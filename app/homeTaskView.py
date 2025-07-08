@@ -1,10 +1,11 @@
 import sys
-from PySide6.QtWidgets import QApplication ,QLabel, QFrame, QWidget, QGridLayout, QCalendarWidget, QMainWindow, QTextEdit, QToolBar, QStatusBar, QPushButton, QHBoxLayout, QVBoxLayout
+from PySide6.QtWidgets import QApplication ,QLabel, QFrame, QWidget, QGridLayout, QCalendarWidget, QMainWindow, QTextEdit, QToolBar, QStatusBar, QPushButton, QHBoxLayout, QVBoxLayout, QTableView
 from PySide6.QtGui import QIcon, QAction, QPixmap
 from PySide6.QtCore import QSize
 from PySide6.QtCore import Qt 
 
-
+# importing TableModel
+from homeTaskTable import TableModel
 
 class TaskAppView(QMainWindow):
     def __init__(self):
@@ -15,13 +16,11 @@ class TaskAppView(QMainWindow):
 
         # we are creating a QMenuBar object() : we are using menuBar() method from QMainWindow()
         menuBarObject = self.menuBar()
-        
 
         # adding menues to the menuBar
         fileMenuBarMenue = menuBarObject.addMenu("&File")
         editMenuBarMenue = menuBarObject.addMenu("&Edit")
         helpMenuBarMenue = menuBarObject.addMenu("&Help")
-
 
         # creating actions|items for the menues objects
         new_file_action = fileMenuBarMenue.addAction('&New')
@@ -103,7 +102,7 @@ class TaskAppView(QMainWindow):
         fastActionFrame  = QFrame()
         fastActionView = QVBoxLayout()
         homeButton = QPushButton("Home")
-        homeButton.setStyleSheet("font-size:30px;")
+        # homeButton.setStyleSheet("font-size:30px;")
         settingBtn = QPushButton('Setting')
         fastActionView.addWidget(homeButton)
         fastActionView.addWidget(settingBtn)
@@ -116,13 +115,31 @@ class TaskAppView(QMainWindow):
         mainMiddleFrame = QFrame()
         mainMiddleView = QVBoxLayout()
         welcomeLabel = QLabel("Welcome back sir")
+        # welcomeLabel.setStyleSheet('border:1px solid red') # testing:
         mainMiddleView.addWidget(welcomeLabel)
-        kali_pixmap = QPixmap("./assets/icons/kaliDev_canva.png")
+        kali_pixmap = QPixmap("./assets/icons/kaliDev_canva.png") 
         #  Qt::KeepAspectRatio
-        kaliDevImg = kali_pixmap.scaled(400, 300, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+        kaliDevImg = kali_pixmap.scaled(400, 250, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
         mainMiddleImage = QLabel()
+        # mainMiddleImage.setStyleSheet("border:1px solid red") # testing: 
         mainMiddleImage.setPixmap(kaliDevImg)
         mainMiddleView.addWidget(mainMiddleImage)
+        myTasksLabel = QLabel("My Tasks")
+        myTasksLabel.setStyleSheet("border:2px solid black; color:white; font-weight: 600; padding:5px;")
+        mainMiddleView.addWidget(myTasksLabel)
+        myHeaders = ["Task", "Priority","Start Date", "End Date",  "Status", "Warning"]
+        users_data = [
+            ["FreeCodeCamp JavaScript & DataStructures", "10", "2025-07-07", "2025-07-10", "In progress", ""],
+            ["KaliDev-Track","10", "2025-07-07", "2025-08-10", "Upcoming", "Red"],
+            ["ANN", "10", "2025-07-07", "2025-07-10", "Finished", ""]
+        ]
+        model = TableModel(users_data, myHeaders)
+        myTable = QTableView()
+        myTable.setModel(model)
+        myTable.setColumnWidth(0, 316)
+
+        mainMiddleView.addWidget(myTable)
+
         mainMiddleFrame.setLayout(mainMiddleView)
 
         # setting up view 3 
@@ -134,6 +151,8 @@ class TaskAppView(QMainWindow):
         # myCalendar.setGridVisible(True)
         myCalendar.setFixedSize(QSize(250,200))
         notificationView.addWidget(myCalendar)
+        upComing_label = QLabel("Upcoming Activities")
+        notificationView.addWidget(upComing_label)
         notificationFrame.setLayout(notificationView)
 
         # edit the frames
@@ -144,7 +163,6 @@ class TaskAppView(QMainWindow):
         gridLayout.addWidget(fastActionFrame, 0, 0)
         gridLayout.addWidget(mainMiddleFrame, 0, 1)
         gridLayout.addWidget(notificationFrame, 0, 2)
-
 
         # setting the width for the columns
         gridLayout.setColumnMinimumWidth(0, 200)
@@ -160,13 +178,8 @@ class TaskAppView(QMainWindow):
         self.setCentralWidget(mainWidget)
         self.addToolBar(mainToolBar)
 
-
         self.resize(1368,768)
         # self.setGeometry(100,0,1368,768)\
-
-
-
-
 
 
 

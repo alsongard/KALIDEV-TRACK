@@ -4,6 +4,7 @@ import json
 import sys
 import os
 import hashlib
+import bcrypt
 # this window will have 2 views: using QTabWidget 1 for creatign account and the other for signing in
 class MainFormWindow(QWidget):
     def __init__(self, app):
@@ -27,10 +28,10 @@ class MainFormWindow(QWidget):
         vLayout = QVBoxLayout()
 
 
-        user_label = QLabel('Email:')
+        user_label = QLabel('Email:', parent=None)
         self.username_input = QLineEdit()
 
-        passwd_label = QLabel("Password:")
+        passwd_label = QLabel("Password:", parent=None)
         self.password_input = QLineEdit()
         self.password_input.setEchoMode(QLineEdit.EchoMode.Password)
 
@@ -80,9 +81,9 @@ class MainFormWindow(QWidget):
         loginView = QWidget()
 
         login_username = QLabel('Email:')
-        login_username_line_input = QLineEdit()
+        self.login_username_line_input = QLineEdit()
         login_passwd = QLabel('Password')
-        login_passwd_line_input = QLineEdit()
+        self.login_passwd_line_input = QLineEdit()
 
 
         # buttons
@@ -91,14 +92,15 @@ class MainFormWindow(QWidget):
 
         # add functionality to loginButtons
         loginCancelBtn.clicked.connect(self.quit_app)
+        LoginBtn.clicked.connect(self.checkLogin)
 
 
         # set layouts
         loginFormLayout = QVBoxLayout()
         loginFormLayout.addWidget(login_username)
-        loginFormLayout.addWidget(login_username_line_input)
+        loginFormLayout.addWidget(self.login_username_line_input)
         loginFormLayout.addWidget(login_passwd)
-        loginFormLayout.addWidget(login_passwd_line_input)
+        loginFormLayout.addWidget(self.login_passwd_line_input)
 
         # horizontal layout for buttons
         login_hor_layout = QHBoxLayout()
@@ -138,23 +140,54 @@ class MainFormWindow(QWidget):
         username = self.username_input.text()
         password = self.password_input.text()
         filepath=self.filepath
-        hash_sha256_func = hashlib.sha256()
+
         passwd_encoded = password.encode()
-        hash_sha256_func.update(passwd_encoded)
-        hash_password = hash_sha256_func.hexdigest()
-        user_detail_dictionary = {"user_name":username, "password":hash_password}
-        # print(f"user_detail_dictionary : ${user_detail_dictionary}") testing 
-            # check if file exit
+        hashed_password = bcrypt.hashpw(passwd_encoded, bcrypt.gensalt())
+        decoded_hash_passwd = hashed_password.decode() # decoding rom bytes to string for storage
+        # print(decoded_hash_passwd) testing=working correctly
+
+        user_detail_dictionary = {"user_name":username, "password":decoded_hash_passwd}
+        # print(user_detail_dictionary) testing=working correctly
         if os.path.exists(filepath) and os.path.getsize(filepath) > 0:
             with open(filepath, 'r') as file:
                 data = json.load(file)
         else:
+            # print(f'File is empty')
             data = []
 
         data.append(user_detail_dictionary)
         with open(filepath, 'w') as file:
             json.dump(data, file)
             print('Data has been successfully added to file')
+    
+    def checkLogin(self):
+        # get username &  get password
+        username = self.login_username_line_input.text()
+        userpassword = self.login_passwd_line_input.text()
+        # get data from file:
+        filepath=self.filepath
+
+        if os.path.exists(filepath):
+            with open(filepath, 'r') as file:
+                data = json.load(file) # return an array
+            for item in data: 
+                if item['user_name'] == username:
+                    print('user found')
+                    getHashedPassword = item['password']
+                    encoded_passwd = userpassword.encode()
+                    getPasswdByte = getHashedPassword.encode()
+                    print(f"Type of getPsswdByte: {type(getPasswdByte)} and data : {getPasswdByte}")
+                    # try and compare the password
+                    if bcrypt.checkpw(encoded_passwd,getPasswdByte): # returns boolean
+                        print(f'User {username}  found and password True')
+                        userLoginFound=True
+                    else:
+                        print("Wrong password")
+        else:
+            print('Wrong file path : {filepath}')
+
+
+
 
 
     # def openTaskHome(self):

@@ -2,13 +2,14 @@ from PySide6.QtWidgets import QWidget, QTabWidget, QApplication,  QLineEdit, QPu
 import json
 # from homeTaskView import TaskAppView
 import sys
-
+import os
+import hashlib
 # this window will have 2 views: using QTabWidget 1 for creatign account and the other for signing in
 class MainFormWindow(QWidget):
     def __init__(self, app):
         self.app = app # app will be given as an argument to MainFormWindow on start which will be assigned to variable app
         super().__init__()
-
+        self.filepath = './data/userDetails.json'
         # window title
         self.setWindowTitle("KaliDevTrack")
 
@@ -20,7 +21,7 @@ class MainFormWindow(QWidget):
         
 
         # creating variable to be used for allocating window: why: enable toggling
-        self.taskView = None;
+        self.taskView = None
 
         # set layout
         vLayout = QVBoxLayout()
@@ -136,13 +137,25 @@ class MainFormWindow(QWidget):
     def WriteUserDetails(self):
         username = self.username_input.text()
         password = self.password_input.text()
+        filepath=self.filepath
+        hash_sha256_func = hashlib.sha256()
+        passwd_encoded = password.encode()
+        hash_sha256_func.update(passwd_encoded)
+        hash_password = hash_sha256_func.hexdigest()
+        user_detail_dictionary = {"user_name":username, "password":hash_password}
+        # print(f"user_detail_dictionary : ${user_detail_dictionary}") testing 
+            # check if file exit
+        if os.path.exists(filepath) and os.path.getsize(filepath) > 0:
+            with open(filepath, 'r') as file:
+                data = json.load(file)
+        else:
+            data = []
 
-        user_detail_dictionary = {"user_name":username, "password":password}
-        # print(f"user_detail_dictionary : ${user_detail_dictionary}") testing
-        with open("./data/userDetails.json", "a") as file:
-            # print('file has been opened writing data to file') testing
-            file.write(",")
-            json.dump(user_detail_dictionary, file)
+        data.append(user_detail_dictionary)
+        with open(filepath, 'w') as file:
+            json.dump(data, file)
+            print('Data has been successfully added to file')
+
 
     # def openTaskHome(self):
     #     if self.taskView == None:

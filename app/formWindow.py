@@ -3,7 +3,6 @@ import json
 # from homeTaskView import TaskAppView
 import sys
 import os
-import hashlib
 import bcrypt
 # this window will have 2 views: using QTabWidget 1 for creatign account and the other for signing in
 class MainFormWindow(QWidget):
@@ -176,7 +175,7 @@ class MainFormWindow(QWidget):
                     getHashedPassword = item['password']
                     encoded_passwd = userpassword.encode()
                     getPasswdByte = getHashedPassword.encode()
-                    print(f"Type of getPsswdByte: {type(getPasswdByte)} and data : {getPasswdByte}")
+                    # print(f"Type of getPsswdByte: {type(getPasswdByte)} and data : {getPasswdByte}") testing:working correctly
                     # try and compare the password
                     if bcrypt.checkpw(encoded_passwd,getPasswdByte): # returns boolean
                         print(f'User {username}  found and password True')
@@ -189,14 +188,6 @@ class MainFormWindow(QWidget):
 
 
 
-
-    # def openTaskHome(self):
-    #     if self.taskView == None:
-    #         self.taskView = TaskAppView()
-    #         self.taskView.show()
-    #     else:
-    #         self.taskView.close()
-    #         self.taskView = None
 
 
 

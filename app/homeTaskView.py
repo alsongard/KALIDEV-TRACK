@@ -1,8 +1,9 @@
-import sys
+import sys, json
 from PySide6.QtWidgets import QApplication ,QLabel, QFrame, QWidget, QGridLayout, QCalendarWidget, QMainWindow, QTextEdit, QToolBar, QStatusBar, QPushButton, QHBoxLayout, QVBoxLayout, QTableView
 from PySide6.QtGui import QIcon, QAction, QPixmap
 from PySide6.QtCore import QSize
 from PySide6.QtCore import Qt 
+from datetime import datetime
 
 # importing TableModel
 from homeTaskTable import TableModel
@@ -106,6 +107,7 @@ class TaskAppView(QMainWindow):
         settingBtn = QPushButton('Setting')
         fastActionView.addWidget(homeButton)
         fastActionView.addWidget(settingBtn)
+        fastActionView.addStretch(0)
         fastActionFrame.setLayout(fastActionView)
 
 
@@ -128,12 +130,52 @@ class TaskAppView(QMainWindow):
         myTasksLabel.setStyleSheet("border:2px solid black; color:white; font-weight: 600; padding:5px;")
         mainMiddleView.addWidget(myTasksLabel)
         myHeaders = ["Task", "Priority","Start Date", "End Date",  "Status", "Warning"]
+        
+        # how to read data from projects.json
         users_data = [
             ["FreeCodeCamp JavaScript & DataStructures", "10", "2025-07-07", "2025-07-10", "In progress", ""],
             ["KaliDev-Track","10", "2025-07-07", "2025-08-10", "Upcoming", "Red"],
             ["ANN", "10", "2025-07-07", "2025-07-10", "Finished", ""]
         ]
-        model = TableModel(users_data, myHeaders)
+        data = {}
+        
+        with open("./data/projectData.json", "r") as file:
+            data  = json.load(file)
+            # print(data)
+            # print(type(data))
+        
+
+        # converting dates to datetime format
+        # date format
+        date_format="%Y-%m-%d"
+        project_start_date = datetime.strptime(data["project_start_date"], date_format)
+        project_end_date = datetime.strptime(data["project_end_date"], date_format)
+
+        # to handle projects in the future we:
+        # compare time with now
+        today = datetime.now()
+        todays_date = today.date() # gives us the date: YY-mm-dd
+        print(project_start_date.date() - todays_date)
+        if (project_start_date.date() - todays_date).days > 0:
+            checking_project_date_comparison = (project_start_date.date() - todays_date).days
+            # print('Project is in the future')
+            new_user_data = [
+                [data["project_title"], data["project_priority"], data["project_start_date"], data["project_end_date"], data["project_status"], 'Future project']
+            ]
+        else:
+            time_left =  abs(project_end_date-project_start_date)
+            # print(time_left) # 7 days, 0:00:00
+            # print(time_left.days)
+            time_left = time_left.days
+            print(f"Type : {type(time_left)} and {time_left}")
+            myString = str(time_left) + " days"
+            # print(myString)
+        # project_end_date =datetime.strptime(data["project_"])
+            new_user_data = [
+                [data["project_title"], data["project_priority"], data["project_start_date"], data["project_end_date"], data["project_status"], myString]
+            ]
+        # title, priority, startdate, enddate, status, 
+        model = TableModel(new_user_data, myHeaders)
         myTable = QTableView()
         myTable.setModel(model)
         myTable.setColumnWidth(0, 316)
@@ -152,7 +194,9 @@ class TaskAppView(QMainWindow):
         myCalendar.setFixedSize(QSize(250,200))
         notificationView.addWidget(myCalendar)
         upComing_label = QLabel("Upcoming Activities")
+        # upComing_label.setStyleSheet("text-align:center")
         notificationView.addWidget(upComing_label)
+        notificationView.addStretch(0)
         notificationFrame.setLayout(notificationView)
 
         # edit the frames

@@ -16,10 +16,8 @@ class ProjectView(QWidget):
 
         # setting the sidebar
         sideBarView = QVBoxLayout()
-        createFlowBtn = QPushButton('Create FlowChart')
         createTasks = QPushButton('Create Tasks')
         chatGPTbtn = QPushButton('Ask ChatGPT')
-        sideBarView.addWidget(createFlowBtn)
         sideBarView.addWidget(chatGPTbtn)
         sideBarView.addWidget(createTasks)
 
@@ -93,7 +91,7 @@ class ProjectView(QWidget):
 
         appView.addWidget(sideBarFrame)
         appView.addWidget(projectFrame)
-
+        self.setGeometry(200, 0, 800,800)
         self.setLayout(appView)
 
 
@@ -104,12 +102,7 @@ class ProjectView(QWidget):
         - within the folder save everything to a afile
     """
     def save_functionality(self):
-        user_home_dir = os.path.expanduser("~")
-        projectfolder = user_home_dir+"/PROJECTS"
-        # os.mkdir(projectfolder)
-        new_dir = projectfolder+"/projectab"
-        # os.mkdir(new_dir)
-
+        # get project details
         # after creating the project-title directory we need to get every lineEdit text: method: text()
         title_text  = self.titleInput.text()
         owner_text  = self.ownerInput.text()
@@ -117,6 +110,15 @@ class ProjectView(QWidget):
         description_text  = self.descriptionInput.toPlainText()
         status_text  = self.statusInput.text()
         priority_text = self.priorityInput.text()
+
+        # print()
+        user_home_dir = os.path.expanduser("~")
+        projectfolder = user_home_dir+"/PROJECTS"
+        # os.mkdir(projectfolder)
+        
+        new_dir = projectfolder+"/"+title_text
+        os.mkdir(new_dir)
+
 
         # getting project start and end date
         startDateTime = self.start_project_time_edit.dateTime()
@@ -143,10 +145,11 @@ class ProjectView(QWidget):
             "project_end_date":endDate,
             "project_end_time":endTime
         }
-        # print(project_dictionary)
+        print(project_dictionary)
+
         # writing data to the file
         file_name =new_dir+"/project_data.json"
-        # print(file_name)
+        print(file_name)
         with open(file_name, 'a') as file:
             json.dump(project_dictionary, file)
     

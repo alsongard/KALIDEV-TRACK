@@ -1,9 +1,12 @@
-from PySide6.QtWidgets import QWidget, QTabWidget, QApplication,  QLineEdit, QPushButton, QLabel, QVBoxLayout, QHBoxLayout
+from PySide6.QtWidgets import QWidget, QTabWidget,QMessageBox, QApplication,  QLineEdit, QPushButton, QLabel, QVBoxLayout, QHBoxLayout
 import json
 # from homeTaskView import TaskAppView
 import sys
 import os
 import bcrypt
+
+from homeTaskView import TaskAppView
+
 # this window will have 2 views: using QTabWidget 1 for creatign account and the other for signing in
 class MainFormWindow(QWidget):
     def __init__(self, app):
@@ -168,22 +171,57 @@ class MainFormWindow(QWidget):
 
         if os.path.exists(filepath):
             with open(filepath, 'r') as file:
-                data = json.load(file) # return an array
+                data = json.load(file) # return an array of dictionaries
             for item in data: 
                 if item['user_name'] == username:
-                    print('user found')
+                    # print('user found') # testing:working
+                    # print(f'found user: {item}') # testing:working
                     getHashedPassword = item['password']
                     encoded_passwd = userpassword.encode()
                     getPasswdByte = getHashedPassword.encode()
                     # print(f"Type of getPsswdByte: {type(getPasswdByte)} and data : {getPasswdByte}") testing:working correctly
                     # try and compare the password
+                    # when working with the bcrypt module it is required to encode this data: hence encoding both passwords:userpassword,getHashPassword
+                    
+                    print(f" result of checkpw is {bcrypt.checkpw(encoded_passwd, getPasswdByte)}")
                     if bcrypt.checkpw(encoded_passwd,getPasswdByte): # returns boolean
                         print(f'User {username}  found and password True')
                         userLoginFound=True
+                        self.successMessage()
+                        # window = TaskAppView()
+                        # window.show()
+                        # break
                     else:
                         print("Wrong password")
+                        self.alertMessage()
+                        # break
         else:
             print('Wrong file path : {filepath}')
+
+    def successMessage(self):
+        messageObject = QMessageBox()
+        messageObject.setMinimumSize(700, 200)
+        messageObject.setWindowTitle("Login Successfull")
+        messageObject.setText("Continue to Applicaton")
+        messageObject.setIcon(QMessageBox.Icon.Information)
+
+        messageObject.setStandardButtons(
+            QMessageBox.StandardButton.Ok 
+        )
+        messageObject.exec()
+
+
+    def alertMessage(self):
+        messageObject = QMessageBox()
+        messageObject.setMinimumSize(700, 200)
+        messageObject.setWindowTitle("Login failed")
+        messageObject.setText("Invalid Credentials")
+        messageObject.setIcon(QMessageBox.Icon.Critical)
+
+        messageObject.setStandardButtons(
+            QMessageBox.StandardButton.Ok 
+        )
+        messageObject.exec()
 
 
 

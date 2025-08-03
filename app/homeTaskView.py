@@ -7,7 +7,7 @@ from datetime import datetime
 
 # importing TableModel
 from homeTaskTable import TableModel
-
+from fileOperations import ReadWriteUpdateDeleteFileOperations
 class TaskAppView(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -147,34 +147,43 @@ class TaskAppView(QMainWindow):
 
         # converting dates to datetime format
         # date format
-        date_format="%Y-%m-%d"
-        project_start_date = datetime.strptime(data["project_start_date"], date_format)
-        project_end_date = datetime.strptime(data["project_end_date"], date_format)
+        read_instance = ReadWriteUpdateDeleteFileOperations()
+        geazy = read_instance.readFiles()
+        # print(f"This is geazy")
+        # print(geazy)
+        date_format="%Y-%m-%d" 
+        new_user_data = []
+        for item in geazy:
+            print('this is dictionary')
+            print(item) # item is dictionary
 
-        # to handle projects in the future we:
-        # compare time with now
-        today = datetime.now()
-        todays_date = today.date() # gives us the date: YY-mm-dd
-        print(project_start_date.date() - todays_date)
-        if (project_start_date.date() - todays_date).days > 0:
-            checking_project_date_comparison = (project_start_date.date() - todays_date).days
-            # print('Project is in the future')
-            new_user_data = [
-                [data["project_title"], data["project_priority"], data["project_start_date"], data["project_end_date"], data["project_status"], 'Future project']
-            ]
-        else:
-            time_left =  abs(project_end_date-project_start_date)
-            # print(time_left) # 7 days, 0:00:00
-            # print(time_left.days)
-            time_left = time_left.days
-            print(f"Type : {type(time_left)} and {time_left}")
-            myString = str(time_left) + " days"
-            # print(myString)
-        # project_end_date =datetime.strptime(data["project_"])
-            new_user_data = [
-                [data["project_title"], data["project_priority"], data["project_start_date"], data["project_end_date"], data["project_status"], myString]
-            ]
+            project_start_date = datetime.strptime(item["project_start_date"], date_format)
+            project_end_date = datetime.strptime(item["project_end_date"], date_format)
+
+            print(f"project_start_date: {project_start_date} ")
+            print(f"project_end_date: {project_end_date}")
+            # to handle projects in the future we:
+            # compare time with now
+            today = datetime.now()
+            todays_date = today.date() # gives us the date: YY-mm-dd
+            print(project_start_date.date() - todays_date)
+            if (project_start_date.date() - todays_date).days > 0:
+                checking_project_date_comparison = (project_start_date.date() - todays_date).days
+                # print('Project is in the future')
+                new_user_data.append([item["project_title"], item["project_priority"], item["project_start_date"], item["project_end_date"], item["project_status"], 'Future project'])
+            else:
+                time_left =  abs(project_end_date-project_start_date)
+                # print(time_left) # 7 days, 0:00:00
+                # print(time_left.days)
+                time_left = time_left.days
+                print(f"Type : {type(time_left)} and {time_left}")
+                myString = str(time_left) + " days"
+                # print(myString)
+            # project_end_date =datetime.strptime(data["project_"])
+                new_user_data.append([item["project_title"], item["project_priority"], item["project_start_date"], item["project_end_date"], item["project_status"], myString])
         # title, priority, startdate, enddate, status, 
+        print(f"new_user_data")
+        print(new_user_data)
         model = TableModel(new_user_data, myHeaders)
         myTable = QTableView()
         myTable.setModel(model)

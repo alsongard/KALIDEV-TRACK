@@ -114,7 +114,9 @@ class ProjectView(QWidget):
         # print()
         user_home_dir = os.path.expanduser("~")
         projectfolder = user_home_dir+"/PROJECTS"
-        # os.mkdir(projectfolder)
+        
+        if not os.path.exists(projectfolder):
+            os.mkdir(projectfolder)
         
         new_dir = projectfolder+"/"+title_text
         os.mkdir(new_dir)

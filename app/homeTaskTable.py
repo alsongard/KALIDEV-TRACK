@@ -9,13 +9,13 @@ class TableModel(QAbstractTableModel):
 
 
     def rowCount(self, parent=QModelIndex()):
-        print(f"Number of rows of myData:  {len(self.myData)}")
+        # print(f"Number of rows of myData:  {len(self.myData)}")
         return len(self.myData)
 
     def columnCount(self, parent=QModelIndex()):
-        print(f"Number of column is {len(self.myData[0])}") # row index 1  : basically length counts the number of items in an iterable: array we have 2 items: 2 columns
+        # print(f"Number of column is {len(self.myData[0])}") # row index 1  : basically length counts the number of items in an iterable: array we have 2 items: 2 columns
         if len(self.myData[0]) == 0:
-            print(f"Returning 0")
+            # print(f"Returning 0")
             return 0
         else:
             return len(self.myData[0])

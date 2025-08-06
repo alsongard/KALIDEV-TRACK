@@ -1,9 +1,8 @@
 from PySide6.QtWidgets import QWidget, QTabWidget,QMessageBox, QApplication,  QLineEdit, QPushButton, QLabel, QVBoxLayout, QHBoxLayout
 import json
 # from homeTaskView import TaskAppView
-import sys
-import os
-import bcrypt
+import sys, os, bcrypt, secrets
+from threading import Timer
 
 from homeTaskView import TaskAppView
 
@@ -42,6 +41,8 @@ class MainFormWindow(QWidget):
         vLayout.addWidget(self.username_input)
         vLayout.addWidget(passwd_label)
         vLayout.addWidget(self.password_input)
+
+        self.successMsg =QLabel("")
 
 
         # setting up buttons
@@ -86,6 +87,7 @@ class MainFormWindow(QWidget):
         self.login_username_line_input = QLineEdit()
         login_passwd = QLabel('Password')
         self.login_passwd_line_input = QLineEdit()
+        self.login_passwd_line_input.setEchoMode(QLineEdit.EchoMode.Password)
 
 
         # buttons
@@ -129,6 +131,7 @@ class MainFormWindow(QWidget):
 
 
 
+
     # class methods
     def quit_app(self):
         self.app.quit()
@@ -136,19 +139,25 @@ class MainFormWindow(QWidget):
     def get_user_details(self):
         print(f"username : {self.username_input.text()}")
         print(f"password : {self.password_input.text()}")
+
         
+    def success_msg_set(self):
+        self.successMsg.setText("")
 
     def WriteUserDetails(self):
         username = self.username_input.text()
         password = self.password_input.text()
         filepath=self.filepath
 
+        # generate random string
+        gen_user_id = secrets.token_hex(16)
+
         passwd_encoded = password.encode()
         hashed_password = bcrypt.hashpw(passwd_encoded, bcrypt.gensalt())
         decoded_hash_passwd = hashed_password.decode() # decoding rom bytes to string for storage
         # print(decoded_hash_passwd) testing=working correctly
 
-        user_detail_dictionary = {"user_name":username, "password":decoded_hash_passwd}
+        user_detail_dictionary = {"user_name":username, "password":decoded_hash_passwd, 'user_id':gen_user_id}
         # print(user_detail_dictionary) testing=working correctly
         if os.path.exists(filepath) and os.path.getsize(filepath) > 0:
             with open(filepath, 'r') as file:
@@ -158,9 +167,18 @@ class MainFormWindow(QWidget):
             data = []
 
         data.append(user_detail_dictionary)
+        responseMsgBox = QMessageBox.information(
+            self,
+            "Information",
+            "Proceed to Login to continue", 
+            QMessageBox.StandardButton.Ok
+        )
         with open(filepath, 'w') as file:
             json.dump(data, file)
             print('Data has been successfully added to file')
+            self.successMsg.setText("User Account created Successfully")
+            timer = Timer(3.0, self.success_msg_set)
+            timer.start()
     
     def checkLogin(self):
         # get username &  get password
@@ -177,6 +195,7 @@ class MainFormWindow(QWidget):
                     # print('user found') # testing:working
                     # print(f'found user: {item}') # testing:working
                     getHashedPassword = item['password']
+                    getUserId = item['user_id']
                     encoded_passwd = userpassword.encode()
                     getPasswdByte = getHashedPassword.encode()
                     # print(f"Type of getPsswdByte: {type(getPasswdByte)} and data : {getPasswdByte}") testing:working correctly
@@ -188,8 +207,15 @@ class MainFormWindow(QWidget):
                         print(f'User {username}  found and password True')
                         userLoginFound=True
                         self.successMessage()
-                        # window = TaskAppView()
-                        # window.show()
+                        new_window = TaskAppView.get_instance(username,getUserId)
+                        new_window.show()
+                        new_window.activateWindow()
+                        new_window.raise_()
+                        self.close()
+                        timer = Timer(3.0, self.success_msg_set)
+                        timer.start()
+                        # self.w = TaskAppView(username, getUserId)
+                        # self.w.show()
                         # break
                     else:
                         print("Wrong password")

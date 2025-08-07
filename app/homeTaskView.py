@@ -6,10 +6,12 @@ from PySide6.QtCore import Qt
 import PySide6.QtCore
 from datetime import datetime
 
-# importing TableModel
+# importing class
 from homeTaskTable import TableModel
 from fileOperations import ReadWriteUpdateDeleteFileOperations
-from projectsPage import ProjectView
+from projectsPage import ProjectViewAdd
+from viewProjects import ViewProjects
+
 class TaskAppView(QMainWindow):
     _instance = None
     def __init__(self, username, userID):
@@ -20,7 +22,7 @@ class TaskAppView(QMainWindow):
         # set window title
         self.setWindowTitle("KaliDev-Track")
         self.w = None
-        self.project_window = None
+        self.project_views = None
 
         # we are creating a QMenuBar object() : we are using menuBar() method from QMainWindow()
         menuBarObject = self.menuBar()
@@ -139,6 +141,7 @@ class TaskAppView(QMainWindow):
 
 
         newProjectBtn.clicked.connect(self.open_project_page)
+        viewProjectBtn.clicked.connect(self.open_view_projects_page)
         # homeButton.clicked.connect()
         fastActionView.addWidget(searchBtn)
         fastActionView.addWidget(homeButton)
@@ -254,7 +257,7 @@ class TaskAppView(QMainWindow):
         upComing_label = QLabel("Upcoming Activities")
         upComing_label.setStyleSheet("color:#4B2EEF")
         upComing_label.setMargin(10)
-        upComing_label.setAlignment(Qt.AlignCenter)
+        upComing_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         # upComing_label.setStyleSheet("text-align:center")
         notificationView.addWidget(upComing_label)
         i = 1
@@ -313,10 +316,6 @@ class TaskAppView(QMainWindow):
         return cls._instance
         # self.setGeometry(100,0,1368,768)\
 
-    def open_project_page(self):
-        if self.w is  None:
-            self.w = ProjectView(self.usrID)
-            self.w.show()
 
     def toggle_sidebar(self):
         if self.fastActionFrameCollapse:
@@ -335,6 +334,17 @@ class TaskAppView(QMainWindow):
         else:
             self.notificationFrame.show()
             self.nofication_collapse = True
+
+    def open_project_page(self):
+        if self.w is  None:
+            self.w = ProjectViewAdd(self.usrID)
+            self.w.show()
+
+    def open_view_projects_page(self):
+        if self.project_views is None:
+            self.project_views = ViewProjects()
+            self.project_views.show()
+
 
 
 

@@ -159,7 +159,7 @@ class EditProjectView(QWidget):
 # button.clicked.connect(lambda checked, arg="custom_value": self.my_slot(checked, arg))   
 
 
-app = QApplication([])
-window = EditProjectView()
-window.show()
-exit_code = app.exec()
+# app = QApplication([])
+# window = EditProjectView()
+# window.show()
+# exit_code = app.exec()

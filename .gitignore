@@ -9,3 +9,5 @@ lib/
 
 data/
 */__pycache__
+
+.env

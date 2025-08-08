@@ -11,7 +11,7 @@ class ReadWriteUpdateDeleteFileOperations():
         home_dir = os.path.expanduser("~")
         app_project_folder = home_dir+"/"+"PROJECTS"
 
-        # list everything in folder
+        # list everything in folder:~/username/PROJECTS
         user_projects_folders = os.listdir(app_project_folder)
 
 
@@ -21,21 +21,26 @@ class ReadWriteUpdateDeleteFileOperations():
                 
                 # set project path
                 project_folder_path  = os.path.join(app_project_folder,item)
-                print(f"project_folder_path: {project_folder_path}")
+                # print(f"project_folder_path: {project_folder_path}")
                 
                 # list files and directories
                 get_all_files_dirs = os.listdir(os.path.join(app_project_folder,item))
-                print(get_all_files_dirs)
+                # print(get_all_files_dirs)
                 for item in get_all_files_dirs:
                     if os.path.isfile(os.path.join(project_folder_path, item)):
-                        print(f"Found file: {item}")
-
-                        # read the data in the file: json files
-                        with open(os.path.join(project_folder_path, item), "r") as file:
-                            data = json.load(file)
-                            # print('Data is')
-                            # print(data)
-                            self.data_array.append(data)
+                        # print(f"Found file: {item}")
+                        
+                        # adding functionality to read only project_data.json
+                        # Found file: project_data.json
+                        # Found file: project_task.json
+                        if item == "project_data.json":
+                            print('Success in founding project_data.json')
+                            # read the data in the file: json files
+                            with open(os.path.join(project_folder_path, item), "r") as file:
+                                data = json.load(file)
+                                # print('Data is')
+                                # print(data)
+                                self.data_array.append(data)
         # print(self.data_array)
         return self.data_array
                 

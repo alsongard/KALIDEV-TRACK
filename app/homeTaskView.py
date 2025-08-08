@@ -11,6 +11,8 @@ from homeTaskTable import TableModel
 from fileOperations import ReadWriteUpdateDeleteFileOperations
 from projectsPage import ProjectViewAdd
 from viewProjects import ViewProjects
+from editProjectDetails  import EditProjectView
+from backupDataView import BackUpProject
 
 class TaskAppView(QMainWindow):
     _instance = None
@@ -23,13 +25,14 @@ class TaskAppView(QMainWindow):
         self.setWindowTitle("KaliDev-Track")
         self.w = None
         self.project_views = None
-
+        self.project_edit_view = None
+        self.sychronize_view = None
         # we are creating a QMenuBar object() : we are using menuBar() method from QMainWindow()
         menuBarObject = self.menuBar()
 
         # adding menues to the menuBar
         fileMenuBarMenue = menuBarObject.addMenu("&File")
-        editMenuBarMenue = menuBarObject.addMenu("&Edit")
+        # editMenuBarMenue = menuBarObject.addMenu("&Edit")
         helpMenuBarMenue = menuBarObject.addMenu("&Help")
         viewMenuBarMenue = menuBarObject.addMenu("&View")
 
@@ -46,36 +49,43 @@ class TaskAppView(QMainWindow):
 
 
         # creating actions|items for the menues objects
-        new_file_action = fileMenuBarMenue.addAction('&New')
-        new_window_action = fileMenuBarMenue.addAction('&New Window')
-        save_file_action = fileMenuBarMenue.addAction('&Save')
-        save_as_action = fileMenuBarMenue.addAction('&Save as')
+        new_project_action = fileMenuBarMenue.addAction('&New Project')
+        view_project_action = fileMenuBarMenue.addAction('&View Projects')
+        edit_project_action = fileMenuBarMenue.addAction('&Edit Project')
+        sychronize_project_action = fileMenuBarMenue.addAction('&Sychronize Project')
         exit_action = fileMenuBarMenue.addAction('&Exit')
 
+        new_project_action.triggered.connect(self.open_project_page)
+        view_project_action.triggered.connect(self.open_view_projects_page)
+        edit_project_action.triggered.connect(self.open_edit_projects_page)
+        sychronize_project_action.triggered.connect(self.open_sychronization_backup_page)
+        exit_action.triggered.connect(self.close_window)
 
-        # setting shortcuts for menuItems/menuActions
-        new_file_action.setShortcut("Ctrl+N")
-        new_window_action.setShortcut("Ctrl+Shift+N")
-        save_file_action.setShortcut("Ctrl+S")
-        save_as_action.setShortcut('Ctrl+Shift+S')
-        exit_action.setShortcut('Ctrl+Q')
+
+
+        # setting shortcuts for menuItems/menuActions : need to work on shortcuts
+        # new_project_action.setShortcut("Ctrl+N")
+        # view_project_action.setShortcut("Ctrl+Shift+N")
+        # edit_project_action.setShortcut("Ctrl+S")
+        # sychronize_project_action.setShortcut('Ctrl+Shift+S')
+        # exit_action.setShortcut('Ctrl+Q')
 
         # creating action|items for edit menue
-        undo_action = editMenuBarMenue.addAction('Undo')
-        redo_action  = editMenuBarMenue.addAction('Redo')
-        cut_action = editMenuBarMenue.addAction('Cut')
-        copy_action = editMenuBarMenue.addAction('Copy')
-        paste_action = editMenuBarMenue.addAction('Paste')
-        find_action = editMenuBarMenue.addAction('Find')
-        find_replace_action = editMenuBarMenue.addAction('Find & Replace')
+        # undo_action = editMenuBarMenue.addAction('Undo')
+        # redo_action  = editMenuBarMenue.addAction('Redo')
+        # cut_action = editMenuBarMenue.addAction('Cut')
+        # copy_action = editMenuBarMenue.addAction('Copy')
+        # paste_action = editMenuBarMenue.addAction('Paste')
+        # find_action = editMenuBarMenue.addAction('Find')
+        # find_replace_action = editMenuBarMenue.addAction('Find & Replace')
 
         # setting shortcuts for editAction/Item
-        undo_action.setShortcut('Ctrl+U')
-        redo_action.setShortcut('Ctrl+R')
-        cut_action.setShortcut('Ctrl+X')
-        copy_action.setShortcut('Ctrl+C')
-        paste_action.setShortcut('Ctrl+X')
-        find_action.setShortcut('Ctrl+F')
+        # undo_action.setShortcut('Ctrl+U')
+        # redo_action.setShortcut('Ctrl+R')
+        # cut_action.setShortcut('Ctrl+X')
+        # copy_action.setShortcut('Ctrl+C')
+        # paste_action.setShortcut('Ctrl+X')
+        # find_action.setShortcut('Ctrl+F')
 
         # creating action|items for help menue
         helpMenuBarMenue.addAction('About')
@@ -135,20 +145,21 @@ class TaskAppView(QMainWindow):
         newProjectBtn = QPushButton("New Project")
         viewProjectBtn = QPushButton("View Projects")
         editProjectBtn = QPushButton("Edit Project")
-        dltBtn = QPushButton("Delete Project")
         sychronizeBtn = QPushButton("Sychronize")
         exitApp = QPushButton("ExitApp")
 
 
         newProjectBtn.clicked.connect(self.open_project_page)
         viewProjectBtn.clicked.connect(self.open_view_projects_page)
+        editProjectBtn.clicked.connect(self.open_edit_projects_page)
+        sychronizeBtn.clicked.connect(self.open_sychronization_backup_page)
+        exitApp.clicked.connect(self.close_window)
         # homeButton.clicked.connect()
         fastActionView.addWidget(searchBtn)
         fastActionView.addWidget(homeButton)
         fastActionView.addWidget(newProjectBtn)
         fastActionView.addWidget(viewProjectBtn)
         fastActionView.addWidget(editProjectBtn)
-        fastActionView.addWidget(dltBtn)
         fastActionView.addWidget(sychronizeBtn )
         fastActionView.addWidget(settingBtn)
         fastActionView.addWidget(exitApp)
@@ -206,21 +217,24 @@ class TaskAppView(QMainWindow):
             project_start_date = datetime.strptime(item["project_start_date"], date_format)
             project_end_date = datetime.strptime(item["project_end_date"], date_format)
 
-            # print(f"project_start_date: {project_start_date} ")
-            # print(f"project_end_date: {project_end_date}")
+            print(f"project_start_date: {project_start_date.date()} ")
+            print(f"project_end_date: {project_end_date.date()}")
             # to handle projects in the future we:
             # compare time with now
             today = datetime.now()
             todays_date = today.date() # gives us the date: YY-mm-dd
-            print(project_start_date.date() - todays_date)
+            print(f'{item["project_title"]}: days subtraction')
+            print(todays_date)
             if (project_start_date.date() - todays_date).days > 0:
+                print(project_start_date.date() - todays_date)
+                print('Project is in the future')
                 checking_project_date_comparison = (project_start_date.date() - todays_date).days
-                # print('Project is in the future')
                 new_user_data.append([item["project_title"], item["project_priority"], item["project_start_date"], item["project_end_date"], "Future", 'Future project'])
                 upcomingActivites.append(item["project_title"])
             else:
-                time_left =  abs(project_end_date-project_start_date)
-                # print(time_left) # 7 days, 0:00:00
+                time_left =  abs(project_end_date.date()-todays_date)
+                print(f'for projects date subtraction is minus')
+                print(time_left) # 7 days, 0:00:00
                 # print(time_left.days)
                 time_left = time_left.days
                 # print(f"Type : {type(time_left)} and {time_left}")
@@ -270,7 +284,7 @@ class TaskAppView(QMainWindow):
         deadlineLabel = QLabel("Passed Deadline")
         deadlineLabel.setStyleSheet("color:#F5293A;")
         deadlineLabel.setMargin(5)
-        deadlineLabel.setAlignment(Qt.AlignCenter)
+        deadlineLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
         notificationView.addWidget(deadlineLabel)
 
 
@@ -305,7 +319,7 @@ class TaskAppView(QMainWindow):
         # taskView.addLayout(gridLayout)
 
         self.setCentralWidget(mainWidget)
-        self.addToolBar(mainToolBar)
+        # self.addToolBar(mainToolBar) # future:uncomment to set functionality for toolBar
 
         self.resize(1368,768)
 
@@ -345,15 +359,33 @@ class TaskAppView(QMainWindow):
             self.project_views = ViewProjects()
             self.project_views.show()
 
+    def open_edit_projects_page(self):
+        if self.project_edit_view is None:
+            self.project_edit_view = EditProjectView()
+            self.project_edit_view.show()
 
+    def open_sychronization_backup_page(self):
+        if self.sychronize_view is None:
+            self.sychronize_view = BackUpProject(self.user)
+            self.sychronize_view.show()
 
+    def close_window(self):
+        print("Closing the application")
+        self.close()
+        if self.w is not None:
+            self.w.close() # close the project view page
+        if self.project_views is not None:
+            self.project_views.close() # close the view projects page
+        if self.project_edit_view is not None:
+            self.project_edit_view.close() # close the edit project page
+        if self.sychronize_view is not None:
+            self.sychronize_view.close() # close the sychronization backup page
 
-app = QApplication(sys.argv)
-window = TaskAppView("Alson-Kali","55d345c42a160d35e4acb949bb711608")
-window.show()
-
-exit_code = app.exec()
-sys.exit(exit_code)
+# app = QApplication(sys.argv)
+# window = TaskAppView("Alson-Kali","55d345c42a160d35e4acb949bb711608")
+# window.show()
+# exit_code = app.exec()
+# sys.exit(exit_code)
 
 
 """

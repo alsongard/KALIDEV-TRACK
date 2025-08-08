@@ -1,12 +1,21 @@
-from PySide6.QtWidgets import QApplication, QPushButton, QLabel, QTextEdit, QFrame, QDateTimeEdit, QWidget, QVBoxLayout, QLineEdit, QHBoxLayout
+from PySide6.QtWidgets import QApplication, QPushButton, QLabel, QTextEdit, QFrame, QDateTimeEdit, QWidget, QVBoxLayout, QLineEdit, QHBoxLayout, QMessageBox
 import sys, os, json
 from PySide6.QtCore import QDate
-class ProjectView(QWidget):
-    def __init__(self):
+
+
+# import class
+from createTasks import TaskApp
+class ProjectViewAdd(QWidget):
+    def __init__(self, userId):
+        self.user_id = userId
         super().__init__()
 
         self.setWindowTitle('Project Page')
+        print(f"user_id : {self.user_id}")
 
+        self.user_id = self.user_id.strip("@gmail.com")
+        self.newDir = None
+        self.task_window = None
         # page view
         appView = QHBoxLayout()
 
@@ -18,9 +27,19 @@ class ProjectView(QWidget):
         sideBarView = QVBoxLayout()
         createTasks = QPushButton('Create Tasks')
         chatGPTbtn = QPushButton('Ask ChatGPT')
-        sideBarView.addWidget(chatGPTbtn)
-        sideBarView.addWidget(createTasks)
+        exitBtn = QPushButton("Exit")
 
+
+        createTasks.clicked.connect(self.open_project_tasks)
+        exitBtn.clicked.connect(self.close_window)
+        
+        sideBarView.addWidget(createTasks)
+        sideBarView.addWidget(chatGPTbtn)
+        sideBarView.addWidget(exitBtn)
+        sideBarView.addStretch(0)
+
+
+        exitBtn.clicked.connect(self.close_window)
 
         # setting up mainProjectView === middle view 
         mainProjectView = QVBoxLayout()
@@ -79,6 +98,7 @@ class ProjectView(QWidget):
 
 
         saveBtn = QPushButton('Save')
+
         mainProjectView.addWidget(saveBtn)
 
         # adding functions to button
@@ -91,8 +111,12 @@ class ProjectView(QWidget):
 
         appView.addWidget(sideBarFrame)
         appView.addWidget(projectFrame)
-        self.setGeometry(200, 0, 800,800)
+        self.setGeometry(200, 0, 800,600)
         self.setLayout(appView)
+
+    def close_window(self):
+        print("Closing Window")
+        self.close()
 
 
     # setting logic for the project Page
@@ -121,7 +145,7 @@ class ProjectView(QWidget):
         new_dir = projectfolder+"/"+title_text
         os.mkdir(new_dir)
 
-
+        self.newDir = new_dir
         # getting project start and end date
         startDateTime = self.start_project_time_edit.dateTime()
         endDateTime = self.end_project_time_edit.dateTime()
@@ -135,26 +159,65 @@ class ProjectView(QWidget):
         # print("Without to String")
         # print(startDateTime.time())
 
-        project_dictionary = {
-            "project_title": title_text,
-            "project_owner": owner_text,
-            "project_tags": project_tags,
-            "project_description": description_text,
-            "project_status": status_text,
-            "project_priority": priority_text,
-            "project_start_date":startDate,
-            "project_start_time":startTime,
-            "project_end_date":endDate,
-            "project_end_time":endTime
-        }
-        print(project_dictionary)
 
-        # writing data to the file
-        file_name =new_dir+"/project_data.json"
-        print(file_name)
-        with open(file_name, 'a') as file:
-            json.dump(project_dictionary, file)
+        saving_message_response = QMessageBox().information(
+            self,
+            "Information",
+            "Project Details will be Saved, Would you like to Proceed? ",
+            QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel,
+            QMessageBox.StandardButton.Ok
+        )
+
+        if saving_message_response == QMessageBox.StandardButton.Ok:
+            print("Proceeding to save project data")
+            self.titleInput.clear()
+            self.priorityInput.clear()
+            self.projectTags.clear()
+            self.statusInput.clear()
+            self.ownerInput.clear()
+            self.descriptionInput.clear()
+            project_dictionary = {
+                "userId": self.user_id,
+                "project_title": title_text,
+                "project_owner": owner_text,
+                "project_tags": project_tags,
+                "project_description": description_text,
+                "project_status": status_text,
+                "project_priority": priority_text,
+                "project_start_date":startDate,
+                "project_start_time":startTime,
+                "project_end_date":endDate,
+                "project_end_time":endTime
+            }
+            print(project_dictionary)
+
+            # writing data to the file
+            file_name =new_dir+"/project_data.json"
+            print(file_name)
+            with open(file_name, 'a') as file:
+                json.dump(project_dictionary, file)
+
+        else:
+            QMessageBox().warning(
+                self,
+                "Warning!",
+                "Project Details will not be saved",
+                QMessageBox.StandardButton.Ok
+            )
     
+    def open_project_tasks(self):
+        # setting validation for the task window 
+        if self.newDir is None or self.user_id is None:
+            QMessageBox.critical(
+                self,
+                "Error",
+                "No project directory or user ID specified."
+            )
+            return
+     
+        if self.task_window is None:
+            self.task_window = TaskApp(self.user_id, self.newDir)
+            self.task_window.show()
 
 
 
@@ -163,11 +226,11 @@ class ProjectView(QWidget):
 
 
 
-app = QApplication()
-window = ProjectView()
-window.show()
-exit_code = app.exec()
-sys.exit(exit_code)
+# app = QApplication()
+# window = ProjectView("ffc75283e11d5314c5065a3d7da24748")
+# window.show()
+# exit_code = app.exec()
+# sys.exit(exit_code)
 
 
 

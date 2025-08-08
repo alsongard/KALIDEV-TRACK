@@ -4,6 +4,7 @@ from PySide6.QtWidgets import (
     )
 from fileOperations import ReadWriteUpdateDeleteFileOperations
 from PySide6.QtGui import QColor
+from send2trash import send2trash
 
 import os
 class EditProjectView(QWidget):
@@ -139,8 +140,15 @@ class EditProjectView(QWidget):
             )
             if messageBoxResponse == QMessageBox.StandardButton.Ok:
                 project_remove = self.app_project_folder+"/"+title
+                print(f"removing project: {project_remove}")
                 if os.path.exists(project_remove):
-                    os.rmdir(project_remove)
+                    send2trash(project_remove)
+                    QMessageBox.information(
+                        self,
+                        "Information!",
+                        f"Project {title} has been deleted successfully",
+                        QMessageBox.StandardButton.Ok 
+                    )
                 else:
                     QMessageBox.information(
                             self,

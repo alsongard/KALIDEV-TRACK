@@ -267,8 +267,8 @@ learn more from : [link](https://www.pythonguis.com/docs/qlineedit/)
 
 
 
-app = QApplication()
-window = MainFormWindow(app)
-window.show()
-exit_code = app.exec()
-sys.exit(exit_code)
+# app = QApplication()
+# window = MainFormWindow(app)
+# window.show()
+# exit_code = app.exec()
+# sys.exit(exit_code)

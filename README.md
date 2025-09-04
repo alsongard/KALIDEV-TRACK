@@ -4,7 +4,9 @@
 
 ## Description
 
-**kALIDEV-TRACK** is a desktop application for tracking the progress of your projects and tasks. Built with PySide6, it provides a user-friendly interface to manage, view, and organize your projects efficiently.
+**kALIDEV-TRACK** is a desktop application for tracking the progress of your software projects and tasks. Built with PySide6, it provides a user-friendly interface to manage, view, and organize your projects efficiently.
+
+![working_image](./app/assets/icons/working_image.png)
 
 ---
 
@@ -36,6 +38,8 @@
     - PySide6
     - send2trash
 
+3. **Setup MongoDB**  
+    setup your mongodb url in an env file for backingup data
 ---
 
 ## Usage

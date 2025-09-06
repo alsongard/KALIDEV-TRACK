@@ -34,7 +34,7 @@ class ReadWriteUpdateDeleteFileOperations():
                         # Found file: project_data.json
                         # Found file: project_task.json
                         if item == "project_data.json":
-                            print('Success in founding project_data.json')
+                            # print('Success in founding project_data.json') # testing:working
                             # read the data in the file: json files
                             with open(os.path.join(project_folder_path, item), "r") as file:
                                 data = json.load(file)

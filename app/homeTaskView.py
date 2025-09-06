@@ -219,31 +219,37 @@ class TaskAppView(QMainWindow):
 
             print(f"project_start_date: {project_start_date.date()} ")
             print(f"project_end_date: {project_end_date.date()}")
+
+
+            # getting the differences between the dates: preferably in days
+            # comparing the current date and the deadline: using comparisons < > 
+            current_date = datetime.now()
+            
             # to handle projects in the future we:
             # compare time with now
             today = datetime.now()
             todays_date = today.date() # gives us the date: YY-mm-dd
-            print(f'{item["project_title"]}: days subtraction')
-            print(todays_date)
-            if (project_start_date.date() - todays_date).days > 0:
-                print(project_start_date.date() - todays_date)
-                print('Project is in the future')
+            # print(f'{item["project_title"]}: days subtraction')
+            # print(todays_date)
+
+            if project_end_date.date() > todays_date: 
+                # if in future
+                # print(f"Project in the future: {item['project_title']}") # testing: working
                 checking_project_date_comparison = (project_start_date.date() - todays_date).days
                 new_user_data.append([item["project_title"], item["project_priority"], item["project_start_date"], item["project_end_date"], "Future", 'Future project'])
                 upcomingActivites.append(item["project_title"])
             else:
-                time_left =  abs(project_end_date.date()-todays_date)
-                print(f'for projects date subtraction is minus')
-                print(time_left) # 7 days, 0:00:00
-                # print(time_left.days)
+                # print(f"Project in the past: {item['project_title']}") # testing: working
+                time_left = todays_date - project_end_date.date()
+                # print("time_left") # testing: working
+                # print(time_left) # testing: working
                 time_left = time_left.days
                 # print(f"Type : {type(time_left)} and {time_left}")
                 myString = str(time_left) + " days"
                 passDeadlineActivities.append(item["project_title"])
-                # print(myString)
-            # project_end_date =datetime.strptime(data["project_"])
                 new_user_data.append([item["project_title"], item["project_priority"], item["project_start_date"], item["project_end_date"], "Passed Deadline", myString])
-        # title, priority, startdate, enddate, status, 
+
+                # title, priority, startdate, enddate, status, 
         # print(f"new_user_data")
         # print(new_user_data)
         model = TableModel(new_user_data, myHeaders)
@@ -381,11 +387,11 @@ class TaskAppView(QMainWindow):
         if self.sychronize_view is not None:
             self.sychronize_view.close() # close the sychronization backup page
 
-# app = QApplication(sys.argv)
-# window = TaskAppView("Alson-Kali","55d345c42a160d35e4acb949bb711608")
-# window.show()
-# exit_code = app.exec()
-# sys.exit(exit_code)
+app = QApplication(sys.argv)
+window = TaskAppView("Alson-Kali","55d345c42a160d35e4acb949bb711608")
+window.show()
+exit_code = app.exec()
+sys.exit(exit_code)
 
 
 """

@@ -1,13 +1,11 @@
 # Created by venv; see https://docs.python.org/3/library/venv.html
 
+/.env
+/pyvenv.cfg
+lib/
 bin/
 include/
-lib/
 /lib64
-/pyvenv.cfg
-
-
-data/
-*/__pycache__
-
-.env
+*/**/__pycache__/
+app/data/
+/app/functions/

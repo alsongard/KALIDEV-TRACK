@@ -1,5 +1,5 @@
 import sys, json
-from PySide6.QtWidgets import QApplication ,QLabel, QFrame, QSizePolicy, QWidget, QGridLayout, QCalendarWidget, QMainWindow, QTextEdit, QToolBar, QStatusBar, QPushButton, QHBoxLayout, QVBoxLayout, QTableView
+from PySide6.QtWidgets import QApplication ,QLabel,QMessageBox ,QFrame, QSizePolicy, QWidget, QGridLayout, QCalendarWidget, QMainWindow, QTextEdit, QToolBar, QStatusBar, QPushButton, QHBoxLayout, QVBoxLayout, QTableView
 from PySide6.QtGui import QIcon, QAction, QPixmap
 from PySide6.QtCore import QSize
 from PySide6.QtCore import Qt
@@ -13,7 +13,7 @@ from projectsPage import ProjectViewAdd
 from viewProjects import ViewProjects
 from editProjectDetails  import EditProjectView
 from backupDataView import BackUpProject
-
+import os
 class TaskAppView(QMainWindow):
     _instance = None
     def __init__(self, username, userID):
@@ -208,50 +208,64 @@ class TaskAppView(QMainWindow):
         geazy = read_instance.readFiles()
         # print(f"This is geazy")
         # print(geazy)
-        date_format="%Y-%m-%d" 
+        # print(len(geazy))
         new_user_data = []
-        for item in geazy:
-            # print('this is dictionary')
-            # print(item) # item is dictionary
 
-            project_start_date = datetime.strptime(item["project_start_date"], date_format)
-            project_end_date = datetime.strptime(item["project_end_date"], date_format)
+        if len(geazy) == 0:
+            new_user_data.append(["No Project", "-", "-", "-", "-", "-"])
+            # since we know the path does not exist we need to create the folder
+            value = read_instance.createProjectFolder()
+            if value == 0:
+                QMessageBox.information(
+                    self,
+                    "INformation",
+                    "Your New Project folder has been created at: ~/PROJECTS",
+                    QMessageBox.StandardButton.Ok 
+                )
+        else:
+            date_format="%Y-%m-%d" 
+            for item  in geazy:
+                # print('this is dictionary')
+                # print(item) # item is dictionary
+                # print(item)
+                project_start_date = datetime.strptime(item["project_start_date"], date_format)
+                project_end_date = datetime.strptime(item["project_end_date"], date_format)
 
-            print(f"project_start_date: {project_start_date.date()} ")
-            print(f"project_end_date: {project_end_date.date()}")
+                print(f"project_start_date: {project_start_date.date()} ")
+                print(f"project_end_date: {project_end_date.date()}")
 
 
-            # getting the differences between the dates: preferably in days
-            # comparing the current date and the deadline: using comparisons < > 
-            current_date = datetime.now()
-            
-            # to handle projects in the future we:
-            # compare time with now
-            today = datetime.now()
-            todays_date = today.date() # gives us the date: YY-mm-dd
-            # print(f'{item["project_title"]}: days subtraction')
-            # print(todays_date)
+                # getting the differences between the dates: preferably in days
+                # comparing the current date and the deadline: using comparisons < > 
+                current_date = datetime.now()
+                
+                # to handle projects in the future we:
+                # compare time with now
+                today = datetime.now()
+                todays_date = today.date() # gives us the date: YY-mm-dd
+                # print(f'{item["project_title"]}: days subtraction')
+                # print(todays_date)
 
-            if project_end_date.date() > todays_date: 
-                # if in future
-                # print(f"Project in the future: {item['project_title']}") # testing: working
-                checking_project_date_comparison = (project_start_date.date() - todays_date).days
-                new_user_data.append([item["project_title"], item["project_priority"], item["project_start_date"], item["project_end_date"], "Future", 'Future project'])
-                upcomingActivites.append(item["project_title"])
-            else:
-                # print(f"Project in the past: {item['project_title']}") # testing: working
-                time_left = todays_date - project_end_date.date()
-                # print("time_left") # testing: working
-                # print(time_left) # testing: working
-                time_left = time_left.days
-                # print(f"Type : {type(time_left)} and {time_left}")
-                myString = str(time_left) + " days"
-                passDeadlineActivities.append(item["project_title"])
-                new_user_data.append([item["project_title"], item["project_priority"], item["project_start_date"], item["project_end_date"], "Passed Deadline", myString])
+                if project_end_date.date() > todays_date: 
+                    # if in future
+                    # print(f"Project in the future: {item['project_title']}") # testing: working
+                    checking_project_date_comparison = (project_start_date.date() - todays_date).days
+                    new_user_data.append([item["project_title"], item["project_priority"], item["project_start_date"], item["project_end_date"], "Future", 'Future project'])
+                    upcomingActivites.append(item["project_title"])
+                else:
+                    # print(f"Project in the past: {item['project_title']}") # testing: working
+                    time_left = todays_date - project_end_date.date()
+                    # print("time_left") # testing: working
+                    # print(time_left) # testing: working
+                    time_left = time_left.days
+                    # print(f"Type : {type(time_left)} and {time_left}")
+                    myString = str(time_left) + " days"
+                    passDeadlineActivities.append(item["project_title"])
+                    new_user_data.append([item["project_title"], item["project_priority"], item["project_start_date"], item["project_end_date"], "Passed Deadline", myString])
 
-                # title, priority, startdate, enddate, status, 
-        # print(f"new_user_data")
-        # print(new_user_data)
+                    # title, priority, startdate, enddate, status, 
+            # print(f"new_user_data")
+            # print(new_user_data)
         model = TableModel(new_user_data, myHeaders)
         myTable = QTableView()
         myTable.setModel(model)
@@ -389,7 +403,7 @@ class TaskAppView(QMainWindow):
 
 app = QApplication(sys.argv)
 window = TaskAppView("Alson-Kali","55d345c42a160d35e4acb949bb711608")
-window.show()
+# window.show()
 exit_code = app.exec()
 sys.exit(exit_code)
 

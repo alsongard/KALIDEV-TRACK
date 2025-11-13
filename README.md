@@ -30,6 +30,11 @@
     ```
 
 2. **Install dependencies:**
+    - Create a python environment
+    ```bash
+        python3 -m venv . 
+    ```
+    - Install dependencies
     ```sh
     pip install -r requirements.txt
     ```

@@ -13,10 +13,19 @@ class ReadWriteUpdateDeleteFileOperations():
 
         if os.path.exists(app_project_folder):
             print("path exists")
-            user_projects_folders = os.listdir(app_project_folder)
+            # user_projects_folders = os.listdir(app_project_folder)
+            user_projects_folders = os.scandir(app_project_folder)
+
+            # check if no files/folders exist: means no project at the moment
+            check_no_files_no_dirs = next(user_projects_folders, None)
+            # print(f"check_no_files_no_dirs: {check_no_files_no_dirs}")
+            if check_no_files_no_dirs == None:
+                # print("runnign no_files_no_dirs")
+                return self.data_array
+
             # check if folder:
             for item in user_projects_folders:
-                if not os.path.isfile(os.path.join(app_project_folder,item)): # item is not a file continue
+                if item.is_dir(): # item is not a file continue
                     
                     # set project path
                     project_folder_path  = os.path.join(app_project_folder,item)

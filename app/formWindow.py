@@ -158,12 +158,12 @@ class MainFormWindow(QWidget):
 		# print(decoded_hash_passwd) testing=working correctly
 
 		user_detail_dictionary = {"user_name":username, "password":decoded_hash_passwd, 'user_id':gen_user_id}
-		# print(user_detail_dictionary) testing=working correctly
+		# print(user_detail_dictionary) # testing=working correctly
+		user_json_str  = json.dumps(user_detail_dictionary, indent=4)
 
 		if os.path.exists(filepath):
 			with open(f"{filepath}/user.json", 'w') as file: # if no file exist, it will be created
-				json.dumps(user_detail_dictionary, file)
-
+				file.write(user_json_str)
 
 			responseMsgBox = QMessageBox.information(
 				self,
@@ -171,9 +171,9 @@ class MainFormWindow(QWidget):
 				"Proceed to Login to continue", 
 				QMessageBox.StandardButton.Ok
 			)
-			print('Data has been successfully added to file')
+			# print('Data has been successfully added to file')
 			self.successMsg.setText("User Account created Successfully")
-			timer = Timer(3.0, self.success_msg_set)
+			timer = Timer(5.0, self.success_msg_set())
 			timer.start()
 
 
@@ -199,39 +199,48 @@ class MainFormWindow(QWidget):
 		filepath = self.filepath
 
 		if os.path.exists(filepath):
-			with open(f"{filepath}/user.json", 'r') as file:
-				data = json.load(file) # return an array of dictionaries
-			for item in data: 
-				if item['user_name'] == username:
-					# print('user found') # testing:working
-					# print(f'found user: {item}') # testing:working
-					getHashedPassword = item['password']
-					getUserId = item['user_id']
-					encoded_passwd = userpassword.encode()
-					getPasswdByte = getHashedPassword.encode()
-					# print(f"Type of getPsswdByte: {type(getPasswdByte)} and data : {getPasswdByte}") testing:working correctly
-					# try and compare the password
-					# when working with the bcrypt module it is required to encode this data: hence encoding both passwords:userpassword,getHashPassword
-					
-					print(f" result of checkpw is {bcrypt.checkpw(encoded_passwd, getPasswdByte)}")
-					if bcrypt.checkpw(encoded_passwd,getPasswdByte): # returns boolean
-						print(f'User {username}  found and password True')
-						userLoginFound=True
-						self.successMessage()
-						new_window = TaskAppView.get_instance(username,getUserId)  # we initiate the HometaskView with necessary  arguments for the class
-						new_window.show()
-						new_window.activateWindow()
-						new_window.raise_()
-						self.close()
-						timer = Timer(3.0, self.success_msg_set)
-						timer.start()
-						# self.w = TaskAppView(username, getUserId)
-						# self.w.show()
-						# break
-					else:
-						print("Wrong password")
-						self.alertMessage()
-						# break
+			try:
+				with open(f"{filepath}/user.json", 'r') as file:
+					data = json.load(file) # return an array of dictionaries
+					# print(f"data  on checkLogin : type of data : {type(data)}")
+					print(data)
+					# for item in data: # this is for handling multiple users for the application: 
+					# changed to single user
+
+					if "user_name" in data: #  check if exist
+						# print('user found') # testing:working
+						# print(f'found user: {item}') # testing:working
+						getHashedPassword = data['password']
+						getUserId = data['user_id']
+						encoded_passwd = userpassword.encode()
+						getPasswdByte = getHashedPassword.encode()
+						# print(f"Type of getPsswdByte: {type(getPasswdByte)} and data : {getPasswdByte}") testing:working correctly
+						# try and compare the password
+						# when working with the bcrypt module it is required to encode this data: hence encoding both passwords:userpassword,getHashPassword
+						
+						# print(f" result of checkpw is {bcrypt.checkpw(encoded_passwd, getPasswdByte)}")
+						if bcrypt.checkpw(encoded_passwd,getPasswdByte): # returns boolean
+							# print(f'User {username}  found and password True')
+							userLoginFound=True
+							self.successMessage()
+							new_window = TaskAppView.get_instance(username,getUserId)  # we initiate the HometaskView with necessary  arguments for the class
+							new_window.show()
+							new_window.activateWindow()
+							new_window.raise_()
+							self.close()
+							timer = Timer(3.0, self.success_msg_set)
+							timer.start()
+							# self.w = TaskAppView(username, getUserId)
+							# self.w.show()
+							# break
+						else:
+							print("Wrong password")
+							self.alertMessage()
+							# break
+			except FileNotFoundError as e:
+				print("File user.json not  found")
+				self.alertMessage("File Not found!, Try creating another account or reinstalling the app")
+
 		else:
 			print('Wrong file path : {filepath}')
 
@@ -248,11 +257,15 @@ class MainFormWindow(QWidget):
 		messageObject.exec()
 
 
-	def alertMessage(self):
+	def alertMessage(self, message):
+		alert_message = message
 		messageObject = QMessageBox()
 		messageObject.setMinimumSize(700, 200)
 		messageObject.setWindowTitle("Login failed")
-		messageObject.setText("Invalid Credentials")
+		if  alert_message:
+			messageObject.setText(alert_message)
+		else: 
+			messageObject.setText("Invalid Credentials")
 		messageObject.setIcon(QMessageBox.Icon.Critical)
 
 		messageObject.setStandardButtons(

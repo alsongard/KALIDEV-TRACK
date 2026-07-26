@@ -1,12 +1,12 @@
 from PySide6.QtWidgets import QApplication
 import sys
 from formWindow import MainFormWindow
-
+import os
 
 
 app = QApplication()
-
-window = MainFormWindow(app)
+app_folder = os.getcwd()
+window = MainFormWindow(app, app_folder)
 window.show()
 
 exit_code = app.exec()

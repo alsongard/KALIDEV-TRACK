@@ -203,7 +203,7 @@ class MainFormWindow(QWidget):
 				with open(f"{filepath}/user.json", 'r') as file:
 					data = json.load(file) # return an array of dictionaries
 					# print(f"data  on checkLogin : type of data : {type(data)}")
-					print(data)
+					# print(data)
 					# for item in data: # this is for handling multiple users for the application: 
 					# changed to single user
 

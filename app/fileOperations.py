@@ -12,18 +12,18 @@ class ReadWriteUpdateDeleteFileOperations():
         app_project_folder = home_dir+"/"+"PROJECTS"
 
         if os.path.exists(app_project_folder):
-            print("path exists")
+            # print("path exists") # testing:works 
             # user_projects_folders = os.listdir(app_project_folder)
             user_projects_folders = os.scandir(app_project_folder)
 
             # check if no files/folders exist: means no project at the moment
-            check_no_files_no_dirs = next(user_projects_folders, None)
+            # check_no_files_no_dirs = next(user_projects_folders, None)
             # print(f"check_no_files_no_dirs: {check_no_files_no_dirs}")
-            if check_no_files_no_dirs == None:
-                # print("runnign no_files_no_dirs")
-                return self.data_array
+            # if check_no_files_no_dirs == None:
+            #     # print("runnign no_files_no_dirs")
+            #     return self.data_array
 
-            # check if folder:
+            # check if folder in Os.DirEntry object:
             for item in user_projects_folders:
                 if item.is_dir(): # item is not a file continue
                     
@@ -57,6 +57,7 @@ class ReadWriteUpdateDeleteFileOperations():
 
     def createProjectFolder(self):
         home_director = os.path.expanduser("~")
+		
         os.mkdir(home_director+"/" + "PROJECTS")     
         return 0           
 # read_instance = ReadWriteUpdateDeleteFileOperations()

@@ -41,9 +41,10 @@ class TaskAppView(QMainWindow):
 
 		
 		# viewMenuBareMenueItems/Action
-		
-		collapse_action = viewMenuBarMenue.addAction("Collapse SideBar")
-		notification_action = viewMenuBarMenue.addAction("Collapse Notification")
+		self.collapseSidebarStatement = "Collapse SideBar"
+		self.collapseNotificationStatement = "Collapse Notification"
+		collapse_action = viewMenuBarMenue.addAction(self.collapseSidebarStatement)
+		notification_action = viewMenuBarMenue.addAction(self.collapseNotificationStatement)
 		collapse_action.triggered.connect(self.toggle_sidebar)
 		notification_action.triggered.connect(self.toggle_notification)
 		# actions for menuBar
@@ -153,6 +154,16 @@ class TaskAppView(QMainWindow):
 		sychronizeBtn = QPushButton("Sychronize")
 		exitApp = QPushButton("ExitApp")
 
+		settingBtn.setStyleSheet("text-align: left; padding: 5px;")
+		homeButton.setStyleSheet("text-align: left; padding: 5px;")
+		searchBtn.setStyleSheet("text-align: left; padding: 5px;")
+		settingBtn.setStyleSheet("text-align: left; padding: 5px;")
+		newProjectBtn.setStyleSheet("text-align: left; padding: 5px;")
+		addTaskBtn.setStyleSheet("text-align: left; padding: 5px;")
+		viewProjectBtn.setStyleSheet("text-align: left; padding: 5px;")
+		editProjectBtn.setStyleSheet("text-align: left; padding: 5px;")
+		sychronizeBtn.setStyleSheet("text-align: left; padding: 5px;")
+		exitApp.setStyleSheet("text-align: left; padding: 5px;")
 
 		newProjectBtn.clicked.connect(self.open_project_page)
 		viewProjectBtn.clicked.connect(self.open_view_projects_page)
@@ -406,8 +417,9 @@ class TaskAppView(QMainWindow):
 		# self.setGeometry(100,0,1368,768)\
 
 
-	def toggle_sidebar(self):
+	def toggle_sidebar(self,collapseSidebarStatement):
 		if self.fastActionFrameCollapse:
+			self.collapseSidebarStatement = "Expand Sidebar"
 			self.fastActionFrame.setMinimumWidth(0)
 			self.fastActionFrame.hide()
 			self.fastActionFrameCollapse = False
@@ -418,6 +430,7 @@ class TaskAppView(QMainWindow):
 
 	def toggle_notification(self):
 		if self.nofication_collapse:
+			self.collapseNotificationStatement = "Expand Notification"
 			self.notificationFrame.hide()
 			self.nofication_collapse = False
 		else:

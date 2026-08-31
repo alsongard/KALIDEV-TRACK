@@ -1,25 +1,27 @@
-from PySide6.QtWidgets import QTableView, QWidget, QApplication, QMainWindow, QLabel,QVBoxLayout
+from PySide6.QtWidgets import QTableView, QGroupBox, QWidget, QApplication, QMainWindow, QLabel,QVBoxLayout
 from  PySide6 import QtCore
 from PySide6.QtCore import Qt, QSize
 import sys
 from read_task_file import ReadTaskFiles
 # Model , View & Controller (MVC) : View & Controller are treated as one
+
 class TableModel(QtCore.QAbstractTableModel):
     def __init__(self, mydata, myHeaderData): 
         super().__init__()
         self._data = mydata
         self.headers = myHeaderData
 
-
+    # returns rowCount
     def rowCount(self, index): 
         # print(f"this is index in rowCount: {index}")
         return len(self._data)
 
+    # returns column count
     def columnCount(self, index):
         # print(f" this is count in columnCount method: {len(self.data[0])}")
         return len(self._data[0])
 
-
+    # returns headers
     def headerData(self, section, orientation, role=Qt.DisplayRole):
         if role == Qt.DisplayRole:
             if orientation == Qt.Horizontal:
@@ -27,17 +29,35 @@ class TableModel(QtCore.QAbstractTableModel):
             else:
                 return str(section+1)
 
-            
-    def data(self, index, role):
+    # return value to displayed at given row & col index
+    def data(self, index, role=Qt.ItemDataRole.DisplayRole):
         # print(f"index in data method: {index}")
         # print(f"role in data method: {role}")
         # print(f'DisplayRole: {Qt.DisplayRole}')
-
-        if role == Qt.DisplayRole: 
-            value =  str(self._data[index.row()][index.column()])
-            # print(f"Display value at ({index.row()}, {index.column()}): {self._data[index.row()][index.column()]}")
-            return value
+        if index.isValid():
+            if role == Qt.ItemDataRole.DisplayRole  or role == Qt.ItemDataRole.EditRole: 
+                value =  str(self._data[index.row()][index.column()])
+                # print(f"Display value at ({index.row()}, {index.column()}): {self._data[index.row()][index.column()]}")
+                return value
         return None
+
+    # enables editing
+    def setData(self, index, value, role ):
+        if role == Qt.ItemDataRole.EditRole:
+            self._data[index.row()][index.column()] = value
+            self.dataChanged.emit(index, index)
+            return True
+        return False
+
+    
+    # enables editing
+    def flags(self, index): 
+        return (
+            Qt.ItemFlag.ItemIsSelectable
+            | Qt.ItemFlag.ItemIsEnabled 
+            | Qt.ItemFlag.ItemIsEditable
+        )
+        
 
     
 class Mainwindow(QMainWindow):
@@ -62,7 +82,10 @@ class Mainwindow(QMainWindow):
         print("-------")
         phase_count = 0
         for phase_content in returnedTaskData:
+            phaseContentGroupBox = QGroupBox() # GroupBox to enable styling
+            phaseLayout = QVBoxLayout() # layout for the phaseContentGroupBox
             phaseTable = QTableView()
+            phaseTable.wordWrapTrue = True
             phaseName = QLabel()
             phaseGoal = QLabel()
 
@@ -74,10 +97,9 @@ class Mainwindow(QMainWindow):
             verticalLayout.addWidget(phaseName)
             verticalLayout.addWidget(phaseGoal)
 
-            each_data = [
-                
-            ]
-            for item in phase_content[2]: # array of subtasks
+            each_data = []
+
+            for item in phase_content[2]: # array of dictionaries
                 thetask = [item['subtaskname'], item["subtaskdescription"], item["subtaskstatus"]]
                 each_data.append(thetask)
 
@@ -93,6 +115,9 @@ class Mainwindow(QMainWindow):
 
         self.central_widget.setLayout(verticalLayout)
 
+        self.central_widget.setStyleSheet("""
+            
+        """)
         self.setFixedSize(1200,600)
         self.setCentralWidget(self.central_widget)
 

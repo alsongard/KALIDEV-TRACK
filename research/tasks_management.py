@@ -65,7 +65,7 @@ class Mainwindow(QMainWindow):
         super().__init__()
         self.table = QTableView() # view instance
 
-        verticalLayout =  QVBoxLayout()
+        self.verticalLayout =  QVBoxLayout()
         self.central_widget = QWidget()
 
         filename = "/home/alson-kali/PROGRAMMING/KALIDEV-TRACK/research/random_task_data.json"
@@ -82,42 +82,77 @@ class Mainwindow(QMainWindow):
         print("-------")
         phase_count = 0
         for phase_content in returnedTaskData:
-            phaseContentGroupBox = QGroupBox() # GroupBox to enable styling
-            phaseLayout = QVBoxLayout() # layout for the phaseContentGroupBox
-            phaseTable = QTableView()
-            phaseTable.wordWrapTrue = True
-            phaseName = QLabel()
-            phaseGoal = QLabel()
+            self.phaseContentGroupBox = QGroupBox() # GroupBox to enable styling
+            self.phaseLayout = QVBoxLayout() # layout for the self.phaseContentGroupBox
+            self.phaseTable = QTableView()
+            self.phaseTable.wordWrapTrue = True
+            self.phaseName = QLabel()
+            # self.phaseName.setStyleSheet("""
+            #     color:red
+            # """)
+            self.phaseName.setObjectName("phaseNameLabel")
+            self.phaseGoal = QLabel()
+            self.phaseGoal.setObjectName("phaseGoalLabel")
+
+
 
             print("this is a single phaseContent ")
             print(phase_content)
-            phaseName.setText(phase_content[0]) # name
-            phaseGoal.setText(f"Goal: {phase_content[1]}") # goal
+            self.phaseName.setText(phase_content[0]) # name
+            self.phaseGoal.setText(f"Goal: {phase_content[1]}") # goal
 
-            verticalLayout.addWidget(phaseName)
-            verticalLayout.addWidget(phaseGoal)
+            self.phaseLayout.addWidget(self.phaseName)
+            self.phaseLayout.addWidget(self.phaseGoal)
 
-            each_data = []
+            self.each_data = []
 
             for item in phase_content[2]: # array of dictionaries
                 thetask = [item['subtaskname'], item["subtaskdescription"], item["subtaskstatus"]]
-                each_data.append(thetask)
+                self.each_data.append(thetask)
 
 
             print('this is all_sub_task_for_table')
-            print(each_data)
+            print(self.each_data)
 
             header_data = ["Module", "Description", "Status"]
-            self.model = TableModel(each_data, header_data)
-            phaseTable.setModel(self.model)
-            phaseTable.resizeColumnsToContents()
-            verticalLayout.addWidget(phaseTable)
+            self.model = TableModel(self.each_data, header_data)
+            self.phaseTable.setModel(self.model)
+            self.phaseTable.resizeColumnsToContents()
+            self.phaseLayout.addWidget(self.phaseTable)
 
-        self.central_widget.setLayout(verticalLayout)
+
+            self.phaseContentGroupBox.setLayout(self.phaseLayout)
+            self.verticalLayout.addWidget(self.phaseContentGroupBox)
+
+
+        self.central_widget.setLayout(self.verticalLayout)
 
         self.central_widget.setStyleSheet("""
-            
+            QGroupBox {
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                margin-top: 10px;
+                padding-top: 10px;
+            }
+            QLabel#phaseNameLabel {
+                    padding-top: 5px;
+                    padding-bottom: 5px;
+                    padding-left: 10px;b
+                    padding-right: 10px;
+                    border-radius: 8px;
+                    background-color: rgba(255, 255, 255, 0.1);   /* Semi‑transparent overlay for contrast */
+                    color: #ffffff;                              /* Adjust text colour for dark background */
+                    font-size: 18px;
+                }
+            }
+            QLabel#phaseGoalLabel {
+                font-style: italic;
+                font-size: 14px;
+                color: #9BBCE0;
+                margin-bottom: 8px;
+            }
         """)
+
         self.setFixedSize(1200,600)
         self.setCentralWidget(self.central_widget)
 

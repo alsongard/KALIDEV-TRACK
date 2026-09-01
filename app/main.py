@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QApplication
 import sys
-from formWindow import MainFormWindow
+from views.form_window import MainFormWindow
 import os
 
 

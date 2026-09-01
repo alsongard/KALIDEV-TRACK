@@ -4,7 +4,7 @@ import json
 import sys, os, bcrypt, secrets
 from threading import Timer
 
-from homeTaskView import TaskAppView
+from homeView import TaskAppView
 
 # this window will have 2 views: using QTabWidget 1 for creatign account and the other for signing in
 class MainFormWindow(QWidget):

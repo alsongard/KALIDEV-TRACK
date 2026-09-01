@@ -183,3 +183,92 @@ this is all_sub_task_for_table
 [['Home module', 'Manages the homepage introduction text, motto, and hero image URL.', ' ✅ Fully Completed (Entity, DTO, Repository injection, Service logic, Insomnia tested)']]
 
 """
+
+
+
+
+
+# Discoverying which data structure to use to pass to TableModel
+"""
+this is data from task file
+{
+    'project': 'my-app', 
+    'phases': [
+        {
+            'name': 'Database schema seup (SQL Tables)', 
+            'goal': 'All tables created and ready for TypeORM integration.', 
+            'subtasks': [
+                {
+                    'subtaskname': 'db.sql', 
+                    'description': 'Master database initialization(schema creation, UUID extensions)', 
+                    'status': 'pending'
+                }, 
+                {
+                    'subtaskname': 'home.sql', 
+                    'description': 'Single-row table for Hero/Mission statement, Hero Image URL.', 
+                    'status': '✅ Completed'
+                }
+            ]
+        }, 
+        {
+            'name': 'NestJS Backend API Resources (Modules, Controllers, Services)', 
+            'goal': 'Generate resources, define entities/DTOs, integrate TypeORM repositories, and test endpoints.', 
+            'subtasks': [
+                {
+                    'subtaskname': 'Home module', 
+                    'description': 'Manages the homepage introduction text, motto, and hero image URL.', 
+                    'status': ' ✅ Fully Completed (Entity, DTO, Repository injection, Service logic, Insomnia tested)'
+                }
+            ]
+        }
+    ]
+}
+
+"""
+
+""""
+Task read from file
+[['Phase 1: Database schema seup (SQL Tables)', 'All tables created and ready for TypeORM integration.', [{'subtaskname': 'db.sql', 'subtaskdescription': 'Master database initialization(schema creation, UUID extensions)', 'subtaskstatus': 'pending'}, {'subtaskname': 'home.sql', 'subtaskdescription': 'Single-row table for Hero/Mission statement, Hero Image URL.', 'subtaskstatus': '✅ Completed'}]], ['Phase 2: NestJS Backend API Resources (Modules, Controllers, Services)', 'Generate resources, define entities/DTOs, integrate TypeORM repositories, and test endpoints.', [{'subtaskname': 'Home module', 'subtaskdescription': 'Manages the homepage introduction text, motto, and hero image URL.', 'subtaskstatus': ' ✅ Fully Completed (Entity, DTO, Repository injection, Service logic, Insomnia tested)'}]]]
+"""
+
+myProject =[
+        {
+            "phaseName": "Database schema seup (SQL Tables)", 
+            "phaseGoal": "All tables created and ready for TypeORM integration.",
+            "subTasks" : [
+                {
+                    "subtaskname": "db.sql",
+                    "subtaskdescription": "Master database initialization(schema creation, UUID extensions)", 
+                    'subtaskstatus': 'pending'
+                },
+                {
+                    'subtaskname': 'home.sql', 
+                    'subtaskdescription': 'Single-row table for Hero/Mission statement, Hero Image URL.', 
+                    'subtaskstatus': '✅ Completed'
+                }
+            ]    
+        }, 
+        {
+            "phaseName":  'Phase 2: NestJS Backend API Resources (Modules, Controllers, Services)',
+            "phaseGoal": 'Generate resources, define entities/DTOs, integrate TypeORM repositories, and test endpoints.',
+            "subTasks": [
+                {
+                    'subtaskname': 'Home module', 
+                    'subtaskdescription': 'Manages the homepage introduction text, motto, and hero image URL.', 
+                    'subtaskstatus': ' ✅ Fully Completed (Entity, DTO, Repository injection, Service logic, Insomnia tested)'
+                }
+            ]
+        }
+    ]
+        
+            
+        
+
+thisdict = {
+  "brand": "Ford",
+  "model": "Mustang",
+  "year": 1964
+}
+"""
+looking at self._data this is an array of dictionaries """
+[{'subtaskname': 'Home module', 'description': 'Manages the homepage introduction text, motto, and hero image URL.', 'status': ' ✅ Fully Completed (Entity, DTO, Repository injection, Service logic, Insomnia tested)'}]

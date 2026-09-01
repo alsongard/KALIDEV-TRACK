@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QTableView, QGroupBox, QWidget, QApplication, QMainWindow, QLabel,QVBoxLayout
 from  PySide6 import QtCore
-from PySide6.QtCore import Qt, QSize
+from PySide6.QtCore import Qt, QSize, QModelIndex
 import sys
 from read_task_file import ReadTaskFiles
 # Model , View & Controller (MVC) : View & Controller are treated as one
@@ -10,16 +10,17 @@ class TableModel(QtCore.QAbstractTableModel):
         super().__init__()
         self._data = mydata
         self.headers = myHeaderData
+        self._column_keys = ["subtaskname", "description", "status"]
 
     # returns rowCount
-    def rowCount(self, index): 
+    def rowCount(self, parent=QModelIndex()): 
         # print(f"this is index in rowCount: {index}")
         return len(self._data)
 
     # returns column count
-    def columnCount(self, index):
+    def columnCount(self, parent=QModelIndex()):
         # print(f" this is count in columnCount method: {len(self.data[0])}")
-        return len(self._data[0])
+        return len(self._column_keys)
 
     # returns headers
     def headerData(self, section, orientation, role=Qt.DisplayRole):
@@ -31,14 +32,23 @@ class TableModel(QtCore.QAbstractTableModel):
 
     # return value to displayed at given row & col index
     def data(self, index, role=Qt.ItemDataRole.DisplayRole):
-        # print(f"index in data method: {index}")
-        # print(f"role in data method: {role}")
-        # print(f'DisplayRole: {Qt.DisplayRole}')
+        # index is an instance from the QModelIndex , which provide methods row and column
+        columns_from_dict = ["subtaskname", "description", "status"]
+
         if index.isValid():
+            row = index.row()
+            col = index.column()
             if role == Qt.ItemDataRole.DisplayRole  or role == Qt.ItemDataRole.EditRole: 
-                value =  str(self._data[index.row()][index.column()])
+                # value =  str(self._data[index.row()][index.column()])
                 # print(f"Display value at ({index.row()}, {index.column()}): {self._data[index.row()][index.column()]}")
-                return value
+                # return value
+                # print(f"row value: {row}\ncol value: {col}")
+                row_in_dict = self._data[row]
+                key = self._column_keys[col]
+                # print(f"dictionary row: {row_in_dict}")
+                # print(f"Cell value: {row_in_dict[key]}")
+                return str(row_in_dict.get(key, ""))
+                
         return None
 
     # enables editing
@@ -81,15 +91,57 @@ class Mainwindow(QMainWindow):
         print()
         print("-------")
         phase_count = 0
+
+        # trial on using dictionary to set Widgets and Table
+        # for item_in_dict in returnedTaskData:
+
+        self.projectName = QLabel()
+        self.projectName.setText(returnedTaskData["project"])
+
+            # phases key has the data for table
+        for item in  returnedTaskData["phases"]: # item is a dictionary
+            self.phaseContentGroupBox = QGroupBox() # GroupBox to enable styling
+            self.phaseLayout = QVBoxLayout() # layout for the self.phaseContentGroupBox
+            self.phaseTable = QTableView()
+            self.phaseTable.wordWrapTrue = True
+            
+            self.phaseName = QLabel()
+            self.phaseName.setText(item["name"])
+
+            self.phaseGoal = QLabel()
+            self.phaseGoal.setText(item["goal"])
+
+            self.phaseName.setObjectName("phaseNameLabel")
+            self.phaseGoal.setObjectName("phaseGoalLabel")
+
+
+            self.phaseLayout.addWidget(self.phaseName)
+            self.phaseLayout.addWidget(self.phaseGoal)
+            # each_data = []
+            # for subtasks in  item["subtasks"]:
+            #     print('')
+
+            header_data  = ["Module", "Description", "Status"] 
+            self.model = TableModel(item["subtasks"], myHeaderData=header_data )
+            self.phaseTable.setModel(self.model)
+            self.phaseTable.resizeColumnsToContents()
+
+            self.phaseLayout.addWidget(self.phaseTable)
+
+            self.phaseContentGroupBox.setLayout(self.phaseLayout)
+            self.verticalLayout.addWidget(self.phaseContentGroupBox)
+
+
+
+
+        # using array for setting data to  QLable and QTable View 
+        """
         for phase_content in returnedTaskData:
             self.phaseContentGroupBox = QGroupBox() # GroupBox to enable styling
             self.phaseLayout = QVBoxLayout() # layout for the self.phaseContentGroupBox
             self.phaseTable = QTableView()
             self.phaseTable.wordWrapTrue = True
             self.phaseName = QLabel()
-            # self.phaseName.setStyleSheet("""
-            #     color:red
-            # """)
             self.phaseName.setObjectName("phaseNameLabel")
             self.phaseGoal = QLabel()
             self.phaseGoal.setObjectName("phaseGoalLabel")
@@ -123,10 +175,11 @@ class Mainwindow(QMainWindow):
 
             self.phaseContentGroupBox.setLayout(self.phaseLayout)
             self.verticalLayout.addWidget(self.phaseContentGroupBox)
-
+        """
 
         self.central_widget.setLayout(self.verticalLayout)
 
+        
         self.central_widget.setStyleSheet("""
             QGroupBox {
                 border: 1px solid #ccc;
@@ -152,8 +205,9 @@ class Mainwindow(QMainWindow):
                 margin-bottom: 8px;
             }
         """)
+    
 
-        self.setFixedSize(1200,600)
+        # self.setFixedSize(1200,600)
         self.setCentralWidget(self.central_widget)
 
 
@@ -220,6 +274,34 @@ app=QtWidgets.QApplication(sys.argv)
 window=MainWindow()
 window.show()
 app.exec()
+"""
 
 
+"""
+output for dictionary row, col values
+-------
+row value: 0
+col value: 0
+dictionary row: {'subtaskname': 'db.sql', 'description': 'Master database initialization(schema creation, UUID extensions)', 'status': 'pending'}
+Cell value: db.sql
+row value: 0
+col value: 1
+dictionary row: {'subtaskname': 'db.sql', 'description': 'Master database initialization(schema creation, UUID extensions)', 'status': 'pending'}
+Cell value: Master database initialization(schema creation, UUID extensions)
+row value: 0
+col value: 2
+dictionary row: {'subtaskname': 'db.sql', 'description': 'Master database initialization(schema creation, UUID extensions)', 'status': 'pending'}
+Cell value: pending
+row value: 1
+col value: 0
+dictionary row: {'subtaskname': 'home.sql', 'description': 'Single-row table for Hero/Mission statement, Hero Image URL.', 'status': '✅ Completed'}
+Cell value: home.sql
+row value: 1
+col value: 1
+dictionary row: {'subtaskname': 'home.sql', 'description': 'Single-row table for Hero/Mission statement, Hero Image URL.', 'status': '✅ Completed'}
+Cell value: Single-row table for Hero/Mission statement, Hero Image URL.
+row value: 1
+col value: 2
+dictionary row: {'subtaskname': 'home.sql', 'description': 'Single-row table for Hero/Mission statement, Hero Image URL.', 'status': '✅ Completed'}
+Cell value: ✅ Completed
 """

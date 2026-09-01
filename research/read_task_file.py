@@ -19,28 +19,31 @@ class ReadTaskFiles():
                 print(self.data)
 
 
-        print(self.data["project"])
-        print(self.data["phases"])
-        print(len(self.data["phases"]))
+        # print(self.data["project"])
+        # print(self.data["phases"])
+        # print(len(self.data["phases"]))
         # print(data["subtasks"])
 
 
-        if (len(self.data) > 0):
-            count = 0
-            for item in self.data["phases"]:
-                phase_name =  f"Phase {count + 1}: " + self.data["phases"][count]["name"] 
-                phase_goal = self.data["phases"][count]["goal"] 
+        if (len(self.data) > 0): # using len  on dictionary to check key properties if it's zero task file is empty
+            return self.data 
+            # count = 0
+            # for item in self.data["phases"]:
+            #     phase_name =  f"Phase {count + 1}: " + self.data["phases"][count]["name"] 
+            #     phase_goal = self.data["phases"][count]["goal"] 
 
-                # for subtasks
-                subtasks_array = []
-                subtaskcount = 0
-                for subtasks in self.data["phases"][count]["subtasks"]:
-                    subtasks_dictionary = {"subtaskname": subtasks["subtaskname"], "subtaskdescription":  subtasks["description"],  "subtaskstatus": subtasks["status"] }
-                    subtasks_array.append(subtasks_dictionary)
+            #     # for subtasks
+            #     subtasks_array = []
+            #     subtaskcount = 0
+            #     for subtasks in self.data["phases"][count]["subtasks"]:
+            #         subtasks_dictionary = {"subtaskname": subtasks["subtaskname"], "subtaskdescription":  subtasks["description"],  "subtaskstatus": subtasks["status"] }
+            #         subtasks_array.append(subtasks_dictionary)
 
-                self.project_tasks.append([phase_name, phase_goal, subtasks_array])
-                count += 1
-        return self.project_tasks
+            #     self.project_tasks.append([phase_name, phase_goal, subtasks_array])
+            #     count += 1
+        # return self.project_tasks
+
+        return []
 
 
 """

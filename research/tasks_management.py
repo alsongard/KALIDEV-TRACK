@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QTableView, QGroupBox, QWidget, QApplication, QMainWindow, QLabel,QVBoxLayout
+from PySide6.QtWidgets import QTableView,QGridLayout, QPushButton, QSizePolicy, QGroupBox, QFrame, QWidget, QApplication, QMainWindow, QLabel,QVBoxLayout
 from  PySide6 import QtCore
 from PySide6.QtCore import Qt, QSize, QModelIndex
 import sys
@@ -73,10 +73,51 @@ class TableModel(QtCore.QAbstractTableModel):
 class Mainwindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.table = QTableView() # view instance
 
         self.verticalLayout =  QVBoxLayout()
-        self.central_widget = QWidget()
+        self.main_widget = QWidget()
+
+
+        """
+            Grid Layout will be added the 2 frames
+            meaning 2 columns
+            1. fast action frame for fast actions
+            2.  main action frame for  displaying the taks  properties and task table
+        """
+        self.gridLayout = QGridLayout()
+
+        # SETTING UP FAST ACTION FRAME AND FASTACTION LAYOUT
+        self.fastActionFrame = QFrame()
+        self.fastActionFrame.setStyleSheet("background-color:#0B0B0F;")
+        self.fastActionVLayout =  QVBoxLayout()
+
+        createTaskBtn = QPushButton("Create Task")
+        createTaskBtn.setObjectName("createTaskBtn")
+        saveTaskBtn =  QPushButton('Save Tasks')
+        saveTaskBtn.setObjectName("saveTaskBtn")
+        deleteTaskBtn = QPushButton("Delete Task")
+        deleteTaskBtn.setObjectName("deleteTaskBtn")
+
+        exitViewBtn = QPushButton("Exit")
+        exitViewBtn.setObjectName("exitViewBtn")
+
+
+        self.fastActionVLayout.addWidget(createTaskBtn)
+        self.fastActionVLayout.addWidget(saveTaskBtn)
+        self.fastActionVLayout.addWidget(deleteTaskBtn)
+        self.fastActionVLayout.addWidget(exitViewBtn)
+        self.fastActionVLayout.addStretch(0)
+        self.fastActionFrame.setLayout(self.fastActionVLayout)
+        self.fastActionFrameCollapse =  False # used for toggling the fastActionFrame visibility
+
+
+
+        # SETTING UP MAIN FRAME AND MAINLAYOUT
+        self.mainFrame = QFrame()
+        self.mainFrame.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+
+        self.mainLayout = QVBoxLayout()
+
 
         filename = "/home/alson-kali/PROGRAMMING/KALIDEV-TRACK/research/random_task_data.json"
 
@@ -106,13 +147,13 @@ class Mainwindow(QMainWindow):
             self.phaseTable.wordWrapTrue = True
             
             self.phaseName = QLabel()
+            self.phaseName.setObjectName("phaseNameLabel")
             self.phaseName.setText(item["name"])
 
             self.phaseGoal = QLabel()
+            self.phaseGoal.setObjectName("phaseGoalLabel")
             self.phaseGoal.setText(item["goal"])
 
-            self.phaseName.setObjectName("phaseNameLabel")
-            self.phaseGoal.setObjectName("phaseGoalLabel")
 
 
             self.phaseLayout.addWidget(self.phaseName)
@@ -129,7 +170,7 @@ class Mainwindow(QMainWindow):
             self.phaseLayout.addWidget(self.phaseTable)
 
             self.phaseContentGroupBox.setLayout(self.phaseLayout)
-            self.verticalLayout.addWidget(self.phaseContentGroupBox)
+            self.mainLayout.addWidget(self.phaseContentGroupBox)
 
 
 
@@ -177,10 +218,15 @@ class Mainwindow(QMainWindow):
             self.verticalLayout.addWidget(self.phaseContentGroupBox)
         """
 
-        self.central_widget.setLayout(self.verticalLayout)
+        self.mainFrame.setLayout(self.mainLayout)
+        self.fastActionFrame.setFrameShape(QFrame.Shape.Box)
+        self.gridLayout.addWidget(self.fastActionFrame, 0, 0)
+        self.gridLayout.addWidget(self.mainFrame, 0, 2)
+
+        self.main_widget.setLayout(self.gridLayout)
 
         
-        self.central_widget.setStyleSheet("""
+        self.main_widget.setStyleSheet("""
             QGroupBox {
                 border: 1px solid #ccc;
                 border-radius: 5px;
@@ -188,15 +234,14 @@ class Mainwindow(QMainWindow):
                 padding-top: 10px;
             }
             QLabel#phaseNameLabel {
-                    padding-top: 5px;
-                    padding-bottom: 5px;
-                    padding-left: 10px;b
-                    padding-right: 10px;
-                    border-radius: 8px;
-                    background-color: rgba(255, 255, 255, 0.1);   /* Semi‑transparent overlay for contrast */
-                    color: #ffffff;                              /* Adjust text colour for dark background */
-                    font-size: 18px;
-                }
+                padding-top: 5px;
+                padding-bottom: 5px;
+                padding-left: 10px;b
+                padding-right: 10px;
+                border-radius: 8px;
+                background-color: rgba(255, 255, 255, 0.1);   /* Semi‑transparent overlay for contrast */
+                color: #ffffff;                              /* Adjust text colour for dark background */
+                font-size: 18px;
             }
             QLabel#phaseGoalLabel {
                 font-style: italic;
@@ -208,7 +253,7 @@ class Mainwindow(QMainWindow):
     
 
         # self.setFixedSize(1200,600)
-        self.setCentralWidget(self.central_widget)
+        self.setCentralWidget(self.main_widget)
 
 
 app = QApplication()

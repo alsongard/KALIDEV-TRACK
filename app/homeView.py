@@ -234,7 +234,7 @@ class TaskAppView(QMainWindow):
 		# converting dates to datetime format
 		# date format
 		read_instance = ReadWriteUpdateDeleteFileOperations()
-		geazy = read_instance.readFiles()
+		geazy = read_instance.readProjectDirectories()
 		# print(f"This is geazy")
 		# print(geazy)
 		# print(len(geazy))

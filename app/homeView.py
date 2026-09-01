@@ -205,7 +205,7 @@ class TaskAppView(QMainWindow):
 		myTasksLabel = QLabel("My Tasks")
 		myTasksLabel.setStyleSheet("border:2px solid black; color:white; font-weight: 600; padding:5px;")
 		mainMiddleView.addWidget(myTasksLabel)
-		myHeaders = ["Task", "Priority","Start Date", "End Date",  "Status", "Warning"]
+		myHeaders = ["Task", "Priority","Start Date", "End Date",  "Status"]
 		
 
 		# upcomingActivitiesArray
@@ -307,7 +307,7 @@ class TaskAppView(QMainWindow):
 					# print(f"Type : {type(time_left)} and {time_left}")
 					myString = str(time_left) + " days"
 					passDeadlineActivities.append(item["project_title"])
-					new_user_data.append([item["project_title"], item["project_priority"], item["project_start_date"], item["project_end_date"], "Passed Deadline", myString])
+					new_user_data.append([item["project_title"], item["project_priority"], item["project_start_date"], item["project_end_date"], f"Passed Deadline by  {myString}"])
 
 					# title, priority, startdate, enddate, status, 
 			# print(f"new_user_data")

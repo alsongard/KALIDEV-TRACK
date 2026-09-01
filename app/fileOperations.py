@@ -1,13 +1,11 @@
 import json, os
 class ReadWriteUpdateDeleteFileOperations():
     def __init__(self):
-
         self.data_array = []
 
 
 
-    def readFiles(self):
-        # check if PROJECTS folder exists
+    def readProjectDirectories(self):
         home_dir = os.path.expanduser("~")
         app_project_folder = home_dir+"/"+"PROJECTS"
 
@@ -53,13 +51,18 @@ class ReadWriteUpdateDeleteFileOperations():
             return self.data_array
         else: 
             return self.data_array
-        # list everything in folder:~/username/PROJECTS
+            # list everything in folder:~/username/PROJECTS
+
 
     def createProjectFolder(self):
         home_director = os.path.expanduser("~")
 		
         os.mkdir(home_director+"/" + "PROJECTS")     
-        return 0           
+        return 0        
+
+    def readTaskFiles(self):
+        self.data = []
+           
 # read_instance = ReadWriteUpdateDeleteFileOperations()
 # # print(read_instance.readFiles())
 # geazy = read_instance.readFiles()

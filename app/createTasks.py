@@ -1,5 +1,8 @@
 from PySide6.QtWidgets import QWidget, QMessageBox, QApplication, QSizePolicy, QPushButton, QLabel, QLineEdit, QTextEdit, QFrame, QVBoxLayout, QHBoxLayout
-import sys, os, json
+import sys
+import os
+import json
+
 
 class TaskApp(QWidget):
     def __init__(self, userId, newDir):
@@ -10,35 +13,33 @@ class TaskApp(QWidget):
         # all validation is set in projectPage.py
         print(f"User ID: {self.userID} : Project Directory: {self.new_dir}")
 
-
-
         # window layout
         vapp_layout = QHBoxLayout()
 
         # create 2 frames for the window
         mainFrame = QFrame()
         sideBarFrame = QFrame()
+
+        # Sidebar buttons
         createFlowBtn = QPushButton('Create FlowChart')
-        chatGptBtn  = QPushButton('Ask ChatGpt')
+        askAI = QPushButton('Ask AI')
         exitBtn = QPushButton('Exit')
 
-
         # stying for buttons
-        createFlowBtn.setStyleSheet("background-color:#e817db;")
-        chatGptBtn.setStyleSheet('background-color:#e817db;  ')
-        exitBtn.setStyleSheet('background-color:#e817db;  ')
-        sideBarView = QVBoxLayout()
+        # createFlowBtn.setStyleSheet("background-color:#e817db;")
+        # askAI.setStyleSheet('background-color:#e817db;  ')
+        # exitBtn.setStyleSheet('background-color:#e817db;  ')
+
+        sideBarView = QVBoxLayout()  # vertical  layout for the sidebar
         sideBarView.addWidget(createFlowBtn)
-        sideBarView.addWidget(chatGptBtn)
+        sideBarView.addWidget(askAI)
         sideBarView.addWidget(exitBtn)
         sideBarView.addStretch(0)
         sideBarFrame.setLayout(sideBarView)
 
-
         # adding button functionality
         exitBtn.clicked.connect(self.close_window)
 
-       
         deleteTask = QPushButton('Delete')
         duplicateTask = QPushButton('Duplicate')
         addTask = QPushButton('Add Tasks')
@@ -48,21 +49,27 @@ class TaskApp(QWidget):
         duplicateTask.setStyleSheet("background-color:green")
         deleteTask.setStyleSheet("background-color:green")
 
-        horLayout = QHBoxLayout()
+        horLayout = QHBoxLayout()  # horizontal button for task management
         horLayout.addWidget(addTask)
         horLayout.addWidget(duplicateTask)
         horLayout.addWidget(deleteTask)
 
-
         # form input for tasks
         self.taskNumber = 1
         task_number = QLabel(f'Task Number {self.taskNumber}')
+
+        # labels
         name_label = QLabel("Task Name")
-        self.task_name_input = QLineEdit()
         description_label = QLabel("Task Description")
+        goal_label = QLabel("Goal/Objective: ")
+
+        # lineedit
+        self.task_name_input = QLineEdit()
         self.task_description_input = QTextEdit()
+        self.goal_input = QLineEdit()
 
         # editting input characteristics
+        # controls the width of the textarea for task description
         self.task_description_input.setFixedHeight(200)
         # self.task_description_input.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         # self.task_description_input.setSizePolicy()
@@ -70,7 +77,6 @@ class TaskApp(QWidget):
         # buttons for tasks
         saveBtn = QPushButton('Save')
         saveBtn.clicked.connect(self.add_task_functionality)
-
 
         # adding to ver_layout form elements
         ver_layout = QVBoxLayout()
@@ -84,15 +90,13 @@ class TaskApp(QWidget):
         ver_layout.addWidget(saveBtn)
         ver_layout.addStretch(0)
 
-
-
         taskView = QVBoxLayout()
         taskView.addLayout(ver_layout)
 
         mainFrame.setLayout(taskView)
         vapp_layout.addWidget(sideBarFrame)
         vapp_layout.addWidget(mainFrame)
-        self.setGeometry(250,0, 800,500)
+        self.setGeometry(250, 0, 800, 500)
         self.setLayout(vapp_layout)
 
     def add_task_functionality(self):
@@ -109,7 +113,6 @@ class TaskApp(QWidget):
         print("Project Dictionary:")
         print(project_dictionary)
 
-
         if os.path.exists(self.new_dir):
             # using writemode||appendmode will create a file
             projectTaskFilePath = self.new_dir+"/"+"project_task.json"
@@ -118,7 +121,7 @@ class TaskApp(QWidget):
                 with open(projectTaskFilePath, 'r') as file:
                     data = json.load(file)
             else:
-                data = [] # this ensures if it's first time: data will be an array: writen to file:always read as an array of dictionary
+                data = []  # this ensures if it's first time: data will be an array: writen to file:always read as an array of dictionary
 
             data.append(project_dictionary)
             with open(projectTaskFilePath, 'w') as file:
@@ -139,12 +142,14 @@ class TaskApp(QWidget):
                 "Project Directory does not exist",
                 QMessageBox.StandardButton.Ok
             )
+
     def close_window(self):
         print("Closing Task Window")
         self.close()
 
+
 # app = QApplication()
-# window = TaskApp()
+# window = TaskApp("1234", "~/alson-kali/PROJECTS/taskstrial")
 # window.show()
 # exit_code = app.exec()
 # sys.exit()

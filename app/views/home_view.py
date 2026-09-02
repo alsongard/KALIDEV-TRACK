@@ -21,9 +21,10 @@ import os
 class HomeAppView(QMainWindow):
 	_instance = None
 	def __init__(self, username, userID):
+		super().__init__()
 		self.user = username
 		self.usrID = userID
-		super().__init__()
+		self.rerunReadProjectDirs = False
 
 		ICON_DIR  = Path(__file__).resolve().parent.parent / "resources"  /"icons"
 
@@ -63,7 +64,7 @@ class HomeAppView(QMainWindow):
 		sychronize_project_action = fileMenuBarMenue.addAction('&Sychronize Project')
 		exit_action = fileMenuBarMenue.addAction('&Exit')
 
-		new_project_action.triggered.connect(self.open_project_page)
+		new_project_action.triggered.connect(self.open_new_project_view_fun)
 		view_project_action.triggered.connect(self.open_view_projects_page)
 		edit_project_action.triggered.connect(self.open_edit_projects_page)
 		sychronize_project_action.triggered.connect(self.open_sychronization_backup_page)
@@ -173,7 +174,7 @@ class HomeAppView(QMainWindow):
 		# sychronizeBtn.setStyleSheet("text-align: left; padding: 5px;")
 		# exitApp.setStyleSheet("text-align: left; padding: 5px;")
 
-		self.newProjectBtn.clicked.connect(self.open_project_page)
+		self.newProjectBtn.clicked.connect(self.open_new_project_view_fun)
 		self.viewProjectBtn.clicked.connect(self.open_view_projects_page)
 		self.editProjectBtn.clicked.connect(self.open_edit_projects_page)
 		self.sychronizeBtn.clicked.connect(self.open_sychronization_backup_page)
@@ -243,6 +244,11 @@ class HomeAppView(QMainWindow):
 		# date format
 		read_instance = ReadWriteUpdateDeleteFileOperations()
 		geazy = read_instance.readProjectDirectories()
+
+
+		if (self.rerunReadProjectDirs):
+			geazy =  read_instance.readProjectDirectories()
+			self.rerunReadProjectDirs = False
 		# print(f"This is geazy")
 		# print(geazy)
 		# print(len(geazy))
@@ -282,8 +288,8 @@ class HomeAppView(QMainWindow):
 				project_start_date = datetime.strptime(item["project_start_date"], date_format)
 				project_end_date = datetime.strptime(item["project_end_date"], date_format)
 
-				print(f"project_start_date: {project_start_date.date()} ")
-				print(f"project_end_date: {project_end_date.date()}")
+				# print(f"project_start_date: {project_start_date.date()} ")
+				# print(f"project_end_date: {project_end_date.date()}")
 
 
 				# getting the differences between the dates: preferably in days
@@ -303,7 +309,8 @@ class HomeAppView(QMainWindow):
 					checking_project_date_comparison = (project_start_date.date() - todays_date).days
 					new_user_data.append([item["project_title"], item["project_priority"], item["project_start_date"], item["project_end_date"], "Future", ''])
 					upcomingActivites.append(item["project_title"])
-				elif todays_date > project_start_date.date() and project_end_date.date() > todays_date:
+				elif todays_date >= project_start_date.date() and project_end_date.date() > todays_date:
+					# print(f"Project title: {item["project_title"]}")
 					new_user_data.append([item["project_title"], item["project_priority"], item["project_start_date"], item["project_end_date"], "Active", ''])
 					activeActivities.append(item["project_title"])
 				elif project_end_date.date() < todays_date:
@@ -318,10 +325,12 @@ class HomeAppView(QMainWindow):
 					new_user_data.append([item["project_title"], item["project_priority"], item["project_start_date"], item["project_end_date"], f"Passed Deadline by  {myString}"])
 
 					# title, priority, startdate, enddate, status, 
-			# print(f"new_user_data")
+			# print(f"new_user_data : {len(new_user_data)}")
 			# print(new_user_data)
+
 		model = HomeTableModel(new_user_data, myHeaders)
 		myTable = QTableView()
+		myTable.resizeColumnsToContents()
 		myTable.setModel(model)
 		myTable.setColumnWidth(0, 316)
 
@@ -444,28 +453,40 @@ class HomeAppView(QMainWindow):
 			self.notificationFrame.show()
 			self.nofication_collapse = True
 
-	def open_project_page(self, checked):  # using checked to set view
+	def open_new_project_view_fun(self, checked):  # using checked to set view
 		# print("The status for self.w is")
 		# print(self.w)
 		if checked == True:
 			if self.w is  None:
 				self.w = ProjectViewAdd(self.usrID)
-				self.w.closed.connect(self.on_child_closed)
+				self.w.closed.connect(self.on_new_project_child_closed)
+				self.w.rerun.connect(self.on_rerun_slot)
 				self.w.show()
 		else:
 			if self.w is not None:
 				self.w.close()
-				self.w =  None
+				self.w = None
 
-	def on_child_closed(self):
+	def on_new_project_child_closed(self):
 		# print("The child widget is closing : signal received")
 		self.w = None
 		self.newProjectBtn.setChecked(False)
 		
-	def open_view_projects_page(self):
-		if self.project_views is None:
-			self.project_views = ViewProjects()
-			self.project_views.show()
+	def open_view_projects_page(self, checked):
+		if checked == True: # we change using setCheckable(True)
+			if self.project_views is None:
+				self.project_views = ViewProjects()
+				self.project_views.closed.connect(self.on_view_project_child)
+				self.project_views.show()
+		else: 
+			if self.project_views is not None: # an instance exist
+				self.project_views.close()
+				self.project_views = None
+
+	def on_view_project_child(self):
+		# print("Project Views Child Widget is closing : signal received ")
+		self.project_views = None
+		self.viewProjectBtn.setChecked(False)
 
 	def open_edit_projects_page(self):
 		if self.project_edit_view is None:
@@ -476,6 +497,11 @@ class HomeAppView(QMainWindow):
 		if self.sychronize_view is None:
 			self.sychronize_view = BackUpProject(self.user)
 			self.sychronize_view.show()
+
+
+	def on_rerun_slot(self):
+		print("This reruns the reading on projects")
+		self.rerunReadProjectDirs = True
 
 	def close_window(self):
 		print("Closing the application")

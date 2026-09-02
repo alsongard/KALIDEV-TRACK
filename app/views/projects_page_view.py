@@ -6,14 +6,15 @@ this file is used to provide a QWidget to the user to fill  in a new project det
 from PySide6.QtWidgets import QApplication, QPushButton, QLabel, QTextEdit, QFrame, QDateTimeEdit, QWidget, QVBoxLayout, QLineEdit, QHBoxLayout, QMessageBox
 import sys, os, json
 from PySide6.QtCore import QDate
-
+from PySide6.QtCore import Signal
 
 # import class
 from .create_tasks import TaskApp
 class ProjectViewAdd(QWidget):
+    closed =  Signal()
     def __init__(self, userId):
-        self.user_id = userId
         super().__init__()
+        self.user_id = userId
 
         self.setWindowTitle('Project Page')
         print(f"user_id : {self.user_id}")
@@ -123,6 +124,12 @@ class ProjectViewAdd(QWidget):
     def close_window(self):
         print("Closing Window")
         self.close()
+
+
+    # custom method to send closed signal to parent 
+    def closeEvent(self, event):
+        self.closed.emit()
+        super().closeEvent(event)
 
 
     # setting logic for the project Page

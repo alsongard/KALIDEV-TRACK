@@ -5,24 +5,27 @@ from PySide6.QtCore import QSize
 from PySide6.QtCore import Qt
 import PySide6.QtCore
 from datetime import datetime
-
+from pathlib import Path
 # importing class
 from models.home_table_model import HomeTableModel
-from fileOperations import ReadWriteUpdateDeleteFileOperations
-from .projects_page_view import ProjectViewAdd
-from .view_projects import ViewProjects
-from .edit_project_view  import EditProjectView
-from .backup_data_view import BackUpProject
+# from fileOperations import ReadWriteUpdateDeleteFileOperations
+from views.projects_page_view import ProjectViewAdd
+from views.view_projects import ViewProjects
+from views.edit_project_view  import EditProjectView
+from views.backup_data_view import BackUpProject
+from utils.file_operations import  ReadWriteUpdateDeleteFileOperations
 import os
 
 
 
-class TaskAppView(QMainWindow):
+class HomeAppView(QMainWindow):
 	_instance = None
 	def __init__(self, username, userID):
 		self.user = username
 		self.usrID = userID
 		super().__init__()
+
+		ICON_DIR  = Path(__file__).resolve().parent.parent / "resources"  /"icons"
 
 		# set window title
 		self.setWindowTitle("KaliDev-Track")
@@ -143,43 +146,48 @@ class TaskAppView(QMainWindow):
 		self.fastActionFrame.setStyleSheet("background-color:#0B0B0F;")
 		# self.fastActionFrame.setStyleSheet("background-image:linear-gradient:(to right, blue, black);")
 		fastActionView = QVBoxLayout()
-		homeButton = QPushButton("Home")
+		self.homeButton = QPushButton("Home")
 		# homeButton.setStyleSheet("font-size:30px;")
-		settingBtn = QPushButton('Setting')
-		searchBtn = QPushButton("Search")
-		newProjectBtn = QPushButton("New Project")
-		addTaskBtn = QPushButton("Add Task For Project")
-		viewProjectBtn = QPushButton("View Projects")
-		editProjectBtn = QPushButton("Edit Project")
-		sychronizeBtn = QPushButton("Sychronize")
-		exitApp = QPushButton("ExitApp")
+		self.settingBtn = QPushButton('Setting')
+		self.searchBtn = QPushButton("Search")
+		self.newProjectBtn = QPushButton("New Project")
+		self.addTaskBtn = QPushButton("Add Task For Project")
+		self.viewProjectBtn = QPushButton("View Projects")
+		self.editProjectBtn = QPushButton("Edit Project")
+		self.sychronizeBtn = QPushButton("Sychronize")
+		self.exitApp = QPushButton("ExitApp")
 
-		settingBtn.setStyleSheet("text-align: left; padding: 5px;")
-		homeButton.setStyleSheet("text-align: left; padding: 5px;")
-		searchBtn.setStyleSheet("text-align: left; padding: 5px;")
-		settingBtn.setStyleSheet("text-align: left; padding: 5px;")
-		newProjectBtn.setStyleSheet("text-align: left; padding: 5px;")
-		addTaskBtn.setStyleSheet("text-align: left; padding: 5px;")
-		viewProjectBtn.setStyleSheet("text-align: left; padding: 5px;")
-		editProjectBtn.setStyleSheet("text-align: left; padding: 5px;")
-		sychronizeBtn.setStyleSheet("text-align: left; padding: 5px;")
-		exitApp.setStyleSheet("text-align: left; padding: 5px;")
+		myButtons = [self.settingBtn, self.homeButton, self.searchBtn,  self.newProjectBtn, self.addTaskBtn, self.viewProjectBtn, self.editProjectBtn, self.sychronizeBtn, self.exitApp]
+		for button in myButtons:
+			button.setCheckable(True)
+			button.setStyleSheet("text-align: left; padding: 5px;")
 
-		newProjectBtn.clicked.connect(self.open_project_page)
-		viewProjectBtn.clicked.connect(self.open_view_projects_page)
-		editProjectBtn.clicked.connect(self.open_edit_projects_page)
-		sychronizeBtn.clicked.connect(self.open_sychronization_backup_page)
-		exitApp.clicked.connect(self.close_window)
+		# settingBtn.setStyleSheet("text-align: left; padding: 5px;")
+		# homeButton.setStyleSheet("text-align: left; padding: 5px;")
+		# searchBtn.setStyleSheet("text-align: left; padding: 5px;")
+		# settingBtn.setStyleSheet("text-align: left; padding: 5px;")
+		# newProjectBtn.setStyleSheet("text-align: left; padding: 5px;")
+		# addTaskBtn.setStyleSheet("text-align: left; padding: 5px;")
+		# viewProjectBtn.setStyleSheet("text-align: left; padding: 5px;")
+		# editProjectBtn.setStyleSheet("text-align: left; padding: 5px;")
+		# sychronizeBtn.setStyleSheet("text-align: left; padding: 5px;")
+		# exitApp.setStyleSheet("text-align: left; padding: 5px;")
+
+		self.newProjectBtn.clicked.connect(self.open_project_page)
+		self.viewProjectBtn.clicked.connect(self.open_view_projects_page)
+		self.editProjectBtn.clicked.connect(self.open_edit_projects_page)
+		self.sychronizeBtn.clicked.connect(self.open_sychronization_backup_page)
+		self.exitApp.clicked.connect(self.close_window)
 		# homeButton.clicked.connect()
-		fastActionView.addWidget(searchBtn)
-		fastActionView.addWidget(homeButton)
-		fastActionView.addWidget(newProjectBtn)
-		fastActionView.addWidget(addTaskBtn)
-		fastActionView.addWidget(viewProjectBtn)
-		fastActionView.addWidget(editProjectBtn)
-		fastActionView.addWidget(sychronizeBtn )
-		fastActionView.addWidget(settingBtn)
-		fastActionView.addWidget(exitApp)
+		fastActionView.addWidget(self.searchBtn)
+		fastActionView.addWidget(self.homeButton)
+		fastActionView.addWidget(self.newProjectBtn)
+		fastActionView.addWidget(self.addTaskBtn)
+		fastActionView.addWidget(self.viewProjectBtn)
+		fastActionView.addWidget(self.editProjectBtn)
+		fastActionView.addWidget(self.sychronizeBtn )
+		fastActionView.addWidget(self.settingBtn)
+		fastActionView.addWidget(self.exitApp)
 		fastActionView.addStretch(0)
 		self.fastActionFrame.setLayout(fastActionView)
 		self.fastActionFrameCollapse = True
@@ -194,7 +202,7 @@ class TaskAppView(QMainWindow):
 		welcomeLabel = QLabel(f"Welcome back {self.user}")
 		# welcomeLabel.setStyleSheet('border:1px solid red') # testing:
 		mainMiddleView.addWidget(welcomeLabel)
-		kali_pixmap = QPixmap("./assets/icons/kaliDev_canva.png") 
+		kali_pixmap = QPixmap(str(ICON_DIR/"kaliDev_canva.png")) 
 		#  Qt::KeepAspectRatio
 		kaliDevImg = kali_pixmap.scaled(300, 280, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
 		mainMiddleImage = QLabel()
@@ -412,7 +420,7 @@ class TaskAppView(QMainWindow):
 	@classmethod
 	def get_instance(cls,myName, myId, parent=None):
 		if cls._instance is None:
-			cls._instance = TaskAppView(myName, myId)
+			cls._instance = HomeAppView(myName, myId)
 		return cls._instance
 		# self.setGeometry(100,0,1368,768)\
 
@@ -423,7 +431,6 @@ class TaskAppView(QMainWindow):
 			self.fastActionFrame.setMinimumWidth(0)
 			self.fastActionFrame.hide()
 			self.fastActionFrameCollapse = False
-
 		else:
 			self.fastActionFrame.show()
 			self.fastActionFrameCollapse = True
@@ -437,11 +444,24 @@ class TaskAppView(QMainWindow):
 			self.notificationFrame.show()
 			self.nofication_collapse = True
 
-	def open_project_page(self):
-		if self.w is  None:
-			self.w = ProjectViewAdd(self.usrID)
-			self.w.show()
+	def open_project_page(self, checked):  # using checked to set view
+		# print("The status for self.w is")
+		# print(self.w)
+		if checked == True:
+			if self.w is  None:
+				self.w = ProjectViewAdd(self.usrID)
+				self.w.closed.connect(self.on_child_closed)
+				self.w.show()
+		else:
+			if self.w is not None:
+				self.w.close()
+				self.w =  None
 
+	def on_child_closed(self):
+		# print("The child widget is closing : signal received")
+		self.w = None
+		self.newProjectBtn.setChecked(False)
+		
 	def open_view_projects_page(self):
 		if self.project_views is None:
 			self.project_views = ViewProjects()
@@ -469,11 +489,11 @@ class TaskAppView(QMainWindow):
 		if self.sychronize_view is not None:
 			self.sychronize_view.close() # close the sychronization backup page
 
-# app = QApplication(sys.argv)
-# window = TaskAppView("alsongadizo@gmail.com","95ee5bad432b214b609b0de351d0df09")
-# window.show()
-# exit_code = app.exec()
-# sys.exit(exit_code)
+app = QApplication(sys.argv)
+window = HomeAppView("alsongadizo@gmail.com","95ee5bad432b214b609b0de351d0df09")
+window.show()
+exit_code = app.exec()
+sys.exit(exit_code)
 
 
 """

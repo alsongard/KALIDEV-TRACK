@@ -2,9 +2,12 @@ from PySide6.QtWidgets import (
     QApplication, QGraphicsDropShadowEffect, QGroupBox ,QGridLayout, QScrollArea,
     QVBoxLayout, QWidget, QLabel, QHBoxLayout, QPushButton, QTextEdit
     )
-from fileOperations import ReadWriteUpdateDeleteFileOperations
+from utils.file_operations import ReadWriteUpdateDeleteFileOperations
 from PySide6.QtGui import QColor
+from PySide6.QtCore import Signal
 class ViewProjects(QWidget):
+    closed = Signal()  # Signal to indicate that the window is closed
+
     def __init__(self):
         super().__init__()
         self.setWindowTitle("View Projects")
@@ -14,7 +17,7 @@ class ViewProjects(QWidget):
         gridLayout = QGridLayout()
         mywidget = QWidget()
         myScrollArea = QScrollArea()
-        file_data = ReadWriteUpdateDeleteFileOperations().readFiles()
+        file_data = ReadWriteUpdateDeleteFileOperations().readProjectDirectories()
         myScrollArea.setWidgetResizable(True)
         # print(file_data)
         # file_data : array of dictiornaries
@@ -31,6 +34,7 @@ class ViewProjects(QWidget):
             labelStyled = QLabel(text)
             labelStyled.setStyleSheet('font-weight:200; font-size:20px; font-family: Verdana, Geneva, Tahoma, sans-serif; color: #2d3748;')
             return labelStyled
+        
         for item in file_data:
             print(item['project_title'])
             item_h_layout = QVBoxLayout()
@@ -102,7 +106,12 @@ class ViewProjects(QWidget):
         self.setGeometry(200,200, 800,600)
 
 
+    def closeEvent(self, event):
+        # print("Child Widget is closing : emittig signal")
+        self.closed.emit() # emit signal using Signal instance
+        super().closeEvent(event) # this clears the child event
 
+        
 # app = QApplication([])
 # window = ViewProjects()
 # window.show()

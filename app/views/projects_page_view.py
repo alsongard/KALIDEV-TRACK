@@ -12,6 +12,7 @@ from PySide6.QtCore import Signal
 from .create_tasks import TaskApp
 class ProjectViewAdd(QWidget):
     closed =  Signal()
+    rerun = Signal()
     def __init__(self, userId):
         super().__init__()
         self.user_id = userId
@@ -207,8 +208,13 @@ class ProjectViewAdd(QWidget):
             # writing data to the file
             file_name =new_dir+"/project_data.json"
             print(file_name)
-            with open(file_name, 'a') as file:
-                json.dump(project_dictionary, file)
+            try:
+                with open(file_name, 'a') as file:
+                    json.dump(project_dictionary, file)
+                self.emitRerunSignal()
+            except Exception as e:
+                print(f"Error : {e}")
+                
 
         else:
             QMessageBox().warning(
@@ -232,7 +238,9 @@ class ProjectViewAdd(QWidget):
             self.task_window = TaskApp(self.user_id, self.newDir)
             self.task_window.show()
 
-
+    def emitRerunSignal(self):
+        self.rerun.emit()
+        super().closeEvent()
 
 
     def ask_ai_fun(self):

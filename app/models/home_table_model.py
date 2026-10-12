@@ -32,9 +32,12 @@ class HomeTableModel(QAbstractTableModel):
         # this methods returns data for the given index and role
         # index: QModelIndex containing row and column
         # role : data role, (DisplayRole=text, decorationRole=icon)
+        # print(f"this is role: {role}")
         row = index.row()
         col = index.column()
-
+        # print(f"This is index: {index}")
+        # print(f"Row: {index.row()} and Column: {index.column()}")
+        # print(f"Value: {self.myData[row][col]}")
         if role == Qt.DisplayRole:
             # print(str(self.myData[row][col])) won't work
             return str(self.myData[row][col])

@@ -272,3 +272,50 @@ thisdict = {
 """
 looking at self._data this is an array of dictionaries """
 [{'subtaskname': 'Home module', 'description': 'Manages the homepage introduction text, motto, and hero image URL.', 'status': ' ✅ Fully Completed (Entity, DTO, Repository injection, Service logic, Insomnia tested)'}]
+
+
+
+
+# METHOD HANDLER USED IN TABLE_VIEW_MANAGEMENT WHEN RETURNED_TASKS USES ARRAY FOR SETTING QTableView
+"""
+# using array for setting data to  QLable and QTable View 
+for phase_content in returnedTaskData:
+    self.phaseContentGroupBox = QGroupBox() # GroupBox to enable styling
+    self.phaseLayout = QVBoxLayout() # layout for the self.phaseContentGroupBox
+    self.phaseTable = QTableView()
+    self.phaseTable.wordWrapTrue = True
+    self.phaseName = QLabel()
+    self.phaseName.setObjectName("phaseNameLabel")
+    self.phaseGoal = QLabel()
+    self.phaseGoal.setObjectName("phaseGoalLabel")
+
+
+
+    print("this is a single phaseContent ")
+    print(phase_content)
+    self.phaseName.setText(phase_content[0]) # name
+    self.phaseGoal.setText(f"Goal: {phase_content[1]}") # goal
+
+    self.phaseLayout.addWidget(self.phaseName)
+    self.phaseLayout.addWidget(self.phaseGoal)
+
+    self.each_data = []
+
+    for item in phase_content[2]: # array of dictionaries
+        thetask = [item['subtaskname'], item["subtaskdescription"], item["subtaskstatus"]]
+        self.each_data.append(thetask)
+
+
+    print('this is all_sub_task_for_table')
+    print(self.each_data)
+
+    header_data = ["Module", "Description", "Status"]
+    self.model = TableModel(self.each_data, header_data)
+    self.phaseTable.setModel(self.model)
+    self.phaseTable.resizeColumnsToContents()
+    self.phaseLayout.addWidget(self.phaseTable)
+
+
+    self.phaseContentGroupBox.setLayout(self.phaseLayout)
+    self.verticalLayout.addWidget(self.phaseContentGroupBox)
+"""

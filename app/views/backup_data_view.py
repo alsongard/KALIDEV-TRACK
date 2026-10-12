@@ -6,7 +6,7 @@ from PySide6.QtGui import QColor
 import os, json
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure
-from fileOperations import ReadWriteUpdateDeleteFileOperations
+from utils.file_operations import ReadWriteUpdateDeleteFileOperations
 from dotenv import load_dotenv 
 
 class BackUpProject(QWidget):

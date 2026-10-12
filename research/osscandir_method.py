@@ -14,7 +14,7 @@ for entry  in result:
 result.close()
 
 """
-Entry name s : express_vercel 
+Entry names : express_vercel 
 Entry path: /home/alson-kali/PROGRAMMING/express_vercel 
 Is File: False 
 Is Dir: True 

@@ -1,5 +1,5 @@
 import sys, json
-from PySide6.QtWidgets import QApplication ,QLabel,QMessageBox ,QFrame, QSizePolicy, QWidget, QGridLayout, QCalendarWidget, QMainWindow, QTextEdit, QToolBar, QStatusBar, QPushButton, QHBoxLayout, QVBoxLayout, QTableView
+from PySide6.QtWidgets import QApplication, QItemDelegate,QLabel,QMessageBox ,QFrame, QSizePolicy, QWidget, QGridLayout, QCalendarWidget, QMainWindow, QTextEdit, QToolBar, QStatusBar, QPushButton, QHBoxLayout, QVBoxLayout, QTableView
 from PySide6.QtGui import QIcon, QAction, QPixmap
 from PySide6.QtCore import QSize
 from PySide6.QtCore import Qt
@@ -14,6 +14,8 @@ from views.view_projects import ViewProjects
 from views.edit_project_view  import EditProjectView
 from views.backup_data_view import BackUpProject
 from utils.file_operations import  ReadWriteUpdateDeleteFileOperations
+from utils.button_delegate import ButtonDelegate
+from views.edit_view_single_project import EditSingleProjectView
 import os
 
 
@@ -34,6 +36,8 @@ class HomeAppView(QMainWindow):
 		self.project_views = None
 		self.project_edit_view = None
 		self.sychronize_view = None
+		self.task_view = None
+		self.edit_single_project = None
 		# we are creating a QMenuBar object() : we are using menuBar() method from QMainWindow()
 		menuBarObject = self.menuBar()
 
@@ -163,21 +167,12 @@ class HomeAppView(QMainWindow):
 			button.setCheckable(True)
 			button.setStyleSheet("text-align: left; padding: 5px;")
 
-		# settingBtn.setStyleSheet("text-align: left; padding: 5px;")
-		# homeButton.setStyleSheet("text-align: left; padding: 5px;")
-		# searchBtn.setStyleSheet("text-align: left; padding: 5px;")
-		# settingBtn.setStyleSheet("text-align: left; padding: 5px;")
-		# newProjectBtn.setStyleSheet("text-align: left; padding: 5px;")
-		# addTaskBtn.setStyleSheet("text-align: left; padding: 5px;")
-		# viewProjectBtn.setStyleSheet("text-align: left; padding: 5px;")
-		# editProjectBtn.setStyleSheet("text-align: left; padding: 5px;")
-		# sychronizeBtn.setStyleSheet("text-align: left; padding: 5px;")
-		# exitApp.setStyleSheet("text-align: left; padding: 5px;")
 
 		self.newProjectBtn.clicked.connect(self.open_new_project_view_fun)
 		self.viewProjectBtn.clicked.connect(self.open_view_projects_page)
 		self.editProjectBtn.clicked.connect(self.open_edit_projects_page)
 		self.sychronizeBtn.clicked.connect(self.open_sychronization_backup_page)
+		self.addTaskBtn.clicked.connect(self.open_task_view)
 		self.exitApp.clicked.connect(self.close_window)
 		# homeButton.clicked.connect()
 		fastActionView.addWidget(self.searchBtn)
@@ -214,7 +209,7 @@ class HomeAppView(QMainWindow):
 		myTasksLabel = QLabel("My Tasks")
 		myTasksLabel.setStyleSheet("border:2px solid black; color:white; font-weight: 600; padding:5px;")
 		mainMiddleView.addWidget(myTasksLabel)
-		myHeaders = ["Task", "Priority","Start Date", "End Date",  "Status"]
+		myHeaders = ["Task", "Priority","Start Date", "End Date",  "Status", "Action"]
 		
 
 		# upcomingActivitiesArray
@@ -302,16 +297,16 @@ class HomeAppView(QMainWindow):
 				todays_date = today.date() # gives us the date: YY-mm-dd
 				# print(f'{item["project_title"]}: days subtraction')
 				# print(todays_date)
-
+				editViewBtn = QPushButton("Edit/View")
 				if project_start_date.date() > todays_date: 
 					# if in future
 					# print(f"Project in the future: {item['project_title']}") # testing: working
 					checking_project_date_comparison = (project_start_date.date() - todays_date).days
-					new_user_data.append([item["project_title"], item["project_priority"], item["project_start_date"], item["project_end_date"], "Future", ''])
+					new_user_data.append([item["project_title"], item["project_priority"], item["project_start_date"], item["project_end_date"], "Future", ""])
 					upcomingActivites.append(item["project_title"])
 				elif todays_date >= project_start_date.date() and project_end_date.date() > todays_date:
 					# print(f"Project title: {item["project_title"]}")
-					new_user_data.append([item["project_title"], item["project_priority"], item["project_start_date"], item["project_end_date"], "Active", ''])
+					new_user_data.append([item["project_title"], item["project_priority"], item["project_start_date"], item["project_end_date"], "Active", ""])
 					activeActivities.append(item["project_title"])
 				elif project_end_date.date() < todays_date:
 					# print(f"Project in the past: {item['project_title']}") # testing: working
@@ -322,16 +317,19 @@ class HomeAppView(QMainWindow):
 					# print(f"Type : {type(time_left)} and {time_left}")
 					myString = str(time_left) + " days"
 					passDeadlineActivities.append(item["project_title"])
-					new_user_data.append([item["project_title"], item["project_priority"], item["project_start_date"], item["project_end_date"], f"Passed Deadline by  {myString}"])
+					new_user_data.append([item["project_title"], item["project_priority"], item["project_start_date"], item["project_end_date"], f"Passed Deadline by  {myString}", ""])
 
 					# title, priority, startdate, enddate, status, 
 			# print(f"new_user_data : {len(new_user_data)}")
 			# print(new_user_data)
 
-		model = HomeTableModel(new_user_data, myHeaders)
+		self.model = HomeTableModel(new_user_data, myHeaders)
 		myTable = QTableView()
 		myTable.resizeColumnsToContents()
-		myTable.setModel(model)
+		myTable.setModel(self.model)
+		button_delegate = ButtonDelegate()
+		button_delegate.button_clicked.connect(self.open_single_project_editor)
+		myTable.setItemDelegateForColumn(5, button_delegate)
 		myTable.setColumnWidth(0, 316)
 
 		mainMiddleView.addWidget(myTable)
@@ -460,7 +458,6 @@ class HomeAppView(QMainWindow):
 			if self.w is  None:
 				self.w = ProjectViewAdd(self.usrID)
 				self.w.closed.connect(self.on_new_project_child_closed)
-				self.w.rerun.connect(self.on_rerun_slot)
 				self.w.show()
 		else:
 			if self.w is not None:
@@ -468,6 +465,7 @@ class HomeAppView(QMainWindow):
 				self.w = None
 
 	def on_new_project_child_closed(self):
+		self.w.rerun.connect(self.on_rerun_slot)
 		# print("The child widget is closing : signal received")
 		self.w = None
 		self.newProjectBtn.setChecked(False)
@@ -503,6 +501,22 @@ class HomeAppView(QMainWindow):
 		print("This reruns the reading on projects")
 		self.rerunReadProjectDirs = True
 
+	def open_single_project_editor(self, row):
+		print("This will open project view")
+		print(f"Row: {row}")
+		name = self.model.myData[row][0]
+		QMessageBox.information(self, "Row clicked", f"You clicked: {name}")
+		if self.edit_single_project == None:
+			self.edit_single_project = EditSingleProjectView(name)
+			self.edit_single_project.closed.connect(self.on_open_single_project_editor_child)
+			self.edit_single_project.show()
+		else:
+			self.edit_single_project.close()
+			self.edit_single_project = None
+	
+	def on_open_single_project_editor_child(self):
+		self.edit_single_project= None
+
 	def close_window(self):
 		print("Closing the application")
 		self.close()
@@ -514,7 +528,20 @@ class HomeAppView(QMainWindow):
 			self.project_edit_view.close() # close the edit project page
 		if self.sychronize_view is not None:
 			self.sychronize_view.close() # close the sychronization backup page
+		if self.edit_single_project is not None:
+			self.edit_single_project.close()
 
+	
+	def open_task_view(self):
+		print("will open task_view")
+
+
+
+		
+
+
+
+		
 app = QApplication(sys.argv)
 window = HomeAppView("alsongadizo@gmail.com","95ee5bad432b214b609b0de351d0df09")
 window.show()

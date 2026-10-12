@@ -2,7 +2,7 @@ from PySide6.QtWidgets import (
     QApplication, QGraphicsDropShadowEffect, QGroupBox ,QGridLayout, QScrollArea,
     QVBoxLayout, QMessageBox, QWidget, QLabel, QHBoxLayout, QPushButton, QTextEdit
     )
-from fileOperations import ReadWriteUpdateDeleteFileOperations
+from utils.file_operations import ReadWriteUpdateDeleteFileOperations
 from PySide6.QtGui import QColor
 from send2trash import send2trash
 
@@ -17,7 +17,7 @@ class EditProjectView(QWidget):
         gridLayout = QGridLayout()
         mywidget = QWidget()
         myScrollArea = QScrollArea()
-        file_data = ReadWriteUpdateDeleteFileOperations().readFiles()
+        file_data = ReadWriteUpdateDeleteFileOperations().readProjectDirectories()
         myScrollArea.setWidgetResizable(True)
         # print(file_data)
         # file_data : array of dictiornaries

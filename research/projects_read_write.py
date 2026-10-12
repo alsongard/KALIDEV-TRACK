@@ -31,7 +31,8 @@ def ReadJSON(filepath):
         projectData = json.load(file)
         print(f'Project Data : {projectData}')
 
-# ReadJSON(new_file_path)
+ReadJSON(new_file_path)
+
 def ReadProjectData(filepath):
     with open(filepath, "r") as file:
         projectArrayStrings = file.readlines()
@@ -72,4 +73,4 @@ def AmazingSolution(filepath, newProject):
 
         
 
-AmazingSolution(new_file_path, project_details_dic) 
+# AmazingSolution(new_file_path, project_details_dic) 

@@ -1,15 +1,96 @@
-from PySide6.QtWidgets import QTableView,QGridLayout, QPushButton, QSizePolicy, QGroupBox, QFrame, QWidget, QApplication, QMainWindow, QLabel,QVBoxLayout
+from PySide6.QtWidgets import QTableView, QHBoxLayout, QGridLayout, QLineEdit ,QPushButton, QSizePolicy, QGroupBox, QFrame, QWidget, QApplication, QMainWindow, QLabel,QVBoxLayout
 from  PySide6 import QtCore
 from PySide6.QtCore import Qt, QSize, QModelIndex
 import sys
-from utils import ReadWriteUpdateDeleteFileOperations
-from models import TaskTableModel
+from utils.file_operations import ReadWriteUpdateDeleteFileOperations
+from models.tasks_table_model import TaskTableModel
+
+class CreateTaskWidget(QWidget):
+    def __init__(self):
+        super().__init__()
+
+        self.mainLayout =  QVBoxLayout()
+
+        phaseName =  QLabel("Enter Phase/Task Name: ")
+        phaseGoal = QLabel("Enter goal name: ")
+        self.phaseNameInput = QLineEdit()
+        self.phaseGoalInput = QLineEdit()
+
+        self.mainLayout.addWidget(phaseName)
+        self.mainLayout.addWidget(self.phaseNameInput)
+        self.mainLayout.addWidget(phaseGoal)
+        self.mainLayout.addWidget(self.phaseGoalInput)
+
+
+        exitBtn = QPushButton('Exit')
+        exitBtn.setCheckable(True)
+        exitBtn.clicked.connect(self.exit_window)
+
+        saveAllTasksBtn = QPushButton("Save Phase")
+        saveAllTasksBtn.setCheckable(True)
+        saveAllTasksBtn.clicked.connect(self.save_all_tasks_fun)
+
+        addSubTaskBtn = QPushButton("Add SubTask")
+        addSubTaskBtn.setCheckable(True)
+        addSubTaskBtn.clicked.connect(self.add_new_group_box)
+        self.mainLayout.addWidget(addSubTaskBtn)
+
+        self.subTaskGroupBox = QGroupBox("Subtask 1")
+        self.subTaskLayout = QVBoxLayout()
+
+        self.moduleName =  QLabel("Module/File name")
+        self.moduleDescription = QLabel("Module Description")
+        self.moduleStatus = QLabel("Module Status")
+
+        self.moduleNameInput = QLineEdit()
+        self.moduleDescriptionInput = QLineEdit()
+        self.moduleStatusInput = QLineEdit()
+
+        self.subTaskLayout.addWidget(self.moduleName)
+        self.subTaskLayout.addWidget(self.moduleNameInput)
+        self.subTaskLayout.addWidget(self.moduleDescription)
+        self.subTaskLayout.addWidget(self.moduleDescriptionInput)
+        self.subTaskLayout.addWidget(self.moduleStatus)
+        self.subTaskLayout.addWidget(self.moduleStatusInput)
+
+
+        self.subTaskGroupBox.setLayout(self.subTaskLayout)
+        self.mainLayout.addWidget(self.subTaskGroupBox)
+
+
+        horButtonLayout  = QHBoxLayout()
+        horButtonLayout.addWidget(saveAllTasksBtn)
+        horButtonLayout.addWidget(exitBtn)
+        self.mainLayout.addLayout(horButtonLayout)
+        self.mainLayout.addStretch(0)
+
+
+        self.setLayout(self.mainLayout)
+
+    def add_new_group_box(self):
+        print("This recreates and adds a new subTaskGroupBox")
+        self.mainLayout.addWidget(self.subTaskGroupBox)
+
+    def save_all_tasks_fun(self):
+        print("this button will save all new new tasks")
+
+    def exit_window(self):
+        print("Exiting window now")
+
+
+
+
+
 class TaskViewWidget(QWidget):
     def __init__(self):
         super().__init__()
 
         self.verticalLayout =  QVBoxLayout()
         self.main_widget = QWidget()
+
+
+        self.create_task_window = None
+
 
 
         """
@@ -27,6 +108,7 @@ class TaskViewWidget(QWidget):
 
         createTaskBtn = QPushButton("Create Task")
         createTaskBtn.setObjectName("createTaskBtn")
+        createTaskBtn.setCheckable(True)
         saveTaskBtn =  QPushButton('Save Tasks')
         saveTaskBtn.setObjectName("saveTaskBtn")
         deleteTaskBtn = QPushButton("Delete Task")
@@ -61,7 +143,7 @@ class TaskViewWidget(QWidget):
 
         # instance of ReadWriteUpdateDeleteFileOperations class
         readTaskInstance = ReadWriteUpdateDeleteFileOperations() 
-        returnedTaskData = readTaskInstance.readTaskFiles(filepath=filename)
+        returnedTaskData = readTaskInstance.readTaskFiles(filename)
 
         print("Task read from file")
         print(returnedTaskData)
@@ -118,10 +200,12 @@ class TaskViewWidget(QWidget):
         self.gridLayout.addWidget(self.fastActionFrame, 0, 0)
         self.gridLayout.addWidget(self.mainFrame, 0, 2)
 
-        self.main_widget.setLayout(self.gridLayout)
+        # self.main_widget.setLayout(self.gridLayout)
+        self.setLayout(self.gridLayout)
 
         
-        self.main_widget.setStyleSheet("""
+        # self.main_widget.setStyleSheet("""
+        self.setStyleSheet("""
             QGroupBox {
                 border: 1px solid #ccc;
                 border-radius: 5px;
@@ -148,12 +232,15 @@ class TaskViewWidget(QWidget):
     
 
         # self.setFixedSize(1200,600)
-        self.addWidget(self.main_widget)
+        # self.addWidget(self.main_widget)
 
 
-    def create_new_task_fun(self):
+    def create_new_task_fun(self, checked):
         print("this button is linked to createBtn signal")
-
+        if checked: # true
+            if self.create_task_window == None:
+                self.create_task_window = CreateTaskWidget()
+                self.create_task_window.show()
 
     def exit_view_fun(self):
         print("this button  is linked to exitBtn signal")
@@ -165,3 +252,10 @@ class TaskViewWidget(QWidget):
 
     def delete_task_fun(self):
         print("this button  is  linked to deleteBtn signal")
+
+
+
+app = QApplication()
+window = TaskViewWidget()
+window.show()
+app.exec()

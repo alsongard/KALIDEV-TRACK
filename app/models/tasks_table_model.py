@@ -37,9 +37,9 @@ class TaskTableModel(QtCore.QAbstractTableModel):
             row = index.row()
             col = index.column()
             if role == Qt.ItemDataRole.DisplayRole  or role == Qt.ItemDataRole.EditRole: 
+                # return value
                 # value =  str(self._data[index.row()][index.column()])
                 # print(f"Display value at ({index.row()}, {index.column()}): {self._data[index.row()][index.column()]}")
-                # return value
                 # print(f"row value: {row}\ncol value: {col}")
                 row_in_dict = self._data[row]
                 key = self._column_keys[col]

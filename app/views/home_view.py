@@ -258,6 +258,7 @@ class HomeAppView(QMainWindow):
 		upcomingActivites = []
 		passDeadlineActivities = []
 		activeActivities = []
+		completedActivities = []
 
 
 

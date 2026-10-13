@@ -281,29 +281,6 @@ class HomeAppView(QMainWindow):
 
 		if len(geazy) == 0:
 			new_user_data.append(["No Project", "-", "-", "-", "-", "-"])
-			# QMessageBox(
-			# 	self,
-			# 	"INformation",
-			# 	"Your New Project folder has been created at: ~/PROJECTS",
-			# 	QMessageBox.StandardButton.Ok
-			# )
-			# QMessageBox.information(
-			# 	self,
-			# 	"INformation",
-			# 	"Your New Project folder has been created at: ~/PROJECTS",
-			# 	QMessageBox.StandardButton.Ok 
-			# )
-			# since we know the path does not exist we need to create the folder
-			
-			# COMMENTING THIS AS METHOD readFiles already handles directory not exist
-			# value = read_instance.createProjectFolder()
-			# if value == 0:
-			#     QMessageBox.information(
-			#         self,
-			#         "INformation",
-			#         "Your New Project folder has been created at: ~/PROJECTS",
-			#         QMessageBox.StandardButton.Ok 
-			#     )
 		else:
 			date_format="%Y-%m-%d" 
 			for item  in geazy:

@@ -389,6 +389,17 @@ class HomeAppView(QMainWindow):
 			notificationView.addWidget(upcoming)
 			i += 1
 
+
+		completedLabel = QLabel("Completed Activies")
+		completedLabel.setStyleSheet("color:#09E815;")
+		completedLabel.setMargin(5)
+		completedLabel.setAlignment(Qt.AlignmentFlag.AlignLeft)
+		notificationView.addWidget(completedLabel)
+		c = 1
+		for item in completedActivities:
+			notificationView.addWidget(QLabel(f"{c}: {item}"))
+			c+=1 
+
 		deadlineLabel = QLabel("Passed Deadline")
 		deadlineLabel.setStyleSheet("color:#F5293A;")
 		deadlineLabel.setMargin(5)

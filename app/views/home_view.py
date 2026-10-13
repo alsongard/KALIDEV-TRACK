@@ -54,12 +54,13 @@ import logging
 logger = logging.getLogger(__name__)
 
 class HomeAppView(QMainWindow):
-	_instance = None
+	# _instance = None
 	def __init__(self, username, userID):
 		super().__init__()
 		self.user = username
 		self.usrID = userID
 		self.rerunReadProjectDirs = False
+		self.determine_projects_list_to_display = "All"
 
 		ICON_DIR  = Path(__file__).resolve().parent.parent / "resources"  /"icons"
 
@@ -282,8 +283,9 @@ class HomeAppView(QMainWindow):
 		if len(geazy) == 0:
 			new_user_data.append(["No Project", "-", "-", "-", "-", "-"])
 		else:
+			logger.debug("All projects read: %s", geazy)
 			date_format="%Y-%m-%d" 
-			for item  in geazy:
+			for item in geazy:
 				# print('this is dictionary')
 				# print(item) # item is dictionary
 				# print(item)
@@ -305,31 +307,57 @@ class HomeAppView(QMainWindow):
 				# print(f'{item["project_title"]}: days subtraction')
 				# print(todays_date)
 				editViewBtn = QPushButton("Edit/View")
-				if project_start_date.date() > todays_date: 
-					# if in future
-					# print(f"Project in the future: {item['project_title']}") # testing: working
-					checking_project_date_comparison = (project_start_date.date() - todays_date).days
-					new_user_data.append([item["project_title"], item["project_priority"], item["project_start_date"], item["project_end_date"], "Future", ""])
-					upcomingActivites.append(item["project_title"])
-				elif todays_date >= project_start_date.date() and project_end_date.date() > todays_date:
-					# print(f"Project title: {item["project_title"]}")
-					new_user_data.append([item["project_title"], item["project_priority"], item["project_start_date"], item["project_end_date"], "Active", ""])
-					activeActivities.append(item["project_title"])
-				elif project_end_date.date() < todays_date:
-					# print(f"Project in the past: {item['project_title']}") # testing: working
-					time_left = todays_date - project_end_date.date()
-					# print("time_left") # testing: working
-					# print(time_left) # testing: working
-					time_left = time_left.days
-					# print(f"Type : {type(time_left)} and {time_left}")
-					myString = str(time_left) + " days"
-					passDeadlineActivities.append(item["project_title"])
-					new_user_data.append([item["project_title"], item["project_priority"], item["project_start_date"], item["project_end_date"], f"Passed Deadline by  {myString}", ""])
-
+				logger.debug("project_status: %s ", item["project_status"])
+				if self.determine_projects_list_to_display == "All":
+					logger.debug("Displaying all projects: %s", self.determine_projects_list_to_display)
+					print("displaying all projects")
+					if project_start_date.date() > todays_date: 
+						# if in future
+						# print(f"Project in the future: {item['project_title']}") # testing: working
+						checking_project_date_comparison = (project_start_date.date() - todays_date).days
+						new_user_data.append([item["project_title"], item["project_priority"], item["project_start_date"], item["project_end_date"], "Future", ""])
+						upcomingActivites.append(item["project_title"])
+					elif todays_date >= project_start_date.date() and project_end_date.date() > todays_date:
+						# print(f"Project title: {item["project_title"]}")
+						new_user_data.append([item["project_title"], item["project_priority"], item["project_start_date"], item["project_end_date"], "Active", ""])
+						activeActivities.append(item["project_title"])
+					elif project_end_date.date() < todays_date and (item["project_status"].lower() == "in progress" or item["project_status"].lower() == "active"):
+						# print(f"Project in the past: {item['project_title']}") # testing: working
+						time_left = todays_date - project_end_date.date()
+						# print("time_left") # testing: working
+						# print(time_left) # testing: working
+						time_left = time_left.days
+						# print(f"Type : {type(time_left)} and {time_left}")
+						myString = str(time_left) + " days"
+						passDeadlineActivities.append(item["project_title"])
+						new_user_data.append([item["project_title"], item["project_priority"], item["project_start_date"], item["project_end_date"], f"Passed Deadline by  {myString}", ""])
+					elif item["project_status"].lower == "completed" or item["project_status"].lower == "finished" :
+						new_user_data.append([item["project_title"], item["project_priority"], item["project_start_date"], item["project_end_date"], f"Project Completed", ""])
+						completedActivities.append(item["project_title"])
+				elif self.determine_projects_list_to_display == "Completed":
+					logging.debug("Displaying only completed projects")
+					if item["project_status"] == "completed" or item["project_status"].lower() == "finished":
+						new_user_data.append([item["project_title"], item["project_priority"], item["project_start_date"], item["project_end_date"], f"Project Completed", ""])
+						completedActivities.append(item["project_title"])
+				elif self.determine_projects_list_to_display == "Active":
+					logger.debuging("Displaying only active projects")
+					if todays_date >= project_start_date.date() and project_end_date.date() > todays_date:
+						new_user_data.append([item["project_title"], item["project_priority"], item["project_start_date"], item["project_end_date"], f"Active", ""])
+						activeActivities.append(item["project_title"])
+				elif self.determine_projects_list_to_display == "Pending":
+					if project_end_date.date() < todays_date and (item["project_status"].lower() == "in progress" or item["project_status"].lower() == "active"):
+						time_left = todays_date - project_end_date.date()
+						time_left = time_left.days
+						myString = str(time_left) + " days"
+						passDeadlineActivities.append(item["project_title"])
+						new_user_data.append([item["project_title"], item["project_priority"], item["project_start_date"], item["project_end_date"], f"Passed Deadline by  {myString}", ""])
+					
+					
+					
 					# title, priority, startdate, enddate, status, 
 			# print(f"new_user_data : {len(new_user_data)}")
 			# print(new_user_data)
-
+		logger.debug("All projects in new_user_data: %s", new_user_data)
 		self.model = HomeTableModel(new_user_data, myHeaders)
 		myTable = QTableView()
 		myTable.resizeColumnsToContents()

@@ -239,9 +239,18 @@ class HomeAppView(QMainWindow):
 		mainMiddleImage.setPixmap(kaliDevImg)
 
 		mainMiddleView.addWidget(mainMiddleImage)
-		myTasksLabel = QLabel("My Tasks")
-		myTasksLabel.setStyleSheet("border:2px solid black; color:white; font-weight: 600; padding:5px;")
-		mainMiddleView.addWidget(myTasksLabel)
+		hor_layout = QHBoxLayout()
+		myTasksLabel = QLabel("My Projects")
+		# hor_layout.setStyleSheet("border:2px solid black; color:white; font-weight: 600; padding:5px;")
+
+		comboBox = QComboBox()
+		
+		comboBox.addItems(["All", "Completed", "Active", "Pending"])
+		comboBox.currentTextChanged.connect(self.get_text_changed_combobox)
+		hor_layout.addWidget(myTasksLabel)
+		hor_layout.addWidget(comboBox)
+
+		mainMiddleView.addLayout(hor_layout)
 		myHeaders = ["Task", "Priority","Start Date", "End Date",  "Status", "Action"]
 		
 

@@ -1,3 +1,15 @@
+"""
+button_delegate.py 
+
+
+Purpose: 
+    Provides the ButtonDelegate class used in home_view.py for the HomeTable(QTableView)
+    It is used to draw a button on the View
+
+Exports:
+    ButtonDelegate
+"""
+
 from PySide6.QtWidgets import QStyle, QApplication, QStyleOptionButton,  QPushButton, QStyledItemDelegate
 from PySide6.QtCore import QAbstractTableModel, QModelIndex, QEvent, Signal
 

@@ -1,3 +1,15 @@
+"""
+backup_data_view.py
+
+Purpose:
+    Provides a view for backing up projects phases / tasks into storage service provider e.g mongodb
+
+
+Exports:
+    BackUpProject
+"""
+
+
 from PySide6.QtWidgets import (
     QApplication, QGraphicsDropShadowEffect, QGroupBox ,QGridLayout, QScrollArea,QMessageBox,
     QVBoxLayout, QWidget, QLabel, QHBoxLayout, QPushButton, QTextEdit
@@ -10,13 +22,25 @@ from utils.file_operations import ReadWriteUpdateDeleteFileOperations
 from dotenv import load_dotenv 
 
 class BackUpProject(QWidget):
+    """
+    Provides a QWidget window for which the user can backup projects into storage provide
+
+    Attributes:
+        self.username (string): the username for the user logged in 
+        self.connect_status (boolean) : indicates status of connection to online storage service
+
+    """
     def __init__(self, user):
+        """
+        Configure  a view window which is used to setup the view for the user
+
+        """
         super().__init__()
         self.username = user
         self.setWindowTitle("View Projects")
         self.setGeometry(100, 100, 600, 400)
-        appLayout = QVBoxLayout()
-        vLayout = QVBoxLayout()
+        appLayout = QVBoxLayout() # the main layout used for this QWidget
+        vLayout = QVBoxLayout() # tthe vertical layout which holds the GroupBox Instances(which provide UI components for each project)
         gridLayout = QGridLayout()
         load_dotenv()
         mywidget = QWidget()
@@ -62,9 +86,9 @@ class BackUpProject(QWidget):
             print(item['project_title'])
             title=item['project_title']
             print(f'Title: {title}')
-            item_h_layout = QVBoxLayout()
-            buttonLayout = QHBoxLayout()
-            backUpBtn = QPushButton("BackUp Project")
+            item_v_layout = QVBoxLayout() # vertical layout for the individual labels for the project
+            buttonLayout = QHBoxLayout() # button layout
+            backUpBtn = QPushButton("BackUp Project") # backUpBtn
             comparePrjctDetails = QPushButton("Sychronize Project details")
 
             # adding functionality to the button
@@ -72,18 +96,18 @@ class BackUpProject(QWidget):
 
             buttonLayout.addWidget(backUpBtn)
             buttonLayout.addWidget(comparePrjctDetails)
-            item_h_layout.addWidget(property_styled_label('Project Title'))
-            item_h_layout.addWidget(QLabel(f' {item["project_title"]}'))
-            item_h_layout.addWidget(property_styled_label('Project Owner'))
-            item_h_layout.addWidget(QLabel(f'{item["project_owner"]}'))
-            item_h_layout.addWidget(property_styled_label('Project Status'))
-            item_h_layout.addWidget(QLabel(f"{item['project_status']}"))
-            item_h_layout.addWidget(property_styled_label('Project Tags'))
-            item_h_layout.addWidget(QLabel(f'{item["project_tags"]}'))
-            item_h_layout.addWidget(property_styled_label('Project Priority'))
-            item_h_layout.addWidget(QLabel(f'{item["project_priority"]}'))
+            item_v_layout.addWidget(property_styled_label('Project Title'))
+            item_v_layout.addWidget(QLabel(f' {item["project_title"]}'))
+            item_v_layout.addWidget(property_styled_label('Project Owner'))
+            item_v_layout.addWidget(QLabel(f'{item["project_owner"]}'))
+            item_v_layout.addWidget(property_styled_label('Project Status'))
+            item_v_layout.addWidget(QLabel(f"{item['project_status']}"))
+            item_v_layout.addWidget(property_styled_label('Project Tags'))
+            item_v_layout.addWidget(QLabel(f'{item["project_tags"]}'))
+            item_v_layout.addWidget(property_styled_label('Project Priority'))
+            item_v_layout.addWidget(QLabel(f'{item["project_priority"]}'))
 
-            item_h_layout.addLayout(buttonLayout)
+            item_v_layout.addLayout(buttonLayout)
             g_row_1 = QGroupBox(item['project_title'])
             g_row_1.setStyleSheet("""
                 QGroupBox {
@@ -102,7 +126,7 @@ class BackUpProject(QWidget):
                 }
 
                 """)
-            g_row_1.setLayout(item_h_layout)
+            g_row_1.setLayout(item_v_layout)
             vLayout.addWidget(g_row_1)
         
         mywidget.setLayout(vLayout)
@@ -112,6 +136,17 @@ class BackUpProject(QWidget):
         self.setGeometry(200,200, 800,600)
 
     def backUp_project(self, title):
+        """
+        Backups up project data to storage provider
+        
+
+        Args:
+            title (string): This is the title of the project, which is the name used to create the  sub-directory name for the project
+
+        
+        Return:
+            None
+        """
         print(f'Backuped project is : {title}')
         project_path = self.app_project_folder+"/"+title
         if os.path.exists(project_path):

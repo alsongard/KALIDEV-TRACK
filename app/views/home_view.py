@@ -23,7 +23,10 @@ Exports:
 """
 
 import sys, json
-from PySide6.QtWidgets import QApplication, QMessageBox, QItemDelegate,QLabel,QMessageBox ,QFrame, QSizePolicy, QWidget, QGridLayout, QCalendarWidget, QMainWindow, QTextEdit, QToolBar, QStatusBar, QPushButton, QHBoxLayout, QVBoxLayout, QTableView
+from PySide6.QtWidgets import (
+	QApplication, QMessageBox, QItemDelegate,QLabel,QMessageBox ,QFrame, QSizePolicy, QWidget, QGridLayout, QCalendarWidget, 
+	QMainWindow, QTextEdit, QToolBar, QStatusBar, QPushButton, QHBoxLayout, QVBoxLayout, QTableView, QComboBox
+)
 from PySide6.QtGui import QIcon, QAction, QPixmap
 from PySide6.QtCore import QSize
 from PySide6.QtCore import Qt

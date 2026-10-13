@@ -33,9 +33,12 @@ from PySide6.QtCore import Qt
 import PySide6.QtCore
 from datetime import datetime
 from pathlib import Path
-# importing class
+import sys
+import os
+
+
+# importing classes
 from models.home_table_model import HomeTableModel
-# from fileOperations import ReadWriteUpdateDeleteFileOperations
 from views.projects_page_view import ProjectViewAdd
 from views.view_projects import ViewProjects
 from views.edit_project_view  import EditProjectView

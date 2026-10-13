@@ -46,9 +46,12 @@ from views.backup_data_view import BackUpProject
 from utils.file_operations import  ReadWriteUpdateDeleteFileOperations
 from utils.button_delegate import ButtonDelegate
 from views.edit_view_single_project import EditSingleProjectView
-import os
+from PySide6.QtWidgets import QApplication
 
 
+
+import logging
+logger = logging.getLogger(__name__)
 
 class HomeAppView(QMainWindow):
 	_instance = None

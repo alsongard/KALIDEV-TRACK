@@ -262,19 +262,6 @@ class HomeAppView(QMainWindow):
 
 
 
-		# try:
-		#     # how to read data from projects.json
-		#     filePath = "./data/projectData.json"
-		#     with open(filePath, "r") as file:
-		#         data  = json.load(file)
-		#         # print(data)
-		#         # print(type(data))
-
-		# except FileNotFoundError:
-		#     data = {}
-		# except json.JSONDecodeError as e:
-		#     print(f"Error: Invalid JSON format on file: {filePath}")
-		#     data = {}
 
 		
 

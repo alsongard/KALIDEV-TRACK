@@ -1,5 +1,5 @@
 import sys, json
-from PySide6.QtWidgets import QApplication, QItemDelegate,QLabel,QMessageBox ,QFrame, QSizePolicy, QWidget, QGridLayout, QCalendarWidget, QMainWindow, QTextEdit, QToolBar, QStatusBar, QPushButton, QHBoxLayout, QVBoxLayout, QTableView
+from PySide6.QtWidgets import QApplication, QMessageBox, QItemDelegate,QLabel,QMessageBox ,QFrame, QSizePolicy, QWidget, QGridLayout, QCalendarWidget, QMainWindow, QTextEdit, QToolBar, QStatusBar, QPushButton, QHBoxLayout, QVBoxLayout, QTableView
 from PySide6.QtGui import QIcon, QAction, QPixmap
 from PySide6.QtCore import QSize
 from PySide6.QtCore import Qt
@@ -465,7 +465,7 @@ class HomeAppView(QMainWindow):
 				self.w = None
 
 	def on_new_project_child_closed(self):
-		self.w.rerun.connect(self.on_rerun_slot)
+		self.w.rerun.connect(self.on_rerun_slot) # this is used to run on_rerun_slot for reading project_data.json files
 		# print("The child widget is closing : signal received")
 		self.w = None
 		self.newProjectBtn.setChecked(False)
@@ -502,19 +502,19 @@ class HomeAppView(QMainWindow):
 		self.rerunReadProjectDirs = True
 
 	def open_single_project_editor(self, row):
-		print("This will open project view")
-		print(f"Row: {row}")
+		# print("This will open project view")
+		# print(f"Row: {row}")
 		name = self.model.myData[row][0]
-		QMessageBox.information(self, "Row clicked", f"You clicked: {name}")
+		# QMessageBox.information(self, "Row clicked", f"You clicked: {name}")
 		if self.edit_single_project == None:
 			self.edit_single_project = EditSingleProjectView(name)
-			self.edit_single_project.closed.connect(self.on_open_single_project_editor_child)
+			self.edit_single_project.closed.connect(self.on_open_single_project_editor_run)
 			self.edit_single_project.show()
 		else:
 			self.edit_single_project.close()
 			self.edit_single_project = None
 	
-	def on_open_single_project_editor_child(self):
+	def on_open_single_project_editor_run(self):
 		self.edit_single_project= None
 
 	def close_window(self):

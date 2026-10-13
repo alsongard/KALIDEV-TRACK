@@ -575,11 +575,11 @@ class HomeAppView(QMainWindow):
 
 
 		
-app = QApplication(sys.argv)
-window = HomeAppView("alsongadizo@gmail.com","95ee5bad432b214b609b0de351d0df09")
-window.show()
-exit_code = app.exec()
-sys.exit(exit_code)
+# app = QApplication(sys.argv)
+# window = HomeAppView("alsongadizo@gmail.com","95ee5bad432b214b609b0de351d0df09")
+# window.show()
+# exit_code = app.exec()
+# sys.exit(exit_code)
 
 
 """

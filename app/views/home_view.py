@@ -520,6 +520,10 @@ class HomeAppView(QMainWindow):
 		self.rerunReadProjectDirs = True
 
 	def open_single_project_editor(self, row):
+		"""
+		the method open_single_project_editor is connected to the button_delegate QStyleDelegateItem when clicked
+		It opens up the edit or view for single project view
+		"""
 		# print("This will open project view")
 		# print(f"Row: {row}")
 		name = self.model.myData[row][0]
@@ -533,7 +537,18 @@ class HomeAppView(QMainWindow):
 			self.edit_single_project = None
 	
 	def on_open_single_project_editor_run(self):
+		"""
+		the method on_open_single_project_editor_run is connected to the EditSingleProjectView closed signal
+		which is fired when an instance of the window EditSingleProject View is closed
+		"""
 		self.edit_single_project= None
+
+	def get_text_changed_combobox(self, text): 
+		"""
+		the method get_text_changed_combobox is connected to the QComboBox textChanged signal
+		"""
+		logger.debug("Text Changed: %s", text)
+		self.determine_projects_list_to_display = text
 
 	def close_window(self):
 		print("Closing the application")

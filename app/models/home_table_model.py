@@ -1,3 +1,14 @@
+"""
+home_table_model.py
+
+Purpose:
+    Provides the TableModel used for HomeTableView in home_view.py
+    The Model is used to drive the view(QTableView)
+
+Exports: 
+    HomeTableModel
+"""
+
 from PySide6.QtCore import Qt, QAbstractTableModel, QModelIndex
 
 

@@ -1,3 +1,27 @@
+"""
+home_view.py
+
+Purpose:
+	Provides the main landing view for KALIDEV-TRACK
+	Displays the main menu which provide functionalities such as help, edit e.t.c
+	Displays a table of projects , 2 side bar frames:
+		- the fast action side bar: for fast action buttons
+		-  the notification bar side bar showcasing calendar, upcoming, completed, pending and active projects
+
+Depends on:
+	- models/home_table_model.HomeTableModel
+	- views/projects_page_view.ProjectViewAdd
+	- views.view_projects import ViewProjects
+	- views.edit_project_view.EditProjectView
+	- views.backup_data_view.BackUpProject
+	- utils.file_operations.ReadWriteUpdateDeleteFileOperations
+	- utils.button_delegate.ButtonDelegate
+	- views.edit_view_single_project.EditSingleProjectView
+
+Exports: 
+	HomeAppView
+"""
+
 import sys, json
 from PySide6.QtWidgets import QApplication, QMessageBox, QItemDelegate,QLabel,QMessageBox ,QFrame, QSizePolicy, QWidget, QGridLayout, QCalendarWidget, QMainWindow, QTextEdit, QToolBar, QStatusBar, QPushButton, QHBoxLayout, QVBoxLayout, QTableView
 from PySide6.QtGui import QIcon, QAction, QPixmap

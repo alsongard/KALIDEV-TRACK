@@ -1,3 +1,15 @@
+"""
+task_table_model.py 
+
+Purpose: 
+    Provides the TaskTableModel used for TaskView
+    The Model is used to drive the view 
+
+
+Exports:
+    TaskTableModel
+"""
+
 from  PySide6 import QtCore
 from PySide6.QtCore import Qt, QModelIndex
 

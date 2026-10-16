@@ -54,13 +54,16 @@ import logging
 logger = logging.getLogger(__name__)
 
 class HomeAppView(QMainWindow):
-	# _instance = None
+	_instance = None
 	def __init__(self, username, userID):
 		super().__init__()
 		self.user = username
 		self.usrID = userID
-		self.rerunReadProjectDirs = False
 		self.determine_projects_list_to_display = "All"
+		self._all_projects = [] # private variable
+		self._display_projects = []
+		self.fileManagerInstance = FileManager()
+
 
 		ICON_DIR  = Path(__file__).resolve().parent.parent / "resources"  /"icons"
 

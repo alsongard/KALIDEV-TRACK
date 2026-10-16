@@ -14,7 +14,7 @@ Depends on:
 	- views.view_projects import ViewProjects
 	- views.edit_project_view.EditProjectView
 	- views.backup_data_view.BackUpProject
-	- utils.file_operations.ReadWriteUpdateDeleteFileOperations
+	- utils.file_operations.FileManager
 	- utils.button_delegate.ButtonDelegate
 	- views.edit_view_single_project.EditSingleProjectView
 
@@ -28,7 +28,7 @@ from PySide6.QtWidgets import (
 	QMainWindow, QTextEdit, QToolBar, QStatusBar, QPushButton, QHBoxLayout, QVBoxLayout, QTableView, QComboBox
 )
 from PySide6.QtGui import QIcon, QAction, QPixmap
-from PySide6.QtCore import QSize
+from PySide6.QtCore import QSize, QSortFilterProxyModel
 from PySide6.QtCore import Qt
 import PySide6.QtCore
 from datetime import datetime
@@ -43,7 +43,7 @@ from views.projects_page_view import ProjectViewAdd
 from views.view_projects import ViewProjects
 from views.edit_project_view  import EditProjectView
 from views.backup_data_view import BackUpProject
-from utils.file_operations import  ReadWriteUpdateDeleteFileOperations
+from utils.file_operations import  FileManager
 from utils.button_delegate import ButtonDelegate
 from views.edit_view_single_project import EditSingleProjectView
 from PySide6.QtWidgets import QApplication

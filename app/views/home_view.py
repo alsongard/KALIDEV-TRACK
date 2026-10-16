@@ -292,9 +292,12 @@ class HomeAppView(QMainWindow):
 			# print(self._display_projects)
 		logger.debug("All projects in self._display_projects: %s", len(self._display_projects))
 		self.model = HomeTableModel(self._display_projects, myHeaders)
+		self.proxyModel = QSortFilterProxyModel() # instance of QSortFilterProxyModel, which receives the model
+		self.proxyModel.setSourceModel(self.model)
 
 		myTable = QTableView()
 		myTable.resizeColumnsToContents()
+		myTable.setModel(self.proxyModel)
 		button_delegate = ButtonDelegate()
 		button_delegate.button_clicked.connect(self.open_single_project_editor)
 		myTable.setItemDelegateForColumn(5, button_delegate)

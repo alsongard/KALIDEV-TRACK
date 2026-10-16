@@ -549,7 +549,7 @@ class HomeAppView(QMainWindow):
 				self.w = None
 
 	def on_new_project_child_closed(self):
-		self.w.rerun.connect(self.on_rerun_slot) # this is used to run on_rerun_slot for reading project_data.json files
+		self.w.rerun.connect(self.reload_projects) # this is used to run reload_projects for reading project_data.json files
 		# print("The child widget is closing : signal received")
 		self.w = None
 		self.newProjectBtn.setChecked(False)
@@ -581,9 +581,9 @@ class HomeAppView(QMainWindow):
 			self.sychronize_view.show()
 
 
-	def on_rerun_slot(self):
-		print("This reruns the reading on projects")
-		self.rerunReadProjectDirs = True
+	def reload_projects(self):
+		print("This reloads the reading on projects")
+		self.load_projects()
 
 	def open_single_project_editor(self, row):
 		"""

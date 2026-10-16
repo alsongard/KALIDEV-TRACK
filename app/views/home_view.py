@@ -268,100 +268,30 @@ class HomeAppView(QMainWindow):
 
 		# converting dates to datetime format
 		# date format
-		read_instance = ReadWriteUpdateDeleteFileOperations()
-		geazy = read_instance.readProjectDirectories()
+		self._all_projects = self.fileManagerInstance.readProjectDirectories()
 
 
-		if (self.rerunReadProjectDirs):
-			geazy =  read_instance.readProjectDirectories()
-			self.rerunReadProjectDirs = False
-		# print(f"This is geazy")
-		# print(geazy)
-		# print(len(geazy))
-		new_user_data = []
+		# print(f"This is self._all_projects")
+		# print(self._all_projects)
+		# print(len(self._all_projects))
+		self._display_projects = []
 
-		if len(geazy) == 0:
-			new_user_data.append(["No Project", "-", "-", "-", "-", "-"])
+		if len(self._all_projects) == 0:
+			self._display_projects.append(["No Project", "-", "-", "-", "-", "-"])
 		else:
-			logger.debug("All projects read: %s", geazy)
+			logger.debug("All projects read: %s", len(self._all_projects))
 			date_format="%Y-%m-%d" 
-			for item in geazy:
-				# print('this is dictionary')
-				# print(item) # item is dictionary
-				# print(item)
-				project_start_date = datetime.strptime(item["project_start_date"], date_format)
-				project_end_date = datetime.strptime(item["project_end_date"], date_format)
-
-				# print(f"project_start_date: {project_start_date.date()} ")
-				# print(f"project_end_date: {project_end_date.date()}")
-
-
-				# getting the differences between the dates: preferably in days
-				# comparing the current date and the deadline: using comparisons < > 
-				current_date = datetime.now()
-				
-				# to handle projects in the future we:
-				# compare time with now
-				today = datetime.now()
-				todays_date = today.date() # gives us the date: YY-mm-dd
-				# print(f'{item["project_title"]}: days subtraction')
-				# print(todays_date)
-				editViewBtn = QPushButton("Edit/View")
-				logger.debug("project_status: %s ", item["project_status"])
-				if self.determine_projects_list_to_display == "All":
-					logger.debug("Displaying all projects: %s", self.determine_projects_list_to_display)
-					print("displaying all projects")
-					if project_start_date.date() > todays_date: 
-						# if in future
-						# print(f"Project in the future: {item['project_title']}") # testing: working
-						checking_project_date_comparison = (project_start_date.date() - todays_date).days
-						new_user_data.append([item["project_title"], item["project_priority"], item["project_start_date"], item["project_end_date"], "Future", ""])
-						upcomingActivites.append(item["project_title"])
-					elif todays_date >= project_start_date.date() and project_end_date.date() > todays_date:
-						# print(f"Project title: {item["project_title"]}")
-						new_user_data.append([item["project_title"], item["project_priority"], item["project_start_date"], item["project_end_date"], "Active", ""])
-						activeActivities.append(item["project_title"])
-					elif project_end_date.date() < todays_date and (item["project_status"].lower() == "in progress" or item["project_status"].lower() == "active"):
-						# print(f"Project in the past: {item['project_title']}") # testing: working
-						time_left = todays_date - project_end_date.date()
-						# print("time_left") # testing: working
-						# print(time_left) # testing: working
-						time_left = time_left.days
-						# print(f"Type : {type(time_left)} and {time_left}")
-						myString = str(time_left) + " days"
-						passDeadlineActivities.append(item["project_title"])
-						new_user_data.append([item["project_title"], item["project_priority"], item["project_start_date"], item["project_end_date"], f"Passed Deadline by  {myString}", ""])
-					elif item["project_status"].lower == "completed" or item["project_status"].lower == "finished" :
-						new_user_data.append([item["project_title"], item["project_priority"], item["project_start_date"], item["project_end_date"], f"Project Completed", ""])
-						completedActivities.append(item["project_title"])
-				elif self.determine_projects_list_to_display == "Completed":
-					logging.debug("Displaying only completed projects")
-					if item["project_status"] == "completed" or item["project_status"].lower() == "finished":
-						new_user_data.append([item["project_title"], item["project_priority"], item["project_start_date"], item["project_end_date"], f"Project Completed", ""])
-						completedActivities.append(item["project_title"])
-				elif self.determine_projects_list_to_display == "Active":
-					logger.debuging("Displaying only active projects")
-					if todays_date >= project_start_date.date() and project_end_date.date() > todays_date:
-						new_user_data.append([item["project_title"], item["project_priority"], item["project_start_date"], item["project_end_date"], f"Active", ""])
-						activeActivities.append(item["project_title"])
-				elif self.determine_projects_list_to_display == "Pending":
-					if project_end_date.date() < todays_date and (item["project_status"].lower() == "in progress" or item["project_status"].lower() == "active"):
-						time_left = todays_date - project_end_date.date()
-						time_left = time_left.days
-						myString = str(time_left) + " days"
-						passDeadlineActivities.append(item["project_title"])
-						new_user_data.append([item["project_title"], item["project_priority"], item["project_start_date"], item["project_end_date"], f"Passed Deadline by  {myString}", ""])
+			self.apply_filter()
 					
 					
-					
-					# title, priority, startdate, enddate, status, 
-			# print(f"new_user_data : {len(new_user_data)}")
-			# print(new_user_data)
-		logger.debug("All projects in new_user_data: %s", new_user_data)
-		self.model = HomeTableModel(new_user_data, myHeaders)
+			# title, priority, startdate, enddate, status, 
+			# print(f"self._display_projects : {len(self._display_projects)}")
+			# print(self._display_projects)
+		logger.debug("All projects in self._display_projects: %s", len(self._display_projects))
+		self.model = HomeTableModel(self._display_projects, myHeaders)
+
 		myTable = QTableView()
 		myTable.resizeColumnsToContents()
-		myTable.setModel(self.model)
 		button_delegate = ButtonDelegate()
 		button_delegate.button_clicked.connect(self.open_single_project_editor)
 		myTable.setItemDelegateForColumn(5, button_delegate)

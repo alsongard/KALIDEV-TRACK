@@ -246,7 +246,7 @@ class HomeAppView(QMainWindow):
 
 		comboBox = QComboBox()
 		
-		comboBox.addItems(["All", "Completed", "Active", "Pending"])
+		comboBox.addItems(["All", "Completed", "Active", "Overdue", "Future"])
 		comboBox.currentTextChanged.connect(self.get_text_changed_combobox)
 		hor_layout.addWidget(myTasksLabel)
 		hor_layout.addWidget(comboBox)

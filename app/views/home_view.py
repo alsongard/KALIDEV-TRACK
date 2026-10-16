@@ -308,8 +308,8 @@ class HomeAppView(QMainWindow):
 		mainMiddleFrame.setLayout(mainMiddleView)
 
 		# setting up view 3 
-		# print(f'upcomingActivites: {upcomingActivites}')
-		# print(f'passDeadlineActivities: {passDeadlineActivities}')
+		# print(f'self._upcoming_activies: {self._upcoming_activies}')
+		# print(f'self._passdeadline_activies: {self._passdeadline_activies}')
 
 
 		self.notificationFrame = QFrame()
@@ -331,7 +331,7 @@ class HomeAppView(QMainWindow):
 		active_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
 		notificationView.addWidget(active_label)
 		index = 1
-		for item in activeActivities:
+		for item in self._active_activities:
 			active  = QLabel(f"{index}: {item}")
 			notificationView.addWidget(active)
 			index += 1
@@ -347,7 +347,7 @@ class HomeAppView(QMainWindow):
 		# upComing_label.setStyleSheet("text-align:center")
 		notificationView.addWidget(upComing_label)
 		i = 1
-		for item in upcomingActivites:
+		for item in self._upcoming_activies:
 			upcoming = QLabel(f"{i}: {item}")
 			upcoming.setWordWrap(True)
 			notificationView.addWidget(upcoming)
@@ -360,7 +360,7 @@ class HomeAppView(QMainWindow):
 		completedLabel.setAlignment(Qt.AlignmentFlag.AlignLeft)
 		notificationView.addWidget(completedLabel)
 		c = 1
-		for item in completedActivities:
+		for item in self._completed_activities:
 			notificationView.addWidget(QLabel(f"{c}: {item}"))
 			c+=1 
 
@@ -373,7 +373,7 @@ class HomeAppView(QMainWindow):
 
 		# box-shadow:0px 0px 5px blue;: unknown property
 		a = 1
-		for item in passDeadlineActivities:
+		for item in self._passdeadline_activies:
 			notificationView.addWidget(QLabel(f"{a}: {item}"))
 			a+=1
 

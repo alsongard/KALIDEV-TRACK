@@ -615,6 +615,14 @@ class HomeAppView(QMainWindow):
 		"""
 		logger.debug("Text Changed: %s", text)
 		self.determine_projects_list_to_display = text
+			
+		if text == "All":
+			self.proxyModel.setFilterFixedString("")
+		else:
+			self.proxyModel.setFilterKeyColumn(4)
+			self.proxyModel.setFilterFixedString(text)
+
+		# self.apply_filter()
 
 	def close_window(self):
 		print("Closing the application")

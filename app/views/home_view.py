@@ -256,10 +256,10 @@ class HomeAppView(QMainWindow):
 		
 
 		# upcomingActivitiesArray
-		upcomingActivites = []
-		passDeadlineActivities = []
-		activeActivities = []
-		completedActivities = []
+		self._upcoming_activies = []
+		self._passdeadline_activies = []
+		self._active_activities = []
+		self._completed_activities = []
 
 
 

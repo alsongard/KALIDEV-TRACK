@@ -407,6 +407,108 @@ class HomeAppView(QMainWindow):
 		return cls._instance
 		# self.setGeometry(100,0,1368,768)\
 
+	def load_projects(self):
+		"""
+		The  function load_projects is used to read  project_data.json file in PROJECT/projectName directory
+		>>> example : PROJECT/KALIDEV-TRACK
+		"""
+		self._all_projects = self.fileManagerInstance.readProjectDirectories()
+		logger.debug("All projects read length: %s", len(self._all_projects))
+	
+
+	def apply_filter(self): 
+		logger.debug("Running apply_filter")
+		keys = ("project_title", "project_priority", "project_status", "project_start_date", "project_end_date")
+		date_format = "%Y-%m-%d"
+		"""
+		The method apply_filter is used to filter projects based on the project_status and time
+		"""
+		mode = self.determine_projects_list_to_display
+		logger.debug("selected mode: %s", mode)
+
+		# to handle projects in the future we:
+		# compare time with now
+		today = datetime.now()
+		todays_date = today.date() 
+		
+
+		if mode == "All": 
+			# filters the project based on date and status and add to self._display_projects
+			for project in self._all_projects:
+				# logger.debug("project: %s", project)
+				project_start_date = datetime.strptime(project["project_start_date"], date_format)
+				project_end_date = datetime.strptime(project["project_end_date"], date_format)
+
+				# logger.debug("project_start_date: %s", project_start_date)
+				# logger.debug("project_end_date: %s", project_end_date)
+
+				# getting the differences between the dates: preferably in days
+				# comparing the current date and the deadline: using comparisons < > 
+				# logger.debug("todays date: %s", todays_date)
+				
+				if (project_start_date.date() > todays_date):# future projects
+					self._upcoming_activies.append(project["project_title"])
+					self._display_projects.append([project["project_title"], project["project_priority"],  project["project_start_date"], project["project_end_date"], "Future", ""])
+				elif (project_start_date.date() < todays_date and project_end_date.date() > todays_date ):# start with active projects
+					self._active_activities.append(project["project_title"])
+					self._display_projects.append([project["project_title"], project["project_priority"],  project["project_start_date"], project["project_end_date"], "Active", ""])
+				elif (project_end_date.date() < todays_date) : # Overdue projects
+					if (project["project_status"].lower() == "completed" or project["project_status"].lower() == "finished"):
+						self._completed_activities.append(project["project_title"])
+						self._display_projects.append([project["project_title"], project["project_priority"],  project["project_start_date"], project["project_end_date"], "Completed", ""])
+					else:
+						self._passdeadline_activies.append(project["project_title"])
+						self._display_projects.append([project["project_title"], project["project_priority"],  project["project_start_date"], project["project_end_date"], "Overdue", ""])
+		elif mode == "Completed":
+			# filters using project status
+			logger.debug("Running in mode: %s", self.determine_projects_list_to_display)
+			for index, project in enumerate(self._all_projects):
+				if project.get("project_status").lower() == "completed" or project.get("project_status").lower() == "finished":
+					self._display_projects.append(project)
+			
+			logger.debug("Completed projects displayed : %s", len(self._display_projects))
+			
+		elif mode == "Active":
+			logger.debug("Running in mode: %s", self.determine_projects_list_to_display)
+			# filters using project status  and date
+			for index, project in enumerate(self._all_projects):
+				project_start_date = datetime.strptime(project["project_start_date"], date_format)
+				project_end_date = datetime.strptime(project["project_end_date"], date_format)
+				if (project_start_date.date() < today.date() and project_end_date.date() > todays_date ):# start with active projects
+					self._display_projects.append([project["project_title"], project["project_priority"],  project["project_start_date"], project["project_end_date"], "Active", ""])
+			
+			logger.debug("Length of displayed projects: %s", len(self._display_projects))
+			
+		elif mode == "Overdue":
+			logger.debug("Running in mode: %s", self.determine_projects_list_to_display)
+			# filter using date : project_end_time < today.date
+			for index, project in enumerate(self._all_projects):
+				project_start_date = datetime.strptime(project["project_start_date"], date_format)
+				project_end_date = datetime.strptime(project["project_end_date"], date_format)
+				today = datetime.now()
+				if (project_end_date.date() < today.date()) : # Overdue projects
+					self._display_projects.append([project["project_title"], project["project_priority"],  project["project_start_date"], project["project_end_date"], "Overdue", ""])
+
+			logger.debug("Length of displayed projects: %s", len(self._display_projects))
+
+		elif mode == "Future":
+			logger.debug("Running in mode: %s", self.determine_projects_list_to_display)
+			# filter using date : project_end_time < today.date
+			for index, project in enumerate(self._all_projects):
+				project_start_date = datetime.strptime(project["project_start_date"], date_format)
+				today = datetime.now()
+				if (project_start_date.date() > today.date()):# future projects
+					self._display_projects.append([project["project_title"], project["project_priority"],  project["project_start_date"], project["project_end_date"], "Future", ""])
+					foundIndexes(index)
+
+			logger.debug("Length of displayed projects: %s", len(self._display_projects))
+
+		if len(self._display_projects) == 0:
+			self._display_projects.append(["No Project", "-", "-", "-", "-", "-"])
+		
+
+
+
 
 	def toggle_sidebar(self,collapseSidebarStatement):
 		if self.fastActionFrameCollapse:

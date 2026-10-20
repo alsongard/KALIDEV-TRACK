@@ -1,0 +1,23 @@
+[project]
+name = "kalidev-track"
+version = "1.0.0"
+requires-python = ">=3.10"
+dependencies = [
+    "PySide6",
+    "pymongo",
+    "rich",
+    "python-dotenv",
+    "Send2Trash",
+    "bcrypt",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pipdeptree",
+    "autopep8"
+]
+
+
+[tool.setuptools.packages.find]
+include = ["app*"]   

@@ -6,7 +6,7 @@ Purpose:
     This View enables the user to modify or view a project tasks
 
 Depends on: 
-    - utils.file_operations.ReadWriteUpdateDeleteFileOperations
+    - utils.file_operations.FileManager
 
 Exports: 
     EditSingleProjectView
@@ -17,11 +17,14 @@ from PySide6.QtWidgets import (
     QVBoxLayout, QWidget, QLabel, QHBoxLayout, QPushButton, QTextEdit, QLineEdit
     )
 
-from utils.file_operations import ReadWriteUpdateDeleteFileOperations
+from utils.file_operations import FileManager
 from PySide6.QtGui import QColor
 from PySide6.QtCore import Signal
 
-from utils.file_operations import ReadWriteUpdateDeleteFileOperations
+from utils.file_operations import FileManager
+import logging
+
+logger = logging.getLogger(__name__)
 
 class EditSingleProjectView(QWidget): 
     """
@@ -38,18 +41,21 @@ class EditSingleProjectView(QWidget):
     closed = Signal() # used to send signal to the parent # used for styling the QStledButton | Other tasks
     # rerun = Signal()
     def __init__(self, projectName):
+        """
+
+        """
+
         super().__init__()
-        print("Initiated EditSingleProjectView")
+        logger.info("Initiated EditSingleProjectView")
         self.project_name = projectName
-        print(f"project_name: {self.project_name}")
+        logger.debug("project_name: %s", self.project_name)
         self.setWindowTitle(f"Edit Project: {self.project_name}")
         
         self.project_data = {}
 
-        self.readWriteUpdateDeleteFileOperationsInstance = ReadWriteUpdateDeleteFileOperations()
+        self.readWriteUpdateDeleteFileOperationsInstance = FileManager()
         self.project_data = self.readWriteUpdateDeleteFileOperationsInstance.read_single_project_data(project_name=self.project_name) # returns a project data in dictionary
-        print("this is self.project_data")
-        print(self.project_data)
+        logger.debug("this is self.project_data:  %s", self.project_data)
         
         appLayout = QVBoxLayout() # main layout for the Widget window
         vLayout = QVBoxLayout() # vertical layout for the UI components holding project_details e.g Qlabel
@@ -59,10 +65,12 @@ class EditSingleProjectView(QWidget):
         buttonLayout = QHBoxLayout()
 
         saveBtn = QPushButton("save")
+        addTasks = QPushButton("Add Tasks")
         exitBtn = QPushButton("exit")
 
         buttonLayout.addWidget(saveBtn)
         buttonLayout.addWidget(exitBtn)
+        buttonLayout.addWidget(addTasks)
 
         def property_styled_label(text):
             """
@@ -192,8 +200,7 @@ class EditSingleProjectView(QWidget):
             "project_end_date" : self.project_end_date_edit.text(),
             "project_end_time" : self.project_end_time_edit.text()
         }
-        print("this is data in save_project_tasks_data")
-        print(data)
+        logger.debug("this is data in save_project_tasks_data: %s", data)
 
         operation_result = self.readWriteUpdateDeleteFileOperationsInstance.updateProjectTasks(projectName=self.project_name, data=data)
 
@@ -213,7 +220,9 @@ class EditSingleProjectView(QWidget):
                 buttons=QMessageBox.StandardButton.Ok
             )
 
-    
+    def open_add_tasks_view(self):
+        logger.debug("Opening add task view")
+
 
 
     def exit_view(self):

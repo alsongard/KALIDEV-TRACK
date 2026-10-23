@@ -14,3 +14,6 @@ app/data/
 
 node_modules/
 user.json
+
+.vscode/
+kalidev_track.egg-info/

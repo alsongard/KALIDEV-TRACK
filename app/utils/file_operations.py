@@ -26,13 +26,17 @@ class FileManager():
         >>> fileManager.read_project_directories() # read project_data.json file in APP_FOLDER
     """
 
-    logger = logging.getLogger(__name__)
     def __init__(self):
         self.data_array = []
+        home = os.path.expanduser("~")
+        self.app_folder = home + "/PROJECTS"
+
+        logger.info("FileManager instance created")
 
 
 
-    def readProjectDirectories(self):
+
+    def read_project_directories(self):
         """
         Read all projects files for each directory in PROJECTS directory
         
@@ -59,50 +63,53 @@ class FileManager():
             >>> 
         
         """
+        logger.info("readProjectDirs called - reading project data fles in ~/PROJECTS")
+
         home_dir = os.path.expanduser("~")
         app_project_folder = home_dir+"/"+"PROJECTS"
-    
+        logger.debug("Resolved project directory: %s", app_project_folder)
         if os.path.exists(app_project_folder): # path exists /home/user/PROJECTS
-            user_projects_folders = os.scandir(app_project_folder) # retrieves list of dirs
+            
+            with os.scandir(app_project_folder) as user_projects_folders: # retrieves list of dirs
             # print("user_projects_folders") # user_projects_folders
-            # print(user_projects_folders) # <posix.ScandirIterator object at 0x7f81a6d94c30
+            # print(user_projects_folders) # <posix.ScandirIterator object at 0x7f81a6d94c30   
             
-            
-            for item in user_projects_folders:
+                for item in user_projects_folders:
                 # print(f"this is item: {item}") # this is item: <DirEntry 'KALIDEV-track'>
-                if item.is_dir(): # item is not a file continue
-                    
-                    # set project path
-                    project_folder_path  = os.path.join(app_project_folder,item)
-                    # print(f"project_folder_path: {project_folder_path}") # project_folder_path: /home/alson-kali/PROJECTS/KALIDEV-track
-                    
-                    # list files and directories
-                    get_all_files_dirs = os.listdir(os.path.join(app_project_folder,item))
-                    # print(get_all_files_dirs)
-                    for item in get_all_files_dirs:
-                        if os.path.isfile(os.path.join(project_folder_path, item)):
-                            print(f"Project Dir: {project_folder_path} and Found file: {item}") # Found file: project_data.json
-                            
-                            if item == "project_data.json":
-                                # print('Success in founding project_data.json') # testing:working
-
-                                # read the data in the file: json files
-                                with open(os.path.join(project_folder_path, item), "r") as file:
-                                    data = json.load(file)
-                                    
-                                    # print('Data is')
-                                    # print(data)
-                                    self.data_array.append(data)
+                    if item.is_dir(): # item is not a file continue
+                        
+                        # set project path
+                        project_folder_path  = os.path.join(app_project_folder,item)
+                        # print(f"project_folder_path: {project_folder_path}") # project_folder_path: /home/alson-kali/PROJECTS/KALIDEV-track
+                        
+                        # list files and directories
+                        get_all_files_dirs = os.listdir(os.path.join(app_project_folder,item))
+                        # print(get_all_files_dirs)
+                        for item in get_all_files_dirs:
+                            if os.path.isfile(os.path.join(project_folder_path, item)):
+                                # print(f"Project Dir: {project_folder_path} and Found file: {item}") # Found file: project_data.json
+                                logger.debug("Project directory: %s and found file %s", project_folder_path, item)
+                                if item == "project_data.json":
+                                    # print('Success in founding project_data.json') # testing:working
+    
+                                    # read the data in the file: json files
+                                    with open(os.path.join(project_folder_path, item), "r") as file:
+                                        data = json.load(file)
+                                        
+                                        # print('Data is')
+                                        # print(data)
+                                        self.data_array.append(data)
             # print(self.data_array)
             user_projects_folders.close() # close to release memory
             return self.data_array
         else: 
+            logger.warning("Project folder %s does not exist", app_project_folder)
             self.createProjectFolder()
             return self.data_array
             # list everything in folder:~/username/PROJECTS
     
     
-    def createProjectFolder(self):
+    def create_app_folder(self) -> Boolean:
         """
         The method is used to create a PROJECT directory in home directory for the user
 

@@ -31,6 +31,15 @@ class HomeTableModel(QAbstractTableModel):
         else:
             return len(self.myData[0])
     
+    def removeRow(self, foundIndexes):
+        if (len(foundIndexes) == 0 or len(foundIndexes) > self.rowCount()):
+            return
+        for index in foundIndexes:
+            self.beginRemoveRows(QModelIndex(), index,index)
+
+        self.endRemoveRows()
+
+
     def headerData(self, section, orientation, role=Qt.DisplayRole): # this methods returns a string for the header
         if role == Qt.DisplayRole:
             if orientation == Qt.Horizontal:

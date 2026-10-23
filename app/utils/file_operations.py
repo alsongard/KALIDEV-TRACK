@@ -14,12 +14,16 @@ import json, os
 from rich.logging import RichHandler
 
 logger = logging.getLogger(__name__)
+class FileManager():
+    """
+    The class FileManager is used to provide methods that load, read, write, update and delete files, to be specific json files
 
     Attributes:
         data_array[]: An empty array 
 
     Example:
-        >>> 
+        >>> fileManager = FileManager()
+        >>> fileManager.read_project_directories() # read project_data.json file in APP_FOLDER
     """
 
     logger = logging.getLogger(__name__)

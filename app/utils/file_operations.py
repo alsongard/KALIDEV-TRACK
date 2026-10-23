@@ -2,11 +2,11 @@
 file_operation.py
 
 Purpose:
-    Provides the class ReadWriteUpdateDeleteFileOperations is used to provide methods that load, read, write, update and delete files, to be specific json files
+    Provides the class FileManager is used to provide methods that load, read, write, update and delete files, to be specific json files
 
 
 Exports:
-    ReadWriteUpdateDeleteFileOperations
+    FileManager
 
 """
 import logging

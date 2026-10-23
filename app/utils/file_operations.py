@@ -185,24 +185,37 @@ class FileManager():
                     else:
                         return {}
                     
-    def updateProjectTasks(self, projectName, data):
+    def update_project_tasks(self, projectName, data):
+        """
+        The method update_project_tasks is used to update the project phases and subtasks (project_task.json)
+
+        Args: 
+            projectName(string) : name of the project
+            data(dict): Dictionary object of the data being updated
+        
+        Returns:
+            Boolean: 
+                - True: Operation Success
+                - False: Operation Failed
+        """
         project_name = projectName
         project_data = data
-        home_dir = os.path.expanduser("~")
-        project_directory_path = home_dir+"/"+"PROJECTS/"+project_name
 
-        print("project_data")
-        print(project_data)
+        project_directory_path = self.app_folder  + "/"+project_name
+        logger.debug("project_directory_path: %s", project_directory_path)
+        logger.debug("updating project_data: %s", project_data)
 
-        if (os.path.exists(project_directory_path)): # check if file exist
+        if os.path.exists(project_directory_path): # check if file exist
             with os.scandir(project_directory_path) as entries:# the os.scandir() method returns an iterator of os.dirEntry objects
                 for dirEntry in entries:
-                    if dirEntry.is_file and dirEntry.name == "project_data.json":
+                    if dirEntry.is_file and dirEntry.name == "project_task.json":
                         file_name = dirEntry.name
                         file_path=project_directory_path+"/"+file_name
                         with open(file_path, "w") as file:
                             json.dump(data, file)
                             break
+                    
+                
             
             return True # show status of above operation: success
         else:

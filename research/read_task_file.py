@@ -11,7 +11,8 @@ class ReadTaskFiles():
 
 
     def readData(self):
-        filename = "/home/alson-kali/PROGRAMMING/KALIDEV-TRACK/research/random_task_data.json"
+        # filename = "/home/alson-kali/PROGRAMMING/KALIDEV-TRACK/research/random_task_data.json"
+        filename = "/home/alson-kali/PROGRAMMING/KALIDEV-TRACK/research/data/projectTasks.json"
         if (os.path.exists(filename) and os.path.isfile(filename)):
             with open(filename, 'r') as file:
                 self.data = json.load(file)
@@ -44,6 +45,11 @@ class ReadTaskFiles():
         # return self.project_tasks
 
         return []
+
+filename = "/home/alson-kali/PROGRAMMING/KALIDEV-TRACK/research/data/projectTasks.json"
+
+readTaskInstance = ReadTaskFiles(filename)
+readTaskInstance.readData()
 
 
 """

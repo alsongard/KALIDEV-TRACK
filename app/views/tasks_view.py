@@ -13,14 +13,25 @@ Exports:
 """
 
 
-        horButtonLayout  = QHBoxLayout()
-        horButtonLayout.addWidget(saveAllTasksBtn)
-        horButtonLayout.addWidget(exitBtn)
-        self.mainLayout.addLayout(horButtonLayout)
-        self.mainLayout.addStretch(0)
+from PySide6.QtWidgets import QTableView, QHBoxLayout, QGridLayout, QLineEdit ,QPushButton, QSizePolicy, QGroupBox, QFrame, QWidget, QApplication, QMainWindow, QLabel,QVBoxLayout, QScrollArea
+from  PySide6 import QtCore
+from PySide6.QtCore import Qt, QSize, QModelIndex
+import sys
 
+# importing classes
+from app.utils.file_operations import FileManager
+from app.models.tasks_table_model import TaskTableModel
+from app.views.create_tasks_widget import CreateTaskWidget
 
-        self.setLayout(self.mainLayout)
+import logging
+from rich.logging import RichHandler
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(message)s",
+    datefmt="[%x]",
+    handlers=[RichHandler(rich_tracebacks=True)]
+)
+logger = logging.getLogger(__name__)
 
     def add_new_group_box(self):
         print("This recreates and adds a new subTaskGroupBox")

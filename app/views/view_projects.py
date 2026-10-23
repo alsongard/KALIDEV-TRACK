@@ -2,7 +2,7 @@ from PySide6.QtWidgets import (
     QApplication, QGraphicsDropShadowEffect, QGroupBox ,QGridLayout, QScrollArea,
     QVBoxLayout, QWidget, QLabel, QHBoxLayout, QPushButton, QTextEdit
     )
-from utils.file_operations import ReadWriteUpdateDeleteFileOperations
+from utils.file_operations import FileManager
 from PySide6.QtGui import QColor
 from PySide6.QtCore import Signal
 class ViewProjects(QWidget):
@@ -17,7 +17,7 @@ class ViewProjects(QWidget):
         gridLayout = QGridLayout()
         mywidget = QWidget()
         myScrollArea = QScrollArea()
-        file_data = ReadWriteUpdateDeleteFileOperations().readProjectDirectories()
+        file_data = FileManager().readProjectDirectories()
         myScrollArea.setWidgetResizable(True)
         # print(file_data)
         # file_data : array of dictiornaries

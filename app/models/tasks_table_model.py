@@ -16,11 +16,15 @@ from PySide6.QtCore import Qt, QModelIndex
 
 # Model , View & Controller (MVC) : View & Controller are treated as one
 class TaskTableModel(QtCore.QAbstractTableModel):
+    """
+
+    """
+    
     def __init__(self, mydata, myHeaderData): 
         super().__init__()
         self._data = mydata
         self.headers = myHeaderData
-        self._column_keys = ["subtaskname", "description", "status"]
+        self._column_keys = ["module name", "module description", "status"]
 
     # returns rowCount
     def rowCount(self, parent=QModelIndex()): 
@@ -43,7 +47,7 @@ class TaskTableModel(QtCore.QAbstractTableModel):
     # return value to displayed at given row & col index
     def data(self, index, role=Qt.ItemDataRole.DisplayRole):
         # index is an instance from the QModelIndex , which provide methods row and column
-        columns_from_dict = ["subtaskname", "description", "status"]
+        columns_from_dict = ["module name", "module description", "status"]
 
         if index.isValid():
             row = index.row()

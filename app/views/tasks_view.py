@@ -1,61 +1,16 @@
-from PySide6.QtWidgets import QTableView, QHBoxLayout, QGridLayout, QLineEdit ,QPushButton, QSizePolicy, QGroupBox, QFrame, QWidget, QApplication, QMainWindow, QLabel,QVBoxLayout
-from  PySide6 import QtCore
-from PySide6.QtCore import Qt, QSize, QModelIndex
-import sys
-from utils.file_operations import ReadWriteUpdateDeleteFileOperations
-from models.tasks_table_model import TaskTableModel
+"""
+tasks_view.py
 
-class CreateTaskWidget(QWidget):
-    def __init__(self):
-        super().__init__()
+Purpose:
+    Provides UI Widget for creating and managing phases, subtasks for projects
 
-        self.mainLayout =  QVBoxLayout()
+Depends on:
+    - models/tasks_table_model.TaskTableModel
+    - views/create_tasks_widget.CreateTaskWidget
 
-        phaseName =  QLabel("Enter Phase/Task Name: ")
-        phaseGoal = QLabel("Enter goal name: ")
-        self.phaseNameInput = QLineEdit()
-        self.phaseGoalInput = QLineEdit()
-
-        self.mainLayout.addWidget(phaseName)
-        self.mainLayout.addWidget(self.phaseNameInput)
-        self.mainLayout.addWidget(phaseGoal)
-        self.mainLayout.addWidget(self.phaseGoalInput)
-
-
-        exitBtn = QPushButton('Exit')
-        exitBtn.setCheckable(True)
-        exitBtn.clicked.connect(self.exit_window)
-
-        saveAllTasksBtn = QPushButton("Save Phase")
-        saveAllTasksBtn.setCheckable(True)
-        saveAllTasksBtn.clicked.connect(self.save_all_tasks_fun)
-
-        addSubTaskBtn = QPushButton("Add SubTask")
-        addSubTaskBtn.setCheckable(True)
-        addSubTaskBtn.clicked.connect(self.add_new_group_box)
-        self.mainLayout.addWidget(addSubTaskBtn)
-
-        self.subTaskGroupBox = QGroupBox("Subtask 1")
-        self.subTaskLayout = QVBoxLayout()
-
-        self.moduleName =  QLabel("Module/File name")
-        self.moduleDescription = QLabel("Module Description")
-        self.moduleStatus = QLabel("Module Status")
-
-        self.moduleNameInput = QLineEdit()
-        self.moduleDescriptionInput = QLineEdit()
-        self.moduleStatusInput = QLineEdit()
-
-        self.subTaskLayout.addWidget(self.moduleName)
-        self.subTaskLayout.addWidget(self.moduleNameInput)
-        self.subTaskLayout.addWidget(self.moduleDescription)
-        self.subTaskLayout.addWidget(self.moduleDescriptionInput)
-        self.subTaskLayout.addWidget(self.moduleStatus)
-        self.subTaskLayout.addWidget(self.moduleStatusInput)
-
-
-        self.subTaskGroupBox.setLayout(self.subTaskLayout)
-        self.mainLayout.addWidget(self.subTaskGroupBox)
+Exports: 
+    TaskViewWidget
+"""
 
 
         horButtonLayout  = QHBoxLayout()

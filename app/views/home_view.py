@@ -271,7 +271,7 @@ class HomeAppView(QMainWindow):
 
 		# converting dates to datetime format
 		# date format
-		self._all_projects = self.fileManagerInstance.readProjectDirectories()
+		self._all_projects = self.fileManagerInstance.read_project_directories()
 
 
 		# print(f"This is self._all_projects")
@@ -418,7 +418,7 @@ class HomeAppView(QMainWindow):
 		The  function load_projects is used to read  project_data.json file in PROJECT/projectName directory
 		>>> example : PROJECT/KALIDEV-TRACK
 		"""
-		self._all_projects = self.fileManagerInstance.readProjectDirectories()
+		self._all_projects = self.fileManagerInstance.read_project_directories()
 		logger.debug("All projects read length: %s", len(self._all_projects))
 	
 
@@ -549,9 +549,9 @@ class HomeAppView(QMainWindow):
 				self.w = None
 
 	def on_new_project_child_closed(self):
-		self.w.rerun.connect(self.reload_projects) # this is used to run reload_projects for reading project_data.json files
 		# print("The child widget is closing : signal received")
 		self.w = None
+		self.reload_projects() # this is used to run reload_projects for reading project_data.json files
 		self.newProjectBtn.setChecked(False)
 		
 	def open_view_projects_page(self, checked):

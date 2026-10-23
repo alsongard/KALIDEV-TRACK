@@ -124,22 +124,174 @@ class FileManager():
         os.mkdir(home_director+"/" + "PROJECTS")     
         return 0        
 
-    def readTaskFiles(self, given_file_path):
-        self.data = []
-        self.file_for_tasks = given_file_path
-        filename = "/home/alson-kali/PROGRAMMING/KALIDEV-TRACK/research/random_task_data.json"
-        if (os.path.exists(filename) and os.path.isfile(filename)):
-            with open(filename, 'r') as file:
-                self.data = json.load(file)
-                # print("this is data from task file")
-                # print(self.data)
-        
-        
-        if (len(self.data) > 0): # using len  on dictionary to check key properties if it's zero task file is empty
-            return self.data 
-        
-        return []
 
+    def create_project_folder(self, project_name) -> Boolean:
+        """
+        The method create_project_folder is used to create a project directory  in the APP_PROJECT directory
+        
+        Args:
+            - project_name : the  name of the new project which is used to create the new project directory
+        """
+        logger.debug("Creating project folder: %s", project_name)
+        if not os.path.exists(self.app_folder):
+            self.create_app_folder()
+        
+        # create project directory
+        folder_path=self.app_folder + "/"+project_name
+        if os.path.exists(folder_path): # project already exist
+            return
+
+        os.mkdir(folder_path)
+        if os.path.isdir(folder_path):
+            logger.debug("Created project directory:  %s", folder_path)
+            return True
+        else:
+            logger.debug("Failed in creating project directory: %s", folder_path)
+            return False
+
+
+
+
+    def write_project_details(self, project_name, data) -> Boolean:
+        """
+        The method write_project_details is used to save the data in PROJECTS/project_name directory to  project_data.json file
+
+        Args:
+            project_name (string): name of the project which correlates to the new directory created
+            data (dict) : a dictionary containing the project details
+        
+        Returns:
+            Boolean:
+                True: show operation success
+                False: show operation failed
+        """
+        project_path_folder = self.app_folder + "/" + project_name
+        if not os.path.exists(project_path_folder):
+            return False
+        
+        try:
+            filepath = project_path_folder + "/project_data.json"
+            with open(filepath, 'w') as file:
+                json.dump(data, file)
+                logger.debug("project data saved successfully to project_data.json file")
+                return True
+        except  Exception as error:
+            logger.debug("Error while saving project data: %s ", error) 
+            return False
+
+
+
+
+    def create_project_task_file(self, project_name):
+        """
+        Method create_project_task_file is used to create a project_task.json file in project directory in APP_FOLDER
+
+        Args:
+            - project_name : name of the new project whose directory is in APP_FOLDER
+        """
+        logger.info("Method create_project_task_file executed")
+        project_path_folder = self.app_folder + "/" + project_name
+
+        if not os.path.exists(project_path_folder):
+            return False
+        new_tasks_dictionary = {
+            "project": project_name,
+            "phases" : []
+        }
+
+        try:
+            file_path = project_path_folder + "/project_task.json" 
+            with open(file_path, "w") as file:
+                json.dump(new_tasks_dictionary, file)
+                logger.debug("Success creating project_task file: %s", file_path)
+        except Exception as error:
+            logger.debug("Error creating project_task file: %s", file_path)
+        
+
+
+    def read_project_task_file(self, project_name):
+        """
+        Load a project's task file from disk into memory.
+
+        Reads ``PROJECTS/<project_name>/project_tasks.json``, parses the JSON,
+        and stores the phase list on ``self.tasks_data``. The return value
+        mirrors the stored attribute, so the caller can use either without
+        a second disk read.
+
+        Args:
+            project_name (str):
+            Name of the project. Resolves to the directory
+            ``PROJECTS/<project_name>/`` under the app data folder.
+
+        Returns:
+            dict: A dictionary with the following. 
+            
+            .. code-block:: python
+
+                {
+                    "project": str, # name of the project
+                    "phases: [ # a list of dictionary , with the dictionary having the following 
+                        {
+                            "phase name": str, # name of the phase
+                            "phase goal": str, # goal of the pahse
+                            "subtasks": [       # list of subtask dicts
+                                {
+                                    "module name": str,   # e.g. "db.sql"
+                                    "module description": str,   # what the subtask does
+                                    "status": str,        # "pending" | "completed" | ...
+                                    "status_note": str,   # optional free-text note
+                                }
+                            ]
+                        }, 
+                        { ....}
+                    ]
+                }
+
+            Returns ``{}`` if the file exists but contains no phases.
+
+        Raises:
+            FileNotFoundError: If ``project_tasks.json`` does not exist.
+            json.JSONDecodeError: If the file exists but is not valid JSON.
+            PermissionError: If the file cannot be read.
+
+        Side Effects:
+            Sets ``self.tasks_data`` to the same dictionary that is returned.
+
+        Example:
+            >>> reader = ReadWriteUpdateDeleteFileOperations()
+            >>> tasks = reader.read_project_task_file("NestJS_Docs")
+            >>> tasks["phases"]
+            {'phase name': 'some string', ...}, {'phase name': 'some string', ...}
+        """
+        
+        logger.info("read_project_task_file method executed")
+        task_data = {}
+        project_dir = self.app_folder + "/" + project_name
+        logger.debug("project_dir : %s", project_dir)
+        if os.path.exists(project_dir): # project directory exists
+            logger.debug("project dir exists: %s", project_dir)
+            file_name = project_dir + "/project_task.json"
+            if os.path.exists(file_name): # check if file name exist
+                # read project_tasks file
+                logger.debug("filename exists: %s", file_name)
+                try:
+                    with open(file_name, 'r') as file:
+                        task_data = json.load(file)
+                        return task_data
+                except Exception as error:
+                    logger.debug("Error reading project_task file: %s", error)
+            else:
+                logger.debug("file project_task.json does not exist in: %s", file_name)
+                # create project_taskf_file
+                self.create_project_task_file(project_name)
+                return task_data
+
+
+            
+        
+        
+        # if (len(task_data) > 0): # using len  on dictionary to check key properties if it's zero task file is empty
+        return task_data 
 
     def read_single_project_data(self, project_name):
         """

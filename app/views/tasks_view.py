@@ -33,37 +33,43 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-    def add_new_group_box(self):
-        print("This recreates and adds a new subTaskGroupBox")
-        self.mainLayout.addWidget(self.subTaskGroupBox)
-
-    def save_all_tasks_fun(self):
-        print("this button will save all new new tasks")
-
-    def exit_window(self):
-        print("Exiting window now")
-
-
-
 
 
 class TaskViewWidget(QWidget):
-    def __init__(self):
+    """
+    TaskViewWidget class provides the User Interface UI for creating and managing tasks
+
+    Attributes:
+
+    Example:
+        >>> taskView = TaskViewWidget(project_name="Some project Name")
+        >>> taskView.show()
+        
+    """
+
+    def __init__(self, project_name):
+        """
+        TaskView Widget constructor method
+
+        Args:
+        project_name(string): name of the project
+
+        """
         super().__init__()
-
         self.verticalLayout =  QVBoxLayout()
+        self.scrollArea = QScrollArea()
         self.main_widget = QWidget()
-
-
+        self.project_name = project_name
         self.create_task_window = None
-
+        self.returned_task_data = {}
+        self.setWindowTitle("Manage Project Phases")
 
 
         """
-            Grid Layout will be added the 2 frames
-            meaning 2 columns
-            1. fast action frame for fast actions
-            2.  main action frame for  displaying the taks  properties and task table
+        Grid Layout will be added the 2 frames
+        meaning 2 columns
+        1. fast action frame for fast actions
+        2.  main action frame for  displaying the taks  properties and task table
         """
         self.gridLayout = QGridLayout()
 
@@ -72,13 +78,16 @@ class TaskViewWidget(QWidget):
         self.fastActionFrame.setStyleSheet("background-color:#0B0B0F;")
         self.fastActionVLayout =  QVBoxLayout()
 
-        createTaskBtn = QPushButton("Create Task")
+        createTaskBtn = QPushButton("Add or Create Phase")
         createTaskBtn.setObjectName("createTaskBtn")
         createTaskBtn.setCheckable(True)
-        saveTaskBtn =  QPushButton('Save Tasks')
+        saveTaskBtn =  QPushButton('Save Phases')
+        saveTaskBtn.setCheckable(True)
         saveTaskBtn.setObjectName("saveTaskBtn")
-        deleteTaskBtn = QPushButton("Delete Task")
+        deleteTaskBtn = QPushButton("Delete Phase")
+        deleteTaskBtn.setCheckable(True)
         deleteTaskBtn.setObjectName("deleteTaskBtn")
+        deleteTaskBtn.setCheckable(True)
         exitViewBtn = QPushButton("Exit")
         exitViewBtn.setObjectName("exitViewBtn")
 
@@ -104,59 +113,64 @@ class TaskViewWidget(QWidget):
 
         self.mainLayout = QVBoxLayout()
 
+        # instance of FileManager class
+        readTaskInstance = FileManager() 
+        self.returned_task_data = readTaskInstance.read_project_task_file(self.project_name)
 
-        filename = "/home/alson-kali/PROGRAMMING/KALIDEV-TRACK/research/random_task_data.json"
+        logger.debug("Task read from file: %s", self.returned_task_data)
 
-        # instance of ReadWriteUpdateDeleteFileOperations class
-        readTaskInstance = ReadWriteUpdateDeleteFileOperations() 
-        returnedTaskData = readTaskInstance.readTaskFiles(filename)
-
-        print("Task read from file")
-        print(returnedTaskData)
-
-
-        print()
-        print("-------")
+        # print()
+        # print("-------")
         phase_count = 0
 
-        # trial on using dictionary to set Widgets and Table
-        # for item_in_dict in returnedTaskData:
+        if len(self.returned_task_data) == 0:
+            # display something else
+            groupBox = QGroupBox()
+            descriptionLabel = QLabel(f"No task found for project {self.project_name}\nClick the button below to start adding task for the project!")
+            startNewTaskBtn = QPushButton("Create Task")
+            startNewTaskBtn.setCheckable(True)
+            startNewTaskBtn.clicked.connect(self.create_new_task_fun)
 
-        self.projectName = QLabel()
-        self.projectName.setText(returnedTaskData["project"])
+            vert_layout = QVBoxLayout()
+            vert_layout.addWidget(descriptionLabel)
+            vert_layout.addWidget(startNewTaskBtn)
+            groupBox.setLayout(vert_layout)
+            self.mainLayout.addWidget(groupBox)
+            self.setGeometry(100,100,400,400) 
+        else:
+            for item in  self.returned_task_data["phases"]: # item is a dictionary
+                self.phaseContentGroupBox = QGroupBox() # GroupBox to enable styling
+                self.phaseLayout = QVBoxLayout() # layout for the self.phaseContentGroupBox
+                self.phaseTable = QTableView() # each subtasks 
 
-        # phases key has the data for table
-        for item in  returnedTaskData["phases"]: # item is a dictionary
-            self.phaseContentGroupBox = QGroupBox() # GroupBox to enable styling
-            self.phaseLayout = QVBoxLayout() # layout for the self.phaseContentGroupBox
-            self.phaseTable = QTableView()
-            self.phaseTable.wordWrapTrue = True
-            
-            self.phaseName = QLabel()
-            self.phaseName.setObjectName("phaseNameLabel")
-            self.phaseName.setText(item["name"])
+                self.phaseTable.wordWrapTrue = True
+                
+                self.phaseName = QLabel()
+                self.phaseName.setObjectName("phaseNameLabel")
+                self.phaseName.setText(item["phase name"])
 
-            self.phaseGoal = QLabel()
-            self.phaseGoal.setObjectName("phaseGoalLabel")
-            self.phaseGoal.setText(item["goal"])
+                self.phaseGoal = QLabel()
+                self.phaseGoal.setObjectName("phaseGoalLabel")
+                self.phaseGoal.setText(item["phase goal"])
 
-            self.phaseLayout.addWidget(self.phaseName)
-            self.phaseLayout.addWidget(self.phaseGoal)
-            # each_data = []
-            # for subtasks in  item["subtasks"]:
-            #     print('')
+                self.phaseLayout.addWidget(self.phaseName)
+                self.phaseLayout.addWidget(self.phaseGoal)
+                # each_data = []
+                # for subtasks in  item["subtasks"]:
+                #     print('')
 
-            header_data  = ["Module", "Description", "Status"] 
-            self.model = TaskTableModel(item["subtasks"], myHeaderData=header_data )
-            self.phaseTable.setModel(self.model)
-            self.phaseTable.resizeColumnsToContents()
+                header_data  = ["Module", "Description", "Status"] 
+                self.model = TaskTableModel(item["subtasks"], myHeaderData=header_data )
+                self.phaseTable.setModel(self.model)
+                self.phaseTable.resizeColumnsToContents()
 
-            self.phaseLayout.addWidget(self.phaseTable)
+                self.phaseLayout.addWidget(self.phaseTable)
 
-            self.phaseContentGroupBox.setLayout(self.phaseLayout)
-            self.mainLayout.addWidget(self.phaseContentGroupBox)
+                self.phaseContentGroupBox.setLayout(self.phaseLayout)
+                self.mainLayout.addWidget(self.phaseContentGroupBox)
 
-
+        # self.projectName = QLabel()
+        # self.projectName.setText(self.returned_task_data["project"])
 
 
 
@@ -202,14 +216,23 @@ class TaskViewWidget(QWidget):
 
 
     def create_new_task_fun(self, checked):
-        print("this button is linked to createBtn signal")
+        logger.debug("this button is linked to createBtn signal")
         if checked: # true
             if self.create_task_window == None:
-                self.create_task_window = CreateTaskWidget()
+                self.create_task_window = CreateTaskWidget(self.project_name, self.returned_task_data)
+                self.create_task_window.closed.connect(self.on_task_window_close)
+                self.create_task_window.setGeometry(150,150, 350,350)
                 self.create_task_window.show()
 
     def exit_view_fun(self):
         print("this button  is linked to exitBtn signal")
+
+    def on_task_window_close(self):
+        if self.create_task_window is None:
+            return
+        else:
+            self.create_task_window.close()
+            self.create_task_window = None
 
 
     def save_task_fun(self):
@@ -220,8 +243,10 @@ class TaskViewWidget(QWidget):
         print("this button  is  linked to deleteBtn signal")
 
 
+project_name = "KALIDEV-track"
+
 
 app = QApplication()
-window = TaskViewWidget()
+window = TaskViewWidget(project_name=project_name)
 window.show()
 app.exec()

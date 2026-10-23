@@ -1,6 +1,15 @@
 """
-this file is used to provide a QWidget to the user to fill  in a new project details
+projects_page_view.py
 
+Purpose: this file is used to provide a QWidget to the user to fill  in a new project details
+
+Depends: 
+    - utils/file_operations.FileManager
+    - views/create_tasks.TaskApp
+
+
+Exports:
+    ProjectViewAdd
 """
 
 from PySide6.QtWidgets import QApplication, QPushButton, QLabel, QTextEdit, QFrame, QDateTimeEdit, QWidget, QVBoxLayout, QLineEdit, QHBoxLayout, QMessageBox
@@ -10,12 +19,30 @@ from PySide6.QtCore import Signal
 
 # import class
 from .create_tasks import TaskApp
-class ProjectViewAdd(QWidget):
+from utils.file_operations import FileManager
+
+
+class ProjectAddView(QWidget):
+    """
+    Class ProjectAddView provides a QWidget Window used for adding a new project
+
+    Attributes:
+        - 
+
+    Examples:
+        >>> self.projectView = ProjectAddView()
+        >>> self.projectView.show()
+    """
     closed =  Signal()
     rerun = Signal()
     def __init__(self, userId):
+        """
+        Constructor method
+        """
+        
         super().__init__()
         self.user_id = userId
+        self.fileManager = FileManager()
 
         self.setWindowTitle('Project Page')
         print(f"user_id : {self.user_id}")
@@ -134,12 +161,12 @@ class ProjectViewAdd(QWidget):
 
 
     # setting logic for the project Page
-    """
-    on save what is to be done:
-        - create new folder : will have the projects name
-        - within the folder save everything to a afile
-    """
     def save_functionality(self):
+        """
+        The save_functionality method is used to save project details 
+            - create new folder : will have the projects name
+            - within the folder save everything to a afile
+        """
         # get project details
         # after creating the project-title directory we need to get every lineEdit text: method: text()
         title_text  = self.titleInput.text()
@@ -152,14 +179,8 @@ class ProjectViewAdd(QWidget):
         # print()
         user_home_dir = os.path.expanduser("~")
         projectfolder = user_home_dir+"/PROJECTS"
-        
-        if not os.path.exists(projectfolder):
-            os.mkdir(projectfolder)
-        
-        new_dir = projectfolder+"/"+title_text
-        os.mkdir(new_dir)
+        self.fileManager.create_project_folder(title_text)
 
-        self.newDir = new_dir
         # getting project start and end date
         startDateTime = self.start_project_time_edit.dateTime()
         endDateTime = self.end_project_time_edit.dateTime()
@@ -203,17 +224,19 @@ class ProjectViewAdd(QWidget):
                 "project_end_date":endDate,
                 "project_end_time":endTime
             }
-            print(project_dictionary)
+            logger.debug("new project dictionary: %s", project_dictionary)
 
+
+            operation_status = self.fileManager.write_project_details(title_text, project_dictionary)
             # writing data to the file
-            file_name =new_dir+"/project_data.json"
-            print(file_name)
-            try:
-                with open(file_name, 'a') as file:
-                    json.dump(project_dictionary, file)
-                self.emitRerunSignal()
-            except Exception as e:
-                print(f"Error : {e}")
+            # file_name =new_dir+"/project_data.json"
+            # print(file_name)
+            # try:
+            #     with open(file_name, 'a') as file:
+            #         json.dump(project_dictionary, file)
+            #     self.emitRerunSignal()
+            # except Exception as e:
+            #     print(f"Error : {e}")
                 
 
         else:

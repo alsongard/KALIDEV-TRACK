@@ -378,3 +378,117 @@ Add packages that are not tested, from which you could determine if it's a depen
 ```bash
 pip show <package_name>
 ```
+
+
+## Dynamic Widgets On User Action
+To add widgets to a layout after a user clicks a button or performs somethings , we can use the following concept/example below.
+```py
+class AddingWidgets(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.main_layout = QVBoxLayout(self)
+        self.address_count = 1
+        self.input_array = []
+        self.label_array = []
+
+        # GroupBox for holding UI Components
+        self.groupBox = QGroupBox()
+
+        # layout for the groupBox
+        self.vert_layout = QVBoxLayout() 
+
+        label = QLabel(f"Address {self.address_count}: ")
+        address_input = QLineEdit()
+        self.input_array.append(address_input)
+        self.label_array.append(label)
+        self.vert_layout.addWidget(label)
+        self.vert_layout.addWidget(address_input)
+        self.groupBox.setLayout(self.vert_layout)
+
+        self.main_layout.addWidget(self.groupBox)
+
+        # button layout
+        button_layout = QHBoxLayout()
+        self.add_address = QPushButton("Add Address")
+        self.add_address.clicked.connect(self.adding_new_widget)
+        self.save_btn = QPushButton("Save")
+        self.save_btn.clicked.connect(self.save_address_info)
+        button_layout.addWidget(self.add_address)
+        button_layout.addWidget(self.save_btn)
+
+        self.main_layout.addLayout(button_layout)
+
+        
+
+    def adding_new_widget(self):
+        self.address_count+=1 
+        label = QLabel(f"Address {self.address_count}")
+        address_input = QLineEdit()
+        self.vert_layout.addWidget(label)
+        self.vert_layout.addWidget(address_input)
+
+        self.label_array.append(label)
+        self.input_array.append(address_input)
+
+    
+
+    def save_address_info(self):
+        for index, input_component in enumerate(self.input_array):
+            print(f"Index: {index}\t {input_component.text()}")
+
+```
+
+
+## Working with QComboBox
+The QComboBox provides options for selecting text. 
+The QComboBox provides the below signals which can be connected to slots(methods):
+
+**Example**
+```py
+combobox = QComboBox()
+combobox.addItems(["One", "Two", "Three"])
+```
+
+**Signals**  
+- currentIndexChanged Signal  
+the currentIndexChanged signal provides the new index for the selected item
+```py
+combobox.currentIndexChanged.connect(self.index_changed) # the currentIndexChanged is a signal that is emited when the index value of QComboBox changes
+def index_changed(self, index):
+    print(index)
+```
+- currentTextChanged  
+the currentTextChanged Signal provides the text of the new selected item
+```py 
+combobox.currentTextChanged.connect(self.text_changed) # signal is emited when the text changes in QComboBox
+def text_changed(self, text):
+    print(f"text changed: {text}")
+```
+
+**Methods** 
+- currentText is used to retrieve the current text the QComboBox has been seen selected
+
+```py
+module_status_selector = QComboBox()
+module_status_selector.addItems(["Pending", "Completed", "In Progress"])
+
+def save(self):
+    module_status_selector.currentText()
+```
+
+
+## Removing an item from a layout
+To remove a widget from a layout we use the ``removeWidget()`` followed by ``deleteLater()`` method
+
+
+**Strings**  
+python empty strings are treated as falsy (False)
+
+```py
+>>> if s:
+...     print(f"s is not empty: {s}")
+... else:
+...     print("s is empty")
+... 
+s is empty
+```

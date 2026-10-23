@@ -11,10 +11,9 @@ Exports:
 """
 import logging
 import json, os
-class ReadWriteUpdateDeleteFileOperations():
-    """
-    The class ReadWriteUpdateDeleteFileOperations is used to provide methods that load, read, write, update and delete files, to be specific json files
+from rich.logging import RichHandler
 
+logger = logging.getLogger(__name__)
 
     Attributes:
         data_array[]: An empty array 

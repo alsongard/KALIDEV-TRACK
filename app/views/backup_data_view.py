@@ -18,7 +18,7 @@ from PySide6.QtGui import QColor
 import os, json
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure
-from utils.file_operations import ReadWriteUpdateDeleteFileOperations
+from utils.file_operations import FileManager
 from dotenv import load_dotenv 
 
 class BackUpProject(QWidget):
@@ -69,7 +69,7 @@ class BackUpProject(QWidget):
                 QMessageBox.StandardButton.Ok
             )
 
-        file_data = ReadWriteUpdateDeleteFileOperations().readFiles()
+        file_data = FileManager().readFiles()
 
         print(len(file_data))
 

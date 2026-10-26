@@ -1,13 +1,19 @@
+"""
+
+"""
 from PySide6.QtWidgets import QWidget, QTabWidget,QMessageBox, QApplication,  QLineEdit, QPushButton, QLabel, QVBoxLayout, QHBoxLayout
 import json
-# from homeTaskView import TaskAppView
+# from homeTaskView import HomeAppView
 import sys, os, bcrypt, secrets
 from threading import Timer
 
-from .home_view import TaskAppView
+from .home_view import HomeAppView
 
 # this window will have 2 views: using QTabWidget 1 for creatign account and the other for signing in
 class MainFormWindow(QWidget):
+	"""
+
+	"""
 	def __init__(self, app, app_dir_path):
 		super().__init__()
 		self.app = app # app will be given as an argument to MainFormWindow on start which will be assigned to variable app
@@ -140,9 +146,13 @@ class MainFormWindow(QWidget):
 
 		
 	def success_msg_set(self):
+		"""
+		"""
 		self.successMsg.setText("")
 
 	def RegisterUserAccount(self):
+		"""
+		"""
 		username = self.username_input.text()
 		password = self.password_input.text()
 		filepath = self.filepath
@@ -190,6 +200,9 @@ class MainFormWindow(QWidget):
 		#     timer.start()
 	
 	def checkLogin(self):
+		"""
+
+		"""
 		# get username &  get password
 		username = self.login_username_line_input.text()
 		userpassword = self.login_passwd_line_input.text()
@@ -221,19 +234,19 @@ class MainFormWindow(QWidget):
 							# print(f'User {username}  found and password True')
 							userLoginFound=True
 							self.successMessage()
-							new_window = TaskAppView.get_instance(username,getUserId)  # we initiate the HometaskView with necessary  arguments for the class
+							new_window = HomeAppView.get_instance(username,getUserId)  # we initiate the HometaskView with necessary  arguments for the class
 							new_window.show()
 							new_window.activateWindow()
 							new_window.raise_()
 							self.close()
 							timer = Timer(3.0, self.success_msg_set)
 							timer.start()
-							# self.w = TaskAppView(username, getUserId)
+							# self.w = HomeAppView(username, getUserId)
 							# self.w.show()
 							# break
 						else:
 							print("Wrong password")
-							self.alertMessage()
+							self.alertMessage("Invalid Credentials")
 							# break
 			except FileNotFoundError as e:
 				print("File user.json not  found")
@@ -256,6 +269,8 @@ class MainFormWindow(QWidget):
 
 
 	def alertMessage(self, message):
+		"""
+		"""
 		alert_message = message
 		messageObject = QMessageBox()
 		messageObject.setMinimumSize(700, 200)

@@ -22,6 +22,7 @@ from PySide6.QtGui import QColor
 from PySide6.QtCore import Signal
 
 from utils.file_operations import FileManager
+from views.tasks_view import TaskViewWidget
 import logging
 
 logger = logging.getLogger(__name__)
@@ -44,17 +45,18 @@ class EditSingleProjectView(QWidget):
         """
 
         """
+        logger.info("Initiated EditSingleProjectView")
 
         super().__init__()
-        logger.info("Initiated EditSingleProjectView")
         self.project_name = projectName
+        self.task_window = None
         logger.debug("project_name: %s", self.project_name)
         self.setWindowTitle(f"Edit Project: {self.project_name}")
         
         self.project_data = {}
 
-        self.readWriteUpdateDeleteFileOperationsInstance = FileManager()
-        self.project_data = self.readWriteUpdateDeleteFileOperationsInstance.read_single_project_data(project_name=self.project_name) # returns a project data in dictionary
+        self.fileManagerIns = FileManager()
+        self.project_data = self.fileManagerIns.read_single_project_data(project_name=self.project_name) # returns a project data in dictionary
         logger.debug("this is self.project_data:  %s", self.project_data)
         
         appLayout = QVBoxLayout() # main layout for the Widget window
@@ -67,6 +69,8 @@ class EditSingleProjectView(QWidget):
         saveBtn = QPushButton("save")
         addTasks = QPushButton("Add Tasks")
         exitBtn = QPushButton("exit")
+
+        addTasks.clicked.connect(self.open_task_view)
 
         buttonLayout.addWidget(saveBtn)
         buttonLayout.addWidget(exitBtn)
@@ -220,11 +224,33 @@ class EditSingleProjectView(QWidget):
                 buttons=QMessageBox.StandardButton.Ok
             )
 
-    def open_add_tasks_view(self):
+    def open_task_view(self):
+        """
+        The method open_task_view is used to open the TaskViewWidget window
+        """
         logger.debug("Opening add task view")
+        if  self.task_window is None:
+            self.task_window = TaskViewWidget(self.project_name)
+            self.task_window.closed.connect(self.on_task_view_closed)
+            self.task_window.show()
+        else:
+            self.task_window.close()
+            self.task_window = None
 
+
+
+    def on_task_view_closed(self):
+        """
+        The method on_task_view_closed is connected to the TaskViewWidget closed signal
+        """
+        if self.task_window is not None:
+            self.task_window.close()
+            self.task_window = None
 
 
     def exit_view(self):
+        """
+        The method exit_view is used to close the view and connected to the exitBtn
+        """
         print("close the view")
         self.close() # built in method for closing the Window

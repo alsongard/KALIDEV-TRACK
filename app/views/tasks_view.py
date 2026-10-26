@@ -15,7 +15,7 @@ Exports:
 
 from PySide6.QtWidgets import QTableView, QHBoxLayout, QGridLayout, QLineEdit ,QPushButton, QSizePolicy, QGroupBox, QFrame, QWidget, QApplication, QMainWindow, QLabel,QVBoxLayout, QScrollArea
 from  PySide6 import QtCore
-from PySide6.QtCore import Qt, QSize, QModelIndex
+from PySide6.QtCore import Qt, QSize, QModelIndex, Signal
 import sys
 
 # importing classes
@@ -46,6 +46,8 @@ class TaskViewWidget(QWidget):
         >>> taskView.show()
         
     """
+
+    closed = Signal()
 
     def __init__(self, project_name):
         """
@@ -95,7 +97,7 @@ class TaskViewWidget(QWidget):
         createTaskBtn.clicked.connect(self.create_new_task_fun)
         saveTaskBtn.clicked.connect(self.save_task_fun)
         deleteTaskBtn.clicked.connect(self.delete_task_fun)
-        exitViewBtn.clicked.connect(self.delete_task_fun)
+        exitViewBtn.clicked.connect(self.close_window)
 
         self.fastActionVLayout.addWidget(createTaskBtn)
         self.fastActionVLayout.addWidget(saveTaskBtn)
@@ -224,8 +226,13 @@ class TaskViewWidget(QWidget):
                 self.create_task_window.setGeometry(150,150, 350,350)
                 self.create_task_window.show()
 
-    def exit_view_fun(self):
-        print("this button  is linked to exitBtn signal")
+    def close_window(self):
+        """
+        The method  close_window is used to close the window for task_view
+        """
+        logger.debug("this function  is linked to exitBtn signal")
+        self.close()
+
 
     def on_task_window_close(self):
         if self.create_task_window is None:
@@ -235,18 +242,27 @@ class TaskViewWidget(QWidget):
             self.create_task_window = None
 
 
+    def closeEvent(self, event):
+        """
+        The function closeEvent is used to emit closed signal
+        """
+        self.closed.emit()
+        super().closeEvent(event)
+
+    
+
     def save_task_fun(self):
-        print("this button is linked to saveBtn signal")
+        logger.debug("this button is linked to saveBtn signal")
 
 
     def delete_task_fun(self):
-        print("this button  is  linked to deleteBtn signal")
+        logger.debug("this button  is  linked to deleteBtn signal")
 
 
-project_name = "KALIDEV-track"
+# project_name = "KALIDEV-track"
 
 
-app = QApplication()
-window = TaskViewWidget(project_name=project_name)
-window.show()
-app.exec()
+# app = QApplication()
+# window = TaskViewWidget(project_name=project_name)
+# window.show()
+# app.exec()

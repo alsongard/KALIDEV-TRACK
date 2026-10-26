@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QApplication
 import sys
-# from views.form_window import MainFormWindow
+from views.form_window import MainFormWindow
 from  app.views.home_view import HomeAppView
 import os
 import logging
@@ -12,9 +12,8 @@ logging.basicConfig(
     handlers=[RichHandler(rich_tracebacks=True)],
 )
 app = QApplication()
-# app_folder = os.getcwd()
-# window = MainFormWindow(app, app_folder)
-window = HomeAppView("","")
+app_folder = os.getcwd()
+window = MainFormWindow(app, app_folder)
 window.show()
 
 exit_code = app.exec()

@@ -256,6 +256,8 @@ class MainFormWindow(QWidget):
 			print('Wrong file path : {filepath}')
 
 	def successMessage(self):
+		"""
+		"""
 		messageObject = QMessageBox()
 		messageObject.setMinimumSize(700, 200)
 		messageObject.setWindowTitle("Login Successfull")

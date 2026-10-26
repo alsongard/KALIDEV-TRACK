@@ -266,7 +266,7 @@ class CreateTaskWidget(QWidget):
             )
             self.phase_name_input.clear()
             self.phase_goal_input.clear()
-            self.module_name_input.clear()
+            # self.module_name_input.clear()
             self.module_description_input.clear()
             self.module_status_selector.clear()
             self.module_status_note_input.clear()

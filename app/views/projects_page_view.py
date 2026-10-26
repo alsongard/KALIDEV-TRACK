@@ -18,10 +18,12 @@ from PySide6.QtCore import QDate
 from PySide6.QtCore import Signal
 
 # import class
-from .create_tasks import TaskApp
+from views.tasks_view import TaskViewWidget
 from utils.file_operations import FileManager
 
+import logging
 
+logger = logging.getLogger(__name__)
 class ProjectAddView(QWidget):
     """
     Class ProjectAddView provides a QWidget Window used for adding a new project

@@ -103,8 +103,8 @@ class FileManager():
             user_projects_folders.close() # close to release memory
             return self.data_array
         else: 
-            logger.warning("Project folder %s does not exist", app_project_folder)
-            self.createProjectFolder()
+            logger.warning("Project folder: %s does not exist", app_project_folder)
+            self.create_app_folder()
             return self.data_array
             # list everything in folder:~/username/PROJECTS
     

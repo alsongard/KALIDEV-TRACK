@@ -10,7 +10,7 @@ Purpose:
 
 Depends on:
 	- models/home_table_model.HomeTableModel
-	- views/projects_page_view.ProjectViewAdd
+	- views/projects_page_view.ProjectAddView
 	- views.view_projects import ViewProjects
 	- views.edit_project_view.EditProjectView
 	- views.backup_data_view.BackUpProject
@@ -39,12 +39,12 @@ import os
 
 # importing classes
 from models.home_table_model import HomeTableModel
-from views.projects_page_view import ProjectViewAdd
+from views.projects_page_view import ProjectAddView
 from views.view_projects import ViewProjects
 from views.edit_project_view  import EditProjectView
 from views.backup_data_view import BackUpProject
 from utils.file_operations import  FileManager
-from utils.button_delegate import ButtonDelegate
+from utils.button_delegate import ButtonDelegate 
 from views.edit_view_single_project import EditSingleProjectView
 from PySide6.QtWidgets import QApplication
 
@@ -540,7 +540,7 @@ class HomeAppView(QMainWindow):
 		# print(self.w)
 		if checked == True:
 			if self.w is  None:
-				self.w = ProjectViewAdd(self.usrID)
+				self.w = ProjectAddView(self.usrID)
 				self.w.closed.connect(self.on_new_project_child_closed)
 				self.w.show()
 		else:
@@ -625,7 +625,7 @@ class HomeAppView(QMainWindow):
 		# self.apply_filter()
 
 	def close_window(self):
-		print("Closing the application")
+		logger.debug("Closing the application")
 		self.close()
 		if self.w is not None:
 			self.w.close() # close the project view page
@@ -640,7 +640,10 @@ class HomeAppView(QMainWindow):
 
 	
 	def open_task_view(self):
-		print("will open task_view")
+		"""
+		This function has not been configured yet, but will be used to add tasks to a project
+		"""
+		loger.debug("will open task_view")
 
 
 

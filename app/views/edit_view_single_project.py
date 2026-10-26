@@ -158,8 +158,8 @@ class EditSingleProjectView(QWidget):
                 font-size: 18px;
                 border: 1px solid #3A3AC9;
                 border-radius: 8px;
-                margin-top: 12px;
                 padding: 10px;
+                margin-top: 12px;
             }
             QGroupBox::title {
                 subcontrol-origin: margin;
@@ -206,7 +206,7 @@ class EditSingleProjectView(QWidget):
         }
         logger.debug("this is data in save_project_tasks_data: %s", data)
 
-        operation_result = self.readWriteUpdateDeleteFileOperationsInstance.updateProjectTasks(projectName=self.project_name, data=data)
+        operation_result = self.fileManagerIns.updateProjectTasks(projectName=self.project_name, data=data)
 
         if operation_result: # true
             print("result true")

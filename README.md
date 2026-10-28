@@ -12,7 +12,8 @@
 
 ## Features
 
-- Create, view, update, and delete projects and tasks
+- Create, view, update, and delete projects
+- Create, Edit, Delete and View project phases and it's subtasks
 - Track project deadlines and task statuses
 - Visualize upcoming and overdue activities
 - Data stored in JSON files for easy backup and portability
@@ -25,18 +26,21 @@
 
 1. **Clone the repository:**
     ```sh
-    git clone https://github.com/alsongard/the-project-tracker.git
-    cd the-project-tracker
+    git clone https://github.com/alsongard/KALIDEV-TRACK
+    cd KALIDEV-TRACK
     ```
 
 2. **Install dependencies:**
+
     - Create a python environment
     ```bash
+        mkdir .venv
+        cd .venv
         python3 -m venv . 
     ```
-    - Install dependencies
+    - Install 
     ```sh
-    pip install -r requirements.txt
+    pip install -e ".[dev]"
     ```
 
     *Typical dependencies:*
@@ -62,17 +66,38 @@ You can now create and manage your projects and tasks through the GUI.
 ## Project Structure
 
 ```
-the-project-tracker/
+.
+├── .venv/                          # Virtual environment (ignored by Git)
 ├── app/
-│   ├── createTasks.py
-│   ├── fileOperations.py
-│   ├── homeTaskView.py
-│   └── main.py
-├── assets
-    └── icons/
-├── data/
-│   └── userDetails.json
+│   ├── __init__.py
+│   ├── main.py
+│   ├── global.qss
+│   ├── models/
+│   │   ├── __init__.py
+│   │   ├── home_table_model.py
+│   │   └── tasks_table_model.py     
+│   ├── resources/
+│   │   └── icons/                  # Directory for all application icons
+│   ├── utils/
+│   │   ├── __init__.py
+│   │   ├── button_delegate.py
+│   │   └── file_operations.py
+│   └── views/
+│       ├── __init__.py
+│       ├── backup_data_view.py
+│       ├── create_tasks_widget.py
+│       ├── edit_project_view.py
+│       ├── form_window.py
+│       ├── home_view.py
+│       ├── projects_page_view.py
+│       ├── tasks_view.py
+│       └── view_projects.py
+├── research/
+├── .gitignore
+├── DESIGN.md
 ├── README.md
+├── package.json
+├── package-lock.json
 └── requirements.txt
 ```
 

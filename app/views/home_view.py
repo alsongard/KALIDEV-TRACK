@@ -322,12 +322,12 @@ class HomeAppView(QMainWindow):
 		notificationView.addWidget(myCalendar)
 
 		active_label = QLabel("Active Activities")
-		active_label.setStyleSheet("color:#000000")
+		active_label.setStyleSheet("color:#2196F3")
 		active_label.setMargin(10)
 		# modifying the font size
-		font = active_label.font()
-		font.setPointSize(12)
-		active_label.setFont(font)
+		# font = active_label.font()
+		# font.setPointSize(12)
+		# active_label.setFont(font)
 		active_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
 		notificationView.addWidget(active_label)
 		index = 1
@@ -338,11 +338,11 @@ class HomeAppView(QMainWindow):
 
 
 		upComing_label = QLabel("Upcoming Activities")
-		upComing_label.setStyleSheet("color:#000000")
+		upComing_label.setStyleSheet("color:#FF9800")
 		upComing_label.setMargin(10)
-		font = upComing_label.font()
-		font.setPointSize(12)
-		upComing_label.setFont(font)
+		# font = upComing_label.font()
+		# font.setPointSize(10)
+		# upComing_label.setFont(font)
 		upComing_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
 		# upComing_label.setStyleSheet("text-align:center")
 		notificationView.addWidget(upComing_label)

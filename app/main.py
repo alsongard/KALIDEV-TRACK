@@ -13,7 +13,8 @@ logging.basicConfig(
 )
 app = QApplication()
 app_folder = os.getcwd()
-window = MainFormWindow(app, app_folder)
+# window = MainFormWindow(app, app_folder)
+window = HomeAppView("setup_username", "setup_uuid")
 window.show()
 
 exit_code = app.exec()

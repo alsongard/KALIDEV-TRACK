@@ -287,7 +287,6 @@ class CreateTaskWidget(QWidget):
 
             while count < len(self.module_name_inp_array): 
                 self.module_name_inp_array[count].clear()
-                self.module_name_inp_array[count].clear()
                 self.module_description_inp_array[count].clear()
                 self.module_status_array[count].clear()
                 self.module_status_note_inp_array[count].clear()

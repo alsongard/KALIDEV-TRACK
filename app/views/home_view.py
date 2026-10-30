@@ -102,14 +102,14 @@ class HomeAppView(QMainWindow):
 
 		# creating actions|items for the menues objects
 		new_project_action = fileMenuBarMenue.addAction('&New Project')
-		view_project_action = fileMenuBarMenue.addAction('&View Projects')
-		edit_project_action = fileMenuBarMenue.addAction('&Edit Project')
+		view_project_action = fileMenuBarMenue.addAction('&Manage Projects')
+		# edit_project_action = fileMenuBarMenue.addAction('&Edit Project')
 		sychronize_project_action = fileMenuBarMenue.addAction('&Sychronize Project')
 		exit_action = fileMenuBarMenue.addAction('&Exit')
 
 		new_project_action.triggered.connect(self.open_new_project_view_fun)
 		view_project_action.triggered.connect(self.open_view_projects_page)
-		edit_project_action.triggered.connect(self.open_edit_projects_page)
+		# edit_project_action.triggered.connect(self.open_edit_projects_page)
 		sychronize_project_action.triggered.connect(self.open_sychronization_backup_page)
 		exit_action.triggered.connect(self.close_window)
 
@@ -194,13 +194,13 @@ class HomeAppView(QMainWindow):
 		self.settingBtn = QPushButton('Setting')
 		self.searchBtn = QPushButton("Search")
 		self.newProjectBtn = QPushButton("New Project")
-		self.addTaskBtn = QPushButton("Add Task For Project")
-		self.viewProjectBtn = QPushButton("View Projects")
-		self.editProjectBtn = QPushButton("Edit Project")
+		# self.addTaskBtn = QPushButton("Add Task For Project")
+		self.viewProjectBtn = QPushButton("Manage Projects")
+		# self.editProjectBtn = QPushButton("Edit Project")
 		self.sychronizeBtn = QPushButton("Sychronize")
 		self.exitApp = QPushButton("ExitApp")
 
-		myButtons = [self.settingBtn, self.homeButton, self.searchBtn,  self.newProjectBtn, self.addTaskBtn, self.viewProjectBtn, self.editProjectBtn, self.sychronizeBtn, self.exitApp]
+		myButtons = [self.settingBtn, self.homeButton, self.searchBtn,  self.newProjectBtn,  self.viewProjectBtn, self.sychronizeBtn, self.exitApp]
 		for button in myButtons:
 			button.setCheckable(True)
 			button.setStyleSheet("text-align: left; padding: 5px;")
@@ -208,17 +208,17 @@ class HomeAppView(QMainWindow):
 
 		self.newProjectBtn.clicked.connect(self.open_new_project_view_fun)
 		self.viewProjectBtn.clicked.connect(self.open_view_projects_page)
-		self.editProjectBtn.clicked.connect(self.open_edit_projects_page)
+		# self.editProjectBtn.clicked.connect(self.open_edit_projects_page)
 		self.sychronizeBtn.clicked.connect(self.open_sychronization_backup_page)
-		self.addTaskBtn.clicked.connect(self.open_task_view)
+		# self.addTaskBtn.clicked.connect(self.open_task_view)
 		self.exitApp.clicked.connect(self.close_window)
 		# homeButton.clicked.connect()
 		fastActionView.addWidget(self.searchBtn)
 		fastActionView.addWidget(self.homeButton)
 		fastActionView.addWidget(self.newProjectBtn)
-		fastActionView.addWidget(self.addTaskBtn)
+		# fastActionView.addWidget(self.addTaskBtn)
 		fastActionView.addWidget(self.viewProjectBtn)
-		fastActionView.addWidget(self.editProjectBtn)
+		# fastActionView.addWidget(self.editProjectBtn)
 		fastActionView.addWidget(self.sychronizeBtn )
 		fastActionView.addWidget(self.settingBtn)
 		fastActionView.addWidget(self.exitApp)
@@ -264,11 +264,6 @@ class HomeAppView(QMainWindow):
 		self._passdeadline_activies = []
 		self._active_activities = []
 		self._completed_activities = []
-
-
-
-
-		
 
 		# converting dates to datetime format
 		# date format
@@ -420,6 +415,7 @@ class HomeAppView(QMainWindow):
 		>>> example : PROJECT/KALIDEV-TRACK
 		"""
 		self._all_projects = self.fileManagerInstance.read_project_directories()
+		self.model.update_data(self._all_projects)
 		logger.debug("All projects read length: %s", len(self._all_projects))
 	
 
@@ -442,7 +438,7 @@ class HomeAppView(QMainWindow):
 		if mode == "All": 
 			# filters the project based on date and status and add to self._display_projects
 			for project in self._all_projects:
-				# logger.debug("project: %s", project)
+				logger.debug("project: %s", project)
 				project_start_date = datetime.strptime(project["project_start_date"], date_format)
 				project_end_date = datetime.strptime(project["project_end_date"], date_format)
 
@@ -456,7 +452,7 @@ class HomeAppView(QMainWindow):
 				if (project_start_date.date() > todays_date):# future projects
 					self._upcoming_activies.append(project["project_title"])
 					self._display_projects.append([project["project_title"], project["project_priority"],  project["project_start_date"], project["project_end_date"], "Future", ""])
-				elif (project_start_date.date() < todays_date and project_end_date.date() > todays_date ):# start with active projects
+				elif (project_start_date.date() <= todays_date and project_end_date.date() > todays_date ):# start with active projects
 					self._active_activities.append(project["project_title"])
 					self._display_projects.append([project["project_title"], project["project_priority"],  project["project_start_date"], project["project_end_date"], "Active", ""])
 				elif (project_end_date.date() < todays_date) : # Overdue projects
@@ -550,7 +546,7 @@ class HomeAppView(QMainWindow):
 				self.w = None
 
 	def on_new_project_child_closed(self):
-		# print("The child widget is closing : signal received")
+		# print("The child widget `is closing : signal received")
 		self.w = None
 		self.reload_projects() # this is used to run reload_projects for reading project_data.json files
 		self.newProjectBtn.setChecked(False)
@@ -567,14 +563,21 @@ class HomeAppView(QMainWindow):
 				self.project_views = None
 
 	def on_view_project_child(self):
-		# print("Project Views Child Widget is closing : signal received ")
+		logger.debug("Project Views Child Widget is closing : signal received ")
 		self.project_views = None
 		self.viewProjectBtn.setChecked(False)
 
 	def open_edit_projects_page(self):
 		if self.project_edit_view is None:
-			self.project_edit_view = EditProjectView()
+			self.project_edit_view = ListAllProjects()
+			self.project_edit_view.closed.connect(self.handle_closed_edit_projects_view)
 			self.project_edit_view.show()
+
+	def handle_closed_edit_projects_view(self):
+		if self.project_edit_view is not None:
+			self.project_edit_view.closed()
+			self.project_edit_view = None
+
 
 	def open_sychronization_backup_page(self):
 		if self.sychronize_view is None:
@@ -583,7 +586,7 @@ class HomeAppView(QMainWindow):
 
 
 	def reload_projects(self):
-		print("This reloads the reading on projects")
+		logger.debug("This reloads the reading on projects")
 		self.load_projects()
 
 	def open_single_project_editor(self, row):

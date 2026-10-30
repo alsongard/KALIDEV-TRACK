@@ -31,6 +31,7 @@ class HomeTableModel(QAbstractTableModel):
         else:
             return len(self.myData[0])
     
+    # Unused method which was to be used to update the  data being passed to the HomeTableModel
     def removeRow(self, foundIndexes):
         if (len(foundIndexes) == 0 or len(foundIndexes) > self.rowCount()):
             return
@@ -61,4 +62,16 @@ class HomeTableModel(QAbstractTableModel):
         if role == Qt.DisplayRole:
             # print(str(self.myData[row][col])) won't work
             return str(self.myData[row][col])
+
+
+    def update_data(self, new_data):
+        """
+        Resets the model data to new_data
+
+        - Args:
+            new_data: new project data 
+        """
+        self.beginResetModel()
+        self.myData = new_data
+        self.endResetModel()
         

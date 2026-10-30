@@ -17,12 +17,11 @@ from PySide6.QtWidgets import (
     QVBoxLayout, QWidget, QLabel, QHBoxLayout, QPushButton, QTextEdit, QLineEdit
     )
 
-from utils.file_operations import FileManager
 from PySide6.QtGui import QColor
 from PySide6.QtCore import Signal
 
-from utils.file_operations import FileManager
-from views.tasks_view import TaskViewWidget
+from app.utils.file_operations import FileManager
+from app.views.tasks_view import TaskViewWidget
 import logging
 
 logger = logging.getLogger(__name__)

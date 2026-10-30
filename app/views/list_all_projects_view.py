@@ -45,18 +45,19 @@ class ListAllProjects(QWidget):
 
         # search component 
         searchBtn = QPushButton("Search")
-        self.search_project = QLineEdit()
-        self.search_project.setPlaceholderText("enter project name to search")
+        searchBtn.clicked.connect(self.search_project)
+        self.project_to_search = QLineEdit()
+        self.project_to_search.setPlaceholderText("enter project name to search")
 
         search_hor_layout = QHBoxLayout()
-        search_hor_layout.addWidget(self.search_project)
+        search_hor_layout.addWidget(self.project_to_search)
         search_hor_layout.addWidget(searchBtn)
 
         main_layout.addLayout(search_hor_layout)
 
         # project contianer
-        projects_container = QGroupBox()
-        container_layout = QVBoxLayout()
+        self.project_container = QGroupBox()
+        self.container_layout = QVBoxLayout()
 
         # file Manager object
         fileManagerObject = FileManager()
@@ -78,13 +79,13 @@ class ListAllProjects(QWidget):
                 project_layout.addWidget(view_projectBtn)
                 project_layout.addWidget(view_taskBtn)
 
-                container_layout.addLayout(project_layout)
+                self.container_layout.addLayout(project_layout)
 
             # sets the layout for the container
-            projects_container.setLayout(container_layout)
+            self.project_container.setLayout(self.container_layout)
 
             # adds the container to the main_layout
-            main_layout.addWidget(projects_container)
+            main_layout.addWidget(self.project_container)
 
 
         main_layout.addStretch()
@@ -131,22 +132,82 @@ class ListAllProjects(QWidget):
             self.projectView = None
 
     def search_project(self):
+        """
+        Method search_project is used to search for a project bases on the ``self.search_project`` QLineEdit input. After finding a project it then passed the project to the 
+        ``udpate_ui()`` method, which handles updating the User Interface
+
+        Args:
+            None
+        """
         logger.debug("Search for a project")
-        search_title = self.search_project.text().trim().lower()
+        project_name = self.project_to_search.text().strip().lower()
 
 
-        if search_title == "":
+        if project_name == "":
             filtered_project = self._projects
 
         else:
             filtered_project = [
                 project for project in self._projects
-                if search_title in project["project_title"].lower()
+                if project_name in project["project_title"].lower()
             ]
 
+            self.update_ui(filtered_project, project_name)
 
-    def update_ui(self, filter_project_array):
+
+    def update_ui(self, filter_project_array, search_title):
+        """
+        The method update_ui is used to update the User Interface for the view.
+
+        - Args:
+            - filter_project_array(array) : the array that contains the project data
+            - search_title(string): the title of the project being searched 
+        """
         logger.debug("updates UI")
+        # clear a widget if found in the container_layout or passed the layout to clear_layout function
+        item = self.container_layout.takeAt(0)
+        widget =item.widget()
+        if widget is not None:
+            widget.deleteLater()
+        else:
+            self.clear_layout(item.layout())
+
+        # when filter_project_array is empty / no project found
+        if len(filter_project_array) == 0:
+            empty_label = QLabel(f"No project has been found with the name: {search_title}")
+            empty_label.setStyleSheet("color: gray; font-style:italic;")
+            self.container_layout.addWidget(empty_label)
+
+        
+        # when a project has been found
+        for item in filter_project_array:
+            project_title = QLabel(item["project_title"])
+            project_layout = QHBoxLayout() # horizontal layout to hold: project_name, view project info and view task info button
+            view_projectBtn = QPushButton("View project info")
+            view_taskBtn = QPushButton("View tasks info")
+            view_projectBtn.clicked.connect(partial(self.open_project_view, item["project_title"]))
+            view_taskBtn.clicked.connect(partial(self.open_task_view, item["project_title"]))
+            project_layout.addWidget(project_title)
+            project_layout.addWidget(view_projectBtn)
+            project_layout.addWidget(view_taskBtn)
+
+            self.container_layout.addLayout(project_layout)
+
+
+    # method used to clear widgets in a layout
+    def clear_layout(self, given_layout):
+        """
+        Method clear_layout is used to remove widgets in a layout
+        """
+        while given_layout.count():
+            item = given_layout.takeAt(0)
+            widget = item.widget()
+            if widget is not None:
+                widget.deleteLater()
+            else:
+                self.clear_layout(item.layout())
+
+
 
 logging.basicConfig(
     level=logging.DEBUG,

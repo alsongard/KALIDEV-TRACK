@@ -17,6 +17,7 @@ Depends on:
 	- utils.file_operations.FileManager
 	- utils.button_delegate.ButtonDelegate
 	- views.edit_view_single_project.EditSingleProjectView
+	- views.list_all_projects_view.ListAllProjects
 
 Exports: 
 	HomeAppView
@@ -46,6 +47,7 @@ from views.backup_data_view import BackUpProject
 from utils.file_operations import  FileManager
 from utils.button_delegate import ButtonDelegate 
 from views.edit_view_single_project import EditSingleProjectView
+from views.list_all_projects_view import ListAllProjects
 from PySide6.QtWidgets import QApplication
 
 
@@ -142,9 +144,8 @@ class HomeAppView(QMainWindow):
 		helpMenuBarMenue.addAction('Documentation')
 
 		mainToolBar = QToolBar()
+		# self.addToolBar(mainToolBar)
 		mainToolBar.setIconSize(QSize(20, 20))
-
-
 
 		new_fileToolBarItem = QAction(QIcon("./assets/icons/new_File_icon.png"), "New", self)
 		new_fileToolBarItem.setStatusTip('New file')
@@ -557,7 +558,7 @@ class HomeAppView(QMainWindow):
 	def open_view_projects_page(self, checked):
 		if checked == True: # we change using setCheckable(True)
 			if self.project_views is None:
-				self.project_views = ViewProjects()
+				self.project_views = ListAllProjects()
 				self.project_views.closed.connect(self.on_view_project_child)
 				self.project_views.show()
 		else: 

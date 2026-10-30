@@ -16,6 +16,7 @@ Exports:
 
 from PySide6.QtWidgets import QPushButton, QWidget, QVBoxLayout, QLineEdit, QLabel, QGroupBox, QHBoxLayout, QApplication
 from functools import partial
+from PySide6.QtCore import Signal
 import logging
 from rich.logging import RichHandler
 
@@ -28,6 +29,7 @@ class ListAllProjects(QWidget):
     """
     Class ListAllProjects is used to list all projects in the app_folder, from which a user can view the project information
     """
+    closed = Signal()
     def __init__(self):
         """
         constructor method
@@ -208,17 +210,24 @@ class ListAllProjects(QWidget):
                 self.clear_layout(item.layout())
 
 
+    # closeEvent method handler
+    def closeEvent(self, event):
+        self.closed.emit() # emit event
+        super().closeEvent(event)
+        
 
-logging.basicConfig(
-    level=logging.DEBUG,
-    format="%(message)s",
-    datefmt="[%X]",
-    handlers=[RichHandler(rich_tracebacks=True)],
-)
-app = QApplication()
-window = ListAllProjects()
-window.show()
-app.exec()
+
+
+# logging.basicConfig(
+#     level=logging.DEBUG,
+#     format="%(message)s",
+#     datefmt="[%X]",
+#     handlers=[RichHandler(rich_tracebacks=True)],
+# )
+# app = QApplication()
+# window = ListAllProjects()
+# window.show()
+# app.exec()
 
 
         

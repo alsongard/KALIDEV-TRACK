@@ -66,7 +66,7 @@ class EditSingleProjectView(QWidget):
         buttonLayout = QHBoxLayout()
 
         saveBtn = QPushButton("save")
-        addTasks = QPushButton("Add Tasks")
+        addTasks = QPushButton("Manage Tasks")
         exitBtn = QPushButton("exit")
 
         addTasks.clicked.connect(self.open_task_view)

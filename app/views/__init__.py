@@ -1,1 +1,1 @@
-__all__= ['home_view',"backup_data_view", "create_task", "edit_project_view", "form_window", "projects_page_view", "view_projects", "edit_view_single_project"]
+__all__= ['home_view',"backup_data_view", "create_task", "edit_project_view", "form_window", "projects_page_view", "view_projects", "edit_view_single_project", "list_all_projects_view"]

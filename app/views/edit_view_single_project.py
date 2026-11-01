@@ -17,12 +17,11 @@ from PySide6.QtWidgets import (
     QVBoxLayout, QWidget, QLabel, QHBoxLayout, QPushButton, QTextEdit, QLineEdit
     )
 
-from utils.file_operations import FileManager
 from PySide6.QtGui import QColor
 from PySide6.QtCore import Signal
 
-from utils.file_operations import FileManager
-from views.tasks_view import TaskViewWidget
+from app.utils.file_operations import FileManager
+from app.views.tasks_view import TaskViewWidget
 import logging
 
 logger = logging.getLogger(__name__)
@@ -67,7 +66,7 @@ class EditSingleProjectView(QWidget):
         buttonLayout = QHBoxLayout()
 
         saveBtn = QPushButton("save")
-        addTasks = QPushButton("Add Tasks")
+        addTasks = QPushButton("Manage Tasks")
         exitBtn = QPushButton("exit")
 
         addTasks.clicked.connect(self.open_task_view)

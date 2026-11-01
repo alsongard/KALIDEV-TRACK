@@ -492,3 +492,40 @@ python empty strings are treated as falsy (False)
 ... 
 s is empty
 ```
+
+## Using partial method for remembering arguments
+In a case whereby create a button or an Widget in a loop, and the given widget has a signal that is emmited on click e.g QPushButton, we use the ``partial()`` method to give it the argument to be used by the slot(a function)
+
+E.g
+```py
+for item in self.all_data:
+    titleBtn = QPushButton(item["title"])
+    titleBtn.clicked.connect(partial(self.open_title_view, item["title"]))
+```
+
+
+## Accessing Widgets in QGroupBox
+Example:
+```py
+
+self.group_box = QGroupBox()
+self.radio1 = QRadioButton("Option 1")
+self.radio2 = QRadioButton("Option 2")
+
+group_box_layout = QVBoxLayout()
+# add widgets to layout
+self.group_box.setLayout(group_box_layout)
+
+
+# the below accesses all QLabel widgets in the GroupBox
+self.group_box.findChildren(QLabel)
+
+# A single widget by type + objectName
+btn = self.group_box.findChild(QPushButton, "my_button")
+```
+
+To retrieve the title of a QGroupBox:
+```py
+# Read the current title
+current = self.group_box.title()  # "Subtask 
+```

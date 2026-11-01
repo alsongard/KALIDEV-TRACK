@@ -17,7 +17,7 @@ class EditProjectView(QWidget):
         gridLayout = QGridLayout()
         mywidget = QWidget()
         myScrollArea = QScrollArea()
-        file_data = FileManager().readProjectDirectories()
+        file_data = FileManager().read_project_directories()
         myScrollArea.setWidgetResizable(True)
         # print(file_data)
         # file_data : array of dictiornaries

@@ -94,6 +94,7 @@ You can now create and manage your projects and tasks through the GUI.
 │       └── view_projects.py
 ├── research/
 ├── .gitignore
+├── pyproject.toml
 ├── DESIGN.md
 ├── README.md
 ├── package.json

@@ -18,8 +18,8 @@ from PySide6.QtCore import QDate
 from PySide6.QtCore import Signal
 
 # import class
-from views.tasks_view import TaskViewWidget
-from utils.file_operations import FileManager
+from app.views.tasks_view import TaskViewWidget
+from app.utils.file_operations import FileManager
 
 import logging
 
@@ -260,12 +260,14 @@ class ProjectAddView(QWidget):
             return
      
         if self.task_window is None:
-            self.task_window = TaskApp(self.user_id, self.newDir)
+            title_text  = self.titleInput.text()
+
+            self.task_window = TaskViewWidget(title_text)
             self.task_window.show()
 
-    def emitRerunSignal(self):
+    def emitRerunSignal(self, event):
         self.rerun.emit()
-        super().closeEvent()
+        super().closeEvent(event)
 
 
     def ask_ai_fun(self):

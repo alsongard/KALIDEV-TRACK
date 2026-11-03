@@ -529,3 +529,99 @@ To retrieve the title of a QGroupBox:
 # Read the current title
 current = self.group_box.title()  # "Subtask 
 ```
+
+
+## Prop Drilling
+in cass whereby, a config or a variable is required by another module, instead of passing this variable from one class to another, we use a class, which  only one instance can be found in the application.
+Some of this variables are called global application state (like ocnfiguration and paths)
+
+Example:
+```py
+class ConfigManager():
+    _instance = None
+
+    def __new__(cls): # overwritting the __new__ method which is called first when an object is initialized
+        """
+        Override __new__ method
+        
+        Args:
+            cls: this represent the class itself
+        """
+        if cls._instance is None:
+            # assign instance the class itselft
+            cls._instance = super(ConfigManager, cls).__new__(cls)
+            # call __init__config
+            cls._instance._init_config()
+
+
+        return cls._instance
+
+```
+
+**Explanation of the above code:**  
+
+- Class Variables
+class variables are variables belong to a class and can be accessed from a class
+```py
+class Student:
+    schoolName = "Playway"
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+    def get_marks():
+        self.english = 80
+        self.maths = 90
+
+print(Student.schoolName)
+```
+
+- Instance Variables
+Instance variables are variables which are specific  to a given object and can only be accessed through an object
+e.g
+```py
+class Student:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+    def get_marks():
+        self.english = 80
+        self.maths = 90
+
+juma_obj = Student("Juma", 23)
+# access instance variable
+print(juma_obj.name) # Juma
+print(juma_obj.age) # 23
+```
+
+
+* When an instance/object is created from a class 2 method are executed in the given manner
+    - ``__new__()`` method:  used to create an object in memory
+    - ``__init__()`` method: initialize the object
+- What is __new__? In Python, when you create an object (e.g., obj = MyClass()), Python calls two methods. First it calls __new__ to create the object in memory. Then it calls __init__ to initialize it. By overriding __new__, we intercept the creation process. If _instance already exists, we return it instead of making a new one.
+- Why super(ConfigManager, cls)? Since ConfigManager inherits from object (the base Python class), we need to tell Python to actually create the raw object in memory. We call the parent's __new__ method to do the heavy lifting.
+- Why pass cls? The __new__ method is implicitly a staticmethod (it doesn't take self because the object doesn't exist yet!). It takes cls (the class itself) so it knows what type of object to create.
+
+
+
+## Working with Path module
+To get the file path of a module(pthon file) we use the below:
+```py
+from pathlib import Path
+
+file_path = Path(__file__).resolve()
+
+print(file_path)
+```
+
+the output of the  file_path will be it's absolute path including its name e.g filename is app.py it will be: ``/home/username/app.py``
+
+
+To get the parent directory we use the below:
+```py
+from pathlib import Path
+
+APP_DIR = Path(__file__).resolve().parent
+
+print(APP_DIR)
+```
+the output will not contain the file name, it will show the directory in which the file is: ``/home/username/`` 

@@ -1,1 +1,1 @@
-__all__ = ["file_operations", "button_delegate"]
+__all__ = ["file_operations", "button_delegate", "config_manager"]

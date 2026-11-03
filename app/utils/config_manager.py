@@ -105,11 +105,11 @@ class ConfigManager():
             try:
                 with open(self.settings_path, 'w') as file:
                     dump(self.settings, file)
+                logger.debug("Data saved successfully")
                 return True
             except Exception as err:
                 full_error_details = traceback.format_exc()
                 logger.debug("Failed saving data: %s", full_error_details)
-
                 return False
 
         logger.debug("Error: %s does not exist", self.settings_path)

@@ -10,6 +10,7 @@ Depends on:
 from pathlib import Path
 import logging
 import traceback
+
 from json import load, dump
 logger = logging.getLogger(__name__)
 class ConfigManager():
@@ -38,17 +39,18 @@ class ConfigManager():
         and calls the method load()
         """
         # Setup the app directory path
-        self.app_dir = Path(__file__).resolve().parent.parent # /home/username/PROGRAMS/KALIDEV-TRACK/app/utils/configManager.py
+        self.app_dir = Path(__file__).resolve().parent.parent.parent # /home/username/PROGRAMS/KALIDEV-TRACK/app/utils/configManager.py
         # set filename for settings.json
+        logger.debug("app directory : %s", self.app_dir)
         self.settings_path =  self.app_dir /"setting.json" # or f"{self.app_dir}/settings.json" but this would change logic
         logger.debug("setting filepath: %s", self.settings_path)
 
         self.settings = {
-            "theme": "dark",
+            "theme": "True",
             "font_family" : "Arial", 
-            "email_for_notification": "",
-            "save_before_exiting": "",
-            "maximize_window_on_open": "",
+            "email_for_notification": "False",
+            "save_before_exiting": "True",
+            "maximize_window_on_open": "False",
             "mongodb_uri": "",
             "ai_url": ""
         }
@@ -76,6 +78,22 @@ class ConfigManager():
             except Exception as err:
                 # log error
                 logger.debug("Error while reading settings.json file: %s", err)
+        
+        else: 
+            logger.debug("file settings.json does not exist. path: %s", self.settings_path)
+            self.create_settings_file()
+            
+
+    def create_settings_file(self):
+        """
+        Method create_settings_file is used to create a settings.json file if it does not exist
+        """
+        if self.app_dir.exists():
+            # create file name settings.json
+            if self.settings_path.exists() is False:
+
+                with open(self.settings_path, 'w') as file:
+                    dump(self.settings, file)
 
 
     def save(self, data):
@@ -93,11 +111,28 @@ class ConfigManager():
 
 
     def get(self, key): 
+        """
+        Method get is used to return a value from the self.settings dictionary
+
+        - Args:
+            key (string) : a key in self.settings dictionary
+        """
         if self.settings[key] is not None:
             return self.settings[key]
 
 
     def set(self, key, val) -> bool:
+        """
+        Method set is used ot set a value for a key in self.settings dictionary
+
+        - Args:
+            key (string) : a key in self.settings dictionary
+            val (string) : a value in self.settings dictionary
+
+        Return:
+            True: Operation Success
+            False: Operation False
+        """
         if self.settings[key] is not None:
             self.settings[key] = val
             return True # operation success

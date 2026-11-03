@@ -109,7 +109,7 @@ class FileManager():
             # list everything in folder:~/username/PROJECTS
     
     
-    def create_app_folder(self) -> Boolean:
+    def create_app_folder(self) -> int:
         """
         The method is used to create a PROJECT directory in home directory for the user
 
@@ -125,7 +125,7 @@ class FileManager():
         return 0        
 
 
-    def create_project_folder(self, project_name) -> Boolean:
+    def create_project_folder(self, project_name) -> bool | None:
         """
         The method create_project_folder is used to create a project directory  in the APP_PROJECT directory
         
@@ -152,7 +152,7 @@ class FileManager():
 
 
 
-    def write_project_details(self, project_name, data) -> Boolean:
+    def write_project_details(self, project_name, data) -> bool:
         """
         The method write_project_details is used to save the data in PROJECTS/project_name directory to  project_data.json file
 
@@ -199,8 +199,8 @@ class FileManager():
             "phases" : []
         }
 
+        file_path = project_path_folder + "/project_task.json" 
         try:
-            file_path = project_path_folder + "/project_task.json" 
             with open(file_path, "w") as file:
                 json.dump(new_tasks_dictionary, file)
                 logger.debug("Success creating project_task file: %s", file_path)

@@ -18,6 +18,7 @@ Depends on:
 	- utils.button_delegate.ButtonDelegate
 	- views.edit_view_single_project.EditSingleProjectView
 	- views.list_all_projects_view.ListAllProjects
+	- views.settings_view.SettingsView
 
 Exports: 
 	HomeAppView
@@ -34,6 +35,7 @@ from PySide6.QtCore import Qt
 import PySide6.QtCore
 from datetime import datetime
 from pathlib import Path
+from PySide6.QtWidgets import QApplication
 import sys
 import os
 
@@ -48,7 +50,7 @@ from utils.file_operations import  FileManager
 from utils.button_delegate import ButtonDelegate 
 from views.edit_view_single_project import EditSingleProjectView
 from views.list_all_projects_view import ListAllProjects
-from PySide6.QtWidgets import QApplication
+from views.settings_view import SettingsView
 
 
 
@@ -79,6 +81,7 @@ class HomeAppView(QMainWindow):
 		self.edit_single_project = None
 		# we are creating a QMenuBar object() : we are using menuBar() method from QMainWindow()
 		menuBarObject = self.menuBar()
+		self.settings_view = None
 
 		# adding menues to the menuBar
 		fileMenuBarMenue = menuBarObject.addMenu("&File")
@@ -208,9 +211,8 @@ class HomeAppView(QMainWindow):
 
 		self.newProjectBtn.clicked.connect(self.open_new_project_view_fun)
 		self.viewProjectBtn.clicked.connect(self.open_view_projects_page)
-		# self.editProjectBtn.clicked.connect(self.open_edit_projects_page)
 		self.sychronizeBtn.clicked.connect(self.open_sychronization_backup_page)
-		# self.addTaskBtn.clicked.connect(self.open_task_view)
+		self.settingBtn.clicked.connect(self.open_settings_view)
 		self.exitApp.clicked.connect(self.close_window)
 		# homeButton.clicked.connect()
 		fastActionView.addWidget(self.searchBtn)
@@ -420,12 +422,13 @@ class HomeAppView(QMainWindow):
 	
 
 	def apply_filter(self): 
+		"""
+		Method apply_filter is used to filter projects based on the mode and  the project start and end date
+		"""
 		logger.debug("Running apply_filter")
+
 		keys = ("project_title", "project_priority", "project_status", "project_start_date", "project_end_date")
 		date_format = "%Y-%m-%d"
-		"""
-		The method apply_filter is used to filter projects based on the project_status and time
-		"""
 		mode = self.determine_projects_list_to_display
 		logger.debug("selected mode: %s", mode)
 
@@ -502,7 +505,7 @@ class HomeAppView(QMainWindow):
 				today = datetime.now()
 				if (project_start_date.date() > today.date()):# future projects
 					self._display_projects.append([project["project_title"], project["project_priority"],  project["project_start_date"], project["project_end_date"], "Future", ""])
-					foundIndexes(index)
+					# foundIndexes(index)
 
 			logger.debug("Length of displayed projects: %s", len(self._display_projects))
 
@@ -575,7 +578,7 @@ class HomeAppView(QMainWindow):
 
 	def handle_closed_edit_projects_view(self):
 		if self.project_edit_view is not None:
-			self.project_edit_view.closed()
+			self.project_edit_view.close()
 			self.project_edit_view = None
 
 
@@ -647,7 +650,36 @@ class HomeAppView(QMainWindow):
 		"""
 		This function has not been configured yet, but will be used to add tasks to a project
 		"""
-		loger.debug("will open task_view")
+		logger.debug("will open task_view")
+
+
+	def open_settings_view(self, checked):
+		"""
+		Method open_settings_view is used to open  SettingsView window 
+		"""
+		logger.debug("Running open_settings_view")
+		logger.debug("Status of button: %s", checked)
+		if checked:
+			if self.settings_view is None:
+				self.settings_view = SettingsView()
+				self.settings_view.closed.connect(self.handle_settings_view_closed)
+				self.settings_view.show()
+		else:
+			if self.settings_view is not None:
+				self.settings_view.close()
+				self.settings_view = None
+
+
+	def handle_settings_view_closed(self):
+		"""
+		Method handle_settings_view_closed is a slot/function for SettingsView closed Signal
+		"""
+		logger.debug("handle_settings_view_closed executed")
+		if self.settings_view is  not None:
+			self.settings_view.close()
+			self.settings_view = None
+			self.settingBtn.setChecked(False)
+
 
 
 

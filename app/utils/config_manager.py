@@ -61,7 +61,7 @@ class ConfigManager():
     
     def load(self):
         """
-        Method load is used to read the settings of the application in settings.json and load them to self.settings dictionary
+        # Method load is used to read the settings of the application in settings.json and load them to self.settings dictionary
         """
         logger.debug("Method load executed")
 
@@ -96,18 +96,24 @@ class ConfigManager():
                     dump(self.settings, file)
 
 
-    def save(self, data):
+    def save(self) -> bool:
         """
         Method save is used to write data to settings.json file
         """
         logger.debug("Method save executed")
-        full_error_details = traceback.format_exc()
         if self.settings_path.exists(): 
             try:
                 with open(self.settings_path, 'w') as file:
-                    dump(file, data)
+                    dump(self.settings, file)
+                return True
             except Exception as err:
+                full_error_details = traceback.format_exc()
                 logger.debug("Failed saving data: %s", full_error_details)
+
+                return False
+
+        logger.debug("Error: %s does not exist", self.settings_path)
+        return False # file does not exist
 
 
     def get(self, key): 

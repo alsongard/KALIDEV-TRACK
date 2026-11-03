@@ -9,7 +9,7 @@ Depends:
     - app.utils/.config_manager.ConfigManager
 """
 from PySide6.QtCore import Signal
-from PySide6.QtWidgets import QApplication, QHBoxLayout, QLineEdit, QPushButton, QWidget, QComboBox, QGroupBox, QVBoxLayout, QLabel
+from PySide6.QtWidgets import QApplication, QHBoxLayout, QLineEdit, QMessageBox, QPushButton, QWidget, QComboBox, QGroupBox, QVBoxLayout, QLabel
 import logging
 
 from  app.utils.config_manager import ConfigManager
@@ -38,6 +38,7 @@ class SettingsView(QWidget):
         title_label = QLabel("Settings")
         title_label.setStyleSheet("font-weight:bold; font-size:18px")
         saveBtn = QPushButton("Save")
+        saveBtn.clicked.connect(self.save_settings)
         title_save_layout.addWidget(title_label)
         title_save_layout.addWidget(saveBtn)
 
@@ -119,7 +120,7 @@ class SettingsView(QWidget):
         self.closed.emit()
         return super().closeEvent(event)
 
-    def save_settings(self) -> bool:
+    def save_settings(self):
         """
         Method save_settings is used to save configuration set by the user for the applicaton
         """
@@ -139,7 +140,21 @@ class SettingsView(QWidget):
         self.configManager.set("mongodb_uri", mongo_uri_setting)
         self.configManager.set("ai_url", ai_url_setting)
 
-        return True
+        result = self.configManager.save()
+        if result:
+            QMessageBox.information(
+                self,
+                "Informatiion",
+                "Settings information has been updated",
+                buttons=QMessageBox.StandardButton.Ok,
+            )
+        else:
+            QMessageBox.warning(
+                self,
+                "Warning",
+                "Error saving data",
+                buttons=QMessageBox.StandardButton.Ok
+            )
 
 
     def set_settings(self):

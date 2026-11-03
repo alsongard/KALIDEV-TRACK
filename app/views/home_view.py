@@ -420,12 +420,13 @@ class HomeAppView(QMainWindow):
 	
 
 	def apply_filter(self): 
+		"""
+		Method apply_filter is used to filter projects based on the mode and  the project start and end date
+		"""
 		logger.debug("Running apply_filter")
+
 		keys = ("project_title", "project_priority", "project_status", "project_start_date", "project_end_date")
 		date_format = "%Y-%m-%d"
-		"""
-		The method apply_filter is used to filter projects based on the project_status and time
-		"""
 		mode = self.determine_projects_list_to_display
 		logger.debug("selected mode: %s", mode)
 
@@ -502,7 +503,7 @@ class HomeAppView(QMainWindow):
 				today = datetime.now()
 				if (project_start_date.date() > today.date()):# future projects
 					self._display_projects.append([project["project_title"], project["project_priority"],  project["project_start_date"], project["project_end_date"], "Future", ""])
-					foundIndexes(index)
+					# foundIndexes(index)
 
 			logger.debug("Length of displayed projects: %s", len(self._display_projects))
 

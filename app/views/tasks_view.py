@@ -114,10 +114,13 @@ class TaskViewWidget(QWidget):
         self.mainFrame.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
 
         self.mainLayout = QVBoxLayout()
-
+        self.scroll_area = QScrollArea() # scroll_area used for scrolling
+        self.scroll_widget = QWidget() # scroll_widget that is set for the scroll_area
+        self.vert_layout = QVBoxLayout() # layout used by scroll_widget
+        
         # instance of FileManager class
-        readTaskInstance = FileManager() 
-        self.returned_task_data = readTaskInstance.read_project_task_file(self.project_name)
+        fileManager = FileManager() 
+        self.returned_task_data = fileManager.read_project_task_file(self.project_name)
 
         logger.debug("Task read from file: %s", self.returned_task_data)
 
@@ -145,8 +148,9 @@ class TaskViewWidget(QWidget):
                 self.phaseLayout = QVBoxLayout() # layout for the self.phaseContentGroupBox
                 self.phaseTable = QTableView() # each subtasks 
 
-                self.phaseTable.wordWrapTrue = True
-                
+                self.phaseTable.setWordWrap(True)
+                self.phaseTable.resizeRowsToContents()
+                self.phaseTable.verticalHeader().setDefaultSectionSize(40)
                 self.phaseName = QLabel()
                 self.phaseName.setObjectName("phaseNameLabel")
                 self.phaseName.setText(item["phase name"])
@@ -168,15 +172,20 @@ class TaskViewWidget(QWidget):
 
                 self.phaseLayout.addWidget(self.phaseTable)
 
-                self.phaseContentGroupBox.setLayout(self.phaseLayout)
-                self.mainLayout.addWidget(self.phaseContentGroupBox)
+                self.phaseContentGroupBox.setMinimumSize(200, 250)
+                self.phaseContentGroupBox.setLayout(self.phaseLayout) # phaseContentGroupBox layout is set
+                # self.mainLayout.addWidget(self.phaseContentGroupBox)
+                self.vert_layout.addWidget(self.phaseContentGroupBox) # add to vertial layout
 
         # self.projectName = QLabel()
         # self.projectName.setText(self.returned_task_data["project"])
 
+        self.scroll_widget.setLayout(self.vert_layout)
+        self.scroll_area.setWidget(self.scroll_widget)
+        self.scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
+        self.scroll_area.setWidgetResizable(True)
 
-
-
+        self.mainLayout.addWidget(self.scroll_area)
         self.mainFrame.setLayout(self.mainLayout)
         self.fastActionFrame.setFrameShape(QFrame.Shape.Box)
         self.gridLayout.addWidget(self.fastActionFrame, 0, 0)

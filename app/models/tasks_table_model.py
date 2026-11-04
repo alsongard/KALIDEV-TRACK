@@ -12,8 +12,9 @@ Exports:
 
 from  PySide6 import QtCore
 from PySide6.QtCore import Qt, QModelIndex
+import logging
 
-
+logger = logging.getLogger(__name__)
 # Model , View & Controller (MVC) : View & Controller are treated as one
 class TaskTableModel(QtCore.QAbstractTableModel):
     """
@@ -37,8 +38,8 @@ class TaskTableModel(QtCore.QAbstractTableModel):
         return len(self._column_keys)
 
     # returns headers
-    def headerData(self, section, orientation, role=Qt.DisplayRole):
-        if role == Qt.DisplayRole:
+    def headerData(self, section, orientation, role=Qt.ItemDataRole.DisplayRole):
+        if role == Qt.ItemDataRole.DisplayRole:
             if orientation == Qt.Horizontal:
                 return str(self.headers[section])
             else:
@@ -68,8 +69,20 @@ class TaskTableModel(QtCore.QAbstractTableModel):
     # enables editing
     def setData(self, index, value, role ):
         if role == Qt.ItemDataRole.EditRole:
-            self._data[index.row()][index.column()] = value
-            self.dataChanged.emit(index, index)
+
+            # get the row and index
+            row = index.row()  # represents the dictionary row index in list
+            column = index.column() # represents the column which can be mapped to the key
+
+            key = self.headers[column].lower()
+
+
+            # logger.debug("Data edited on row: %s , key %s", row, key)
+
+            # logger.debug("Data changed from: %s", self._data[row][key])
+            # logger.debug("To: %s", value)
+
+            self._data[row][key] = value
             return True
         return False
 

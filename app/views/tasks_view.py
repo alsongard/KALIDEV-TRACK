@@ -7,15 +7,16 @@ Purpose:
 Depends on:
     - models/tasks_table_model.TaskTableModel
     - views/create_tasks_widget.CreateTaskWidget
+    - utils/file_operations.FileManager
 
 Exports: 
     TaskViewWidget
 """
 
 
-from PySide6.QtWidgets import QTableView, QHBoxLayout, QGridLayout, QLineEdit ,QPushButton, QSizePolicy, QGroupBox, QFrame, QWidget, QApplication, QMainWindow, QLabel,QVBoxLayout, QScrollArea
+from PySide6.QtWidgets import QMessageBox, QTableView, QHBoxLayout, QGridLayout, QLineEdit ,QPushButton, QSizePolicy, QGroupBox, QFrame, QWidget, QApplication, QMainWindow, QLabel,QVBoxLayout, QScrollArea
 from  PySide6 import QtCore
-from PySide6.QtCore import Qt, QSize, QModelIndex, Signal
+from PySide6.QtCore import Qt, Signal
 import sys
 
 # importing classes
@@ -64,6 +65,8 @@ class TaskViewWidget(QWidget):
         self.project_name = project_name
         self.create_task_window = None
         self.returned_task_data = {}
+        self.subtasks_model_array = []
+        self.phase_content_groupbox_array =[]
         self.setWindowTitle("Manage Project Phases")
 
 
@@ -114,10 +117,13 @@ class TaskViewWidget(QWidget):
         self.mainFrame.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
 
         self.mainLayout = QVBoxLayout()
-
+        self.scroll_area = QScrollArea() # scroll_area used for scrolling
+        self.scroll_widget = QWidget() # scroll_widget that is set for the scroll_area
+        self.vert_layout = QVBoxLayout() # layout used by scroll_widget
+        
         # instance of FileManager class
-        readTaskInstance = FileManager() 
-        self.returned_task_data = readTaskInstance.read_project_task_file(self.project_name)
+        self.fileManager = FileManager() 
+        self.returned_task_data = self.fileManager.read_project_task_file(self.project_name)
 
         logger.debug("Task read from file: %s", self.returned_task_data)
 
@@ -145,8 +151,9 @@ class TaskViewWidget(QWidget):
                 self.phaseLayout = QVBoxLayout() # layout for the self.phaseContentGroupBox
                 self.phaseTable = QTableView() # each subtasks 
 
-                self.phaseTable.wordWrapTrue = True
-                
+                self.phaseTable.setWordWrap(True)
+                self.phaseTable.resizeRowsToContents()
+                self.phaseTable.verticalHeader().setDefaultSectionSize(40)
                 self.phaseName = QLabel()
                 self.phaseName.setObjectName("phaseNameLabel")
                 self.phaseName.setText(item["phase name"])
@@ -161,22 +168,29 @@ class TaskViewWidget(QWidget):
                 # for subtasks in  item["subtasks"]:
                 #     print('')
 
-                header_data  = ["Module", "Description", "Status"] 
-                self.model = TaskTableModel(item["subtasks"], myHeaderData=header_data )
+                self.header_data  = ["Module", "Description", "Status"] 
+                self.model = TaskTableModel(item["subtasks"], myHeaderData=self.header_data) # we set data to the entire subtasks array.
+                self.subtasks_model_array.append(self.model) # we then append this model to model_array, which means it holds the entire subtasks for a phase
                 self.phaseTable.setModel(self.model)
                 self.phaseTable.resizeColumnsToContents()
 
                 self.phaseLayout.addWidget(self.phaseTable)
 
-                self.phaseContentGroupBox.setLayout(self.phaseLayout)
-                self.mainLayout.addWidget(self.phaseContentGroupBox)
+                self.phaseContentGroupBox.setMinimumSize(200, 250)
+                self.phaseContentGroupBox.setLayout(self.phaseLayout) # phaseContentGroupBox layout is set
+                # self.mainLayout.addWidget(self.phaseContentGroupBox)
+                self.phase_content_groupbox_array.append(self.phaseContentGroupBox)
+                self.vert_layout.addWidget(self.phaseContentGroupBox) # add to vertial layout
 
         # self.projectName = QLabel()
         # self.projectName.setText(self.returned_task_data["project"])
 
+        self.scroll_widget.setLayout(self.vert_layout)
+        self.scroll_area.setWidget(self.scroll_widget)
+        self.scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
+        self.scroll_area.setWidgetResizable(True)
 
-
-
+        self.mainLayout.addWidget(self.scroll_area)
         self.mainFrame.setLayout(self.mainLayout)
         self.fastActionFrame.setFrameShape(QFrame.Shape.Box)
         self.gridLayout.addWidget(self.fastActionFrame, 0, 0)
@@ -253,7 +267,67 @@ class TaskViewWidget(QWidget):
 
     def save_task_fun(self):
         logger.debug("this button is linked to saveBtn signal")
+        project_phases = {
+            "project" : self.project_name, 
+            "phases": []
+        }
+        
+        # for count in range(len(self.phase_content_groupbox_array)):
+        count = 0
+        # while count < len(self.phase_content_groupbox_array): changed logic to uze zip
+        for phase_gb, model in zip(self.phase_content_groupbox_array, self.subtasks_model_array):
+            phase_gb = self.phase_content_groupbox_array[count] # phase groupbox
+            phase_name = phase_gb.findChild(QLabel, "phaseNameLabel").text() # using objectName to find the specific QLabel 
+            phase_description = phase_gb.findChild(QLabel, "phaseGoalLabel").text()
+            if not phase_name:
+                phase_name  = "Unknow Phase"
+            if not phase_description:
+                phase_description = "Unknown phase and description"
 
+            logger.debug("phase name: %s", phase_name)
+            logger.debug("phase goal: %s", phase_description)
+            phase_item = {
+                "phase name" : phase_name,
+                "phase goal": phase_description,
+                "subtasks" : [
+
+                ]
+            } # it is better to access the table in the model
+
+            for row in range(model.rowCount()): # number of rows in the table : number of subtasks dictionaries
+                subtask_dict = {}
+                for column in range(model.columnCount()):
+                    # get the dictionary
+                    cell_address = model.index(row, column)
+                    value = model.data(cell_address, Qt.ItemDataRole.DisplayRole)
+                    key = self.header_data[column]
+                    logger.debug("key: %s : value: %s", key,value)
+                    subtask_dict[key] = value
+                    # in this iteration it completes the entire row (a  single dictionary key:values pair)
+                
+                phase_item["subtasks"].append(subtask_dict)
+            
+            project_phases["phases"].append(phase_item)
+            count +=1 
+
+        logger.debug("project phases: %s", project_phases)
+
+        result = self.fileManager.update_project_tasks(self.project_name, data=project_phases)
+
+        if result:
+            QMessageBox.information(
+                self,
+                "Information",
+                "Project tasks updated successfully.",
+                buttons=QMessageBox.StandardButton.Ok
+            )
+        else:
+            QMessageBox.information(
+                self,
+                "Warning", 
+                "Project tasks not updated! Contact Support",
+                buttons=QMessageBox.StandardButton.Ok
+            )
 
     def delete_task_fun(self):
         logger.debug("this button  is  linked to deleteBtn signal")

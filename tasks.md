@@ -245,3 +245,81 @@ Implement Restore Logic	Pull data from MongoDB and write it back to the local JS
 | Create .desktop File |	Create a Linux launcher file so the app appears in the system's application menu.	⏳ Pending
 Setup Packaging Config	Configure stdeb or dh-virtualenv in the pyproject.toml or setup.py to build the package.	⏳ Pending
 Build .deb Artifact	Run the build command to compile the application into a distributable .deb package.	⏳ Pending
+
+# Phase 1: User Interface Cleanup
+
+**Project Phase:** UI Cleanup & Fast Actions  
+**Goal/Objective:**  Streamline the main dashboard to prevent redundant actions and improve user experience.
+| Tasks | Description |	Status |
+| ---- | --- | --- |
+| Merge Project Buttons | Remove the separate "View Project" and "Edit Project" buttons and replace them with a single "Open Project" button. |	⏳ Pending |
+| Remove Add Task Button | Remove the "Add Task" button from the main dashboard (tasks should be added from within the specific project's workspace). | ⏳ Pending |
+
+
+# Phase 2: Settings View
+
+**Project Phase:** Application Settings  
+**Goal/Objective:**  Allow users to customize the application and save their preferences persistently.
+| Tasks | Description |	Status |
+| ---- | ---- | ---- |
+| Create Settings UI |	Build the Settings view with form fields for app configuration.	| ⏳ Pending |
+| Implement JSON Persistence | Create read/write methods to save user preferences to a local settings.json file. |⏳ Pending |
+| Apply Settings on Startup | Update main.py to read settings.json upon launch and apply themes or default directories globally.	| ⏳ Pending
+
+# Phase 3: AskAI View
+
+**Project Phase:** AI Assistant Integration  
+**Goal/Objective:**  Provide an in-app AI assistant for the user, allowing them to use custom API keys.
+
+| Tasks | Description |	Status |
+| ---- | ---- | ---- |
+| Create AskAI UI |	Set up the chat interface and an input field for the user's custom API key.	| ⏳ Pending |
+| Implement QThread for API Calls |	Use QThread or QRunnable to handle network requests in the background to prevent the GUI from freezing.	| ⏳ Pending |
+| Connect to AI Provider |	Write the logic to send the prompt and API key to the chosen AI provider's endpoint and display the response.	| ⏳ Pending |
+
+
+# Phase 4: Documentation View
+
+**Project Phase:** Help & Documentation  
+**Goal/Objective:**  Provide clear, in-app instructions and images on how to use KALIDEV-TRACK.
+| Tasks | Description |	Status |
+| ---- | ---- | ---- |
+| Create Docs UI |	Implement a QTextBrowser widget within a new view to render rich text.	⏳ Pending
+| Write User Manual	Write the documentation text and embed images from the app/resources/icons directory.	⏳ Pending
+# Phase 5: Synchronization View
+
+**Project Phase:** Cloud Backup & Sync  
+**Goal/Objective:**  Allow users to back up and restore their project data using a MongoDB URI.
+| Tasks | Description |	Status |
+| ---- | ---- | ---- |
+| Create Sync UI |	Build the view for users to input their MongoDB URI and trigger backup/restore actions.	⏳ Pending
+Implement Backup Logic	Read local JSON files and push them to the MongoDB database.	⏳ Pending
+Implement Restore Logic	Pull data from MongoDB and write it back to the local JSON files.	⏳ Pending
+# Phase 6: Debian Packaging & Distribution
+
+**Project Phase:** Application Deployment  
+**Goal/Objective:**  Package KALIDEV-TRACK as a .deb file for easy installation on Debian/Kali Linux.
+| Tasks | Description |	Status |
+| ---- | ---- | ---- |
+| Create .desktop File |	Create a Linux launcher file so the app appears in the system's application menu.	⏳ Pending
+Setup Packaging Config	Configure stdeb or dh-virtualenv in the pyproject.toml or setup.py to build the package.	⏳ Pending
+Build .deb Artifact	Run the build command to compile the application into a distributable .deb package.	⏳ Pending
+
+
+# Phase 7: Task Management & CRUD Operations
+
+**Project Phase:** Advanced Task Management
+**Goal/Objective:** Upgrade the Task View to support adding/deleting subtasks, handling new metadata fields (date_created, date_updated), and syncing with the new JSON schema.
+
+
+| Tasks |	Description	| Status |
+| --- | --- | --- |
+Update JSON Schema	Update the FileManager read/write methods and TaskTableModel headers to map the new column names.	⏳ Pending
+Implement insertRows() in Model	Add the insertRows() method to TaskTableModel so the View can dynamically insert blank rows for new subtasks.	⏳ Pending
+Add "Add Subtask" UI	Add a button below each phase's QTableView to trigger the model's insertRows() method and append a new subtask.	⏳ Pending
+Implement removeRows() in Model	Add a way for users to delete a subtask (e.g., a delete button or context menu) and update the model accordingly.	⏳ Pending
+Add Auto-Timestamps	Automatically generate date_created on row insertion, and update date_updated whenever a cell is edited.	⏳ Pending
+Hide Metadata Columns	Hide date_created and date_updated in the QTableView for a cleaner UI, while keeping them in the underlying data.	⏳ Pending
+Implement Status Styling	Update data() in TaskTableModel to apply colors (Red/Yellow/Green) or icons based on the status text.	⏳ Pending
+Update Save Logic	Refactor save_task_fun() to zip the UI models and properly extract and save the new keys to project_tasks.json.	⏳ Pending
+Migrate Old JSON Data	(Optional) Write a small script to convert old JSON files to the new schema, or delete old test files to prevent KeyErrors.	⏳ Pending

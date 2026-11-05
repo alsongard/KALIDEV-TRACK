@@ -25,7 +25,7 @@ class TaskTableModel(QtCore.QAbstractTableModel):
         super().__init__()
         self._data = mydata
         self.headers = myHeaderData
-        self._column_keys = ["module name", "module description", "status"]
+        self._column_keys = ["Module", "Description", "Status"]
 
     # returns rowCount
     def rowCount(self, parent=QModelIndex()): 

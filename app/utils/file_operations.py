@@ -344,7 +344,7 @@ class FileManager():
                     else:
                         return {}
                     
-    def update_project_tasks(self, projectName, data):
+    def update_project_tasks(self, projectName, data) -> bool:
         """
         The method update_project_tasks is used to update the project phases and subtasks (project_task.json)
 

@@ -23,7 +23,7 @@ class CustomTableModel(QAbstractTableModel):
         """Return number of columns (length of first row if exists, else 0)"""
         return len(self._data[0]) if self._data else 0
 
-    def data(self, index, role=Qt.DisplayRole):
+    def data(self, index, role=Qt.ItemDataRole.DisplayRole):
         """
         Return data for given index and role.
         
@@ -40,7 +40,7 @@ class CustomTableModel(QAbstractTableModel):
         row = index.row()
         col = index.column()
         
-        if role == Qt.DisplayRole:
+        if role == Qt.ItemDataRole.DisplayRole:
             # Return text for display
             return str(self._data[row][col])
             
@@ -68,7 +68,7 @@ class CustomTableModel(QAbstractTableModel):
             orientation: Qt.Horizontal (columns) or Qt.Vertical (rows)
             role: Data role (usually DisplayRole for text)
         """
-        if role != Qt.DisplayRole:
+        if role != Qt.ItemDataRole.DisplayRole:
             return None
             
         if orientation == Qt.Horizontal:
@@ -83,7 +83,7 @@ class CustomTableModel(QAbstractTableModel):
         base_flags = super().flags(index)
         return base_flags | Qt.ItemIsEditable  # Make cells editable
 
-    def setData(self, index, value, role=Qt.EditRole):
+    def setData(self, index, value, role=Qt.ItemDataRole.EditRole):
         """
         Set data at index to value.
         

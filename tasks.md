@@ -216,9 +216,11 @@ The structure for the project_task.json is:
 
 | Tasks | Description |	Status |
 | ---- | ---- | ---- |
-| Create AskAI UI |	Set up the chat interface and an input field for the user's custom API key.	⏳ Pending
-Implement QThread for API Calls	Use QThread or QRunnable to handle network requests in the background to prevent the GUI from freezing.	⏳ Pending
-Connect to AI Provider	Write the logic to send the prompt and API key to the chosen AI provider's endpoint and display the response.	⏳ Pending
+| Create AskAI UI |	Set up the chat interface and an input field for the user's custom API key.	| ⏳ Pending |
+| Implement QThread for API Calls |	Use QThread or QRunnable to handle network requests in the background to prevent the GUI from freezing.	| ⏳ Pending |
+| Connect to AI Provider |	Write the logic to send the prompt and API key to the chosen AI provider's endpoint and display the response.	| ⏳ Pending |
+
+
 # Phase 4: Documentation View
 
 **Project Phase:** Help & Documentation  
@@ -245,3 +247,22 @@ Implement Restore Logic	Pull data from MongoDB and write it back to the local JS
 | Create .desktop File |	Create a Linux launcher file so the app appears in the system's application menu.	⏳ Pending
 Setup Packaging Config	Configure stdeb or dh-virtualenv in the pyproject.toml or setup.py to build the package.	⏳ Pending
 Build .deb Artifact	Run the build command to compile the application into a distributable .deb package.	⏳ Pending
+
+
+# Phase 7: Task Management & CRUD Operations
+
+**Project Phase:** Advanced Task Management
+**Goal/Objective:** Upgrade the Task View to support adding/deleting subtasks, handling new metadata fields (date_created, date_updated), and syncing with the new JSON schema.
+
+
+| Tasks |	Description	| Status |
+| --- | --- | --- |
+Update JSON Schema	Update the FileManager read/write methods and TaskTableModel headers to map the new column names.	⏳ Pending
+Implement insertRows() in Model	Add the insertRows() method to TaskTableModel so the View can dynamically insert blank rows for new subtasks.	⏳ Pending
+Add "Add Subtask" UI	Add a button below each phase's QTableView to trigger the model's insertRows() method and append a new subtask.	⏳ Pending
+Implement removeRows() in Model	Add a way for users to delete a subtask (e.g., a delete button or context menu) and update the model accordingly.	⏳ Pending
+Add Auto-Timestamps	Automatically generate date_created on row insertion, and update date_updated whenever a cell is edited.	⏳ Pending
+Hide Metadata Columns	Hide date_created and date_updated in the QTableView for a cleaner UI, while keeping them in the underlying data.	⏳ Pending
+Implement Status Styling	Update data() in TaskTableModel to apply colors (Red/Yellow/Green) or icons based on the status text.	⏳ Pending
+Update Save Logic	Refactor save_task_fun() to zip the UI models and properly extract and save the new keys to project_tasks.json.	⏳ Pending
+Migrate Old JSON Data	(Optional) Write a small script to convert old JSON files to the new schema, or delete old test files to prevent KeyErrors.	⏳ Pending

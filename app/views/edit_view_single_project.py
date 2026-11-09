@@ -66,14 +66,16 @@ class EditSingleProjectView(QWidget):
         buttonLayout = QHBoxLayout()
 
         saveBtn = QPushButton("save")
-        addTasks = QPushButton("Manage Tasks")
+        manageBtn = QPushButton("Manage Tasks")
         exitBtn = QPushButton("exit")
+        deleteBtn = QPushButton("Delete Project")
 
-        addTasks.clicked.connect(self.open_task_view)
+        manageBtn.clicked.connect(self.open_task_view)
 
         buttonLayout.addWidget(saveBtn)
+        buttonLayout.addWidget(manageBtn)
+        buttonLayout.addWidget(deleteBtn)
         buttonLayout.addWidget(exitBtn)
-        buttonLayout.addWidget(addTasks)
 
         def property_styled_label(text):
             """
@@ -128,6 +130,7 @@ class EditSingleProjectView(QWidget):
 
         saveBtn.clicked.connect(self.save_project_tasks_data)
         exitBtn.clicked.connect(self.exit_view)
+        deleteBtn.clicked.connect(self.delete_project)
 
         item_v_layout = QVBoxLayout()
         
@@ -247,9 +250,36 @@ class EditSingleProjectView(QWidget):
             self.task_window = None
 
 
+    def delete_project(self):
+        result = QMessageBox.warning(
+            self, 
+            "Warning", 
+            f"Are you sure you want to delete  project: {self.project_name}.\n This will delete the project and it's tasks. ",
+            buttons = QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel
+        )
+
+        if result == QMessageBox.StandardButton.Ok:
+            operation_result = self.fileManagerIns.delete_project(self.project_name)
+            if operation_result:
+                QMessageBox.information(
+                    self, 
+                    "Information", 
+                    "Project has been deleted successfully"
+                )
+
+            else:
+                QMessageBox.information(
+                    self, 
+                    "Information", 
+                    "An error occured while deleting the project! Contact support"
+                )
+
+
     def exit_view(self):
         """
         The method exit_view is used to close the view and connected to the exitBtn
         """
         print("close the view")
         self.close() # built in method for closing the Window
+
+

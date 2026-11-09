@@ -10,6 +10,7 @@ Exports:
 
 """
 import logging
+from send2trash import send2trash
 import json, os
 from rich.logging import RichHandler
 
@@ -379,6 +380,23 @@ class FileManager():
             return True # show status of above operation: success
         else:
             return False # show status of above operation: false
+
+    def delete_project(self, project_name) -> bool:
+        """
+        Method delete_project is used to delete a project
+        """
+
+        project_directory_path = self.app_folder  + "/" +project_name
+        try:
+            if os.path.exists(project_directory_path):
+                logger.debug("project folder found: %s", project_directory_path)
+                send2trash(f"{project_directory_path}")
+                return True
+            else:
+                return False
+        except Exception :
+            return False
+
 
 
 

@@ -20,7 +20,8 @@ Depends on:
 	- views.list_all_projects_view.ListAllProjects
 	- views.settings_view.SettingsView
 	- views.ask_ai_view.AskAIView
-
+	- views.docs_view.DocsView
+	
 Exports: 
 	HomeAppView
 """
@@ -44,6 +45,7 @@ from pydantic import NonNegativeFloat
 
 
 # importing classes
+from app.views.docs_view import DocsView
 from models.home_table_model import HomeTableModel
 from views.projects_page_view import ProjectAddView
 from views.view_projects import ViewProjects
@@ -80,6 +82,7 @@ class HomeAppView(QMainWindow):
 		self.project_views = None
 		self.project_edit_view = None
 		self.sychronize_view = None
+		self.help_view =None
 		self.task_view = None
 		self.ai_assistant_view = None
 		self.edit_single_project = None
@@ -207,8 +210,9 @@ class HomeAppView(QMainWindow):
 		self.sychronizeBtn = QPushButton("Sychronize")
 		self.exitApp = QPushButton("ExitApp")
 		self.ai_assistant = QPushButton("AI Assistant")
+		self.helpBtn = QPushButton("Help")
 
-		myButtons = [self.settingBtn, self.homeButton, self.searchBtn,  self.newProjectBtn,  self.viewProjectBtn, self.sychronizeBtn, self.exitApp, self.ai_assistant]
+		myButtons = [self.settingBtn, self.homeButton, self.searchBtn, self.helpBtn,  self.newProjectBtn,  self.viewProjectBtn, self.sychronizeBtn, self.exitApp, self.ai_assistant]
 		for button in myButtons:
 			button.setCheckable(True)
 			button.setStyleSheet("text-align: left; padding: 5px;")
@@ -220,6 +224,7 @@ class HomeAppView(QMainWindow):
 		self.settingBtn.clicked.connect(self.open_settings_view)
 		self.ai_assistant.clicked.connect(self.open_ai_asistant_view)
 		self.exitApp.clicked.connect(self.close_window)
+		self.helpBtn.clicked.connect(self.open_docs_view)
 		# homeButton.clicked.connect()
 		fastActionView.addWidget(self.searchBtn)
 		fastActionView.addWidget(self.homeButton)
@@ -229,6 +234,7 @@ class HomeAppView(QMainWindow):
 		fastActionView.addWidget(self.ai_assistant)
 		# fastActionView.addWidget(self.editProjectBtn)
 		fastActionView.addWidget(self.sychronizeBtn )
+		fastActionView.addWidget(self.helpBtn)
 		fastActionView.addWidget(self.settingBtn)
 		fastActionView.addWidget(self.exitApp)
 		fastActionView.addStretch(0)
@@ -715,7 +721,25 @@ class HomeAppView(QMainWindow):
 			self.ai_assistant_view.close()
 			self.ai_assistant_view = None
 
-
+	def open_docs_view(self, checked):
+		"""
+		Method open_docs_view is used for opening a QWidget window for DocsView class 
+		"""
+		logger.info("Opening DocsView window")
+		if checked:
+			if self.help_view is None:
+				self.help_view = DocsView()
+				self.help_view.show()
+		else:
+			if self.help_view is not None:
+				self.help_view.close()
+				self.help_view = None
+	
+	def handle_help_view_closed_signal(self):
+		if self.help_view is not None:
+			self.help_view.close()
+			self.help_view = None
+		
 
 
 		

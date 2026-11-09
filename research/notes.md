@@ -531,7 +531,7 @@ current = self.group_box.title()  # "Subtask
 ```
 
 
-## Prop Drilling
+# Prop Drilling
 in cass whereby, a config or a variable is required by another module, instead of passing this variable from one class to another, we use a class, which  only one instance can be found in the application.
 Some of this variables are called global application state (like ocnfiguration and paths)
 
@@ -603,7 +603,7 @@ print(juma_obj.age) # 23
 
 
 
-## Working with Path module
+# Working with Path module
 To get the file path of a module(pthon file) we use the below:
 ```py
 from pathlib import Path
@@ -625,3 +625,78 @@ APP_DIR = Path(__file__).resolve().parent
 print(APP_DIR)
 ```
 the output will not contain the file name, it will show the directory in which the file is: ``/home/username/`` 
+
+
+# Working with Ollama
+python provides ollama package which can be used to interact with ollama API. 
+To install ollama python package, first ensure you have python3 > , locall model downloaded using ``ollama pull modelName`` and pip
+
+**Install Ollama**  
+- 
+```bash
+python3 -m pip install ollama
+```
+
+
+1. For MultiChat Conversations
+We use: ``ollama.Chat()``
+for role-based, multi-turn conversations. It’s great for building assistants with multi-turn interactions and context.
+
+```py
+from ollama import Chat
+
+messages = [
+    {
+        'role': "user", 
+        "content": "some message"
+    }
+]
+response = chat(model="model_name", content=messages)
+
+# access the message
+print(response.message.content)
+
+# to add context of the conversation
+messages.append(response.message)
+```
+chat is a class imported from ollama
+It receives 2 argumetns: 
+- model : this is the model you have installed
+- content : the message you pass to the model
+- ``messages``:  message is a list of dictionaries becuase the chat interface is built for multi-turn conversations. 
+- dictionary : for each dictionary in the messages array, it has the keys : ``role`` & ``content``.
+- the call to ``chat(model="", message=messages)`` generates a ChatResponse that has multiple attributes. 
+use ``response.message.content`` to access the generated answer.
+- To keep the context of the current conversation, one can append the answer: ``response.message`` to the ``messages`` array. 
+
+- The chatResponse message body ``response.message`` consist of of the following keys:
+- role 
+- content
+- thinking
+- images
+- toolName 
+- toolCalls
+
+E.g
+```bash
+```
+
+
+**Working with Stream**   
+At anytime you may want to access partial messages from the chat, we set   ``stream=True``. 
+
+```py
+from ollama import Chat
+
+messages = [
+    {'role': "user", "content": "some message.."}
+]
+
+reponse = chat(model="model name", message=messages, stream=True)
+
+for chunk in stream:
+    print(chunk.message.content, end="", flush=True)
+```
+
+
+

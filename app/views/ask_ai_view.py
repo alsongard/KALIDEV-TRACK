@@ -14,7 +14,7 @@ from re import S
 import re
 from typing import Container
 from PySide6.QtWidgets import QApplication, QGroupBox, QHBoxLayout, QTextEdit, QScrollArea, QVBoxLayout, QWidget, QPushButton, QLabel, QLineEdit
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, Signal
 from ollama import chat
 import logging
 from rich.logging import RichHandler
@@ -39,7 +39,7 @@ class AskAIView(QWidget):
     Class Attributes:
 
     """
-
+    closed = Signal()
     def __init__(self):
         """
         Initializes the AskAIView class and sets up the user interface components.
@@ -178,8 +178,9 @@ class AskAIView(QWidget):
         # Add a spacer to push everything up
         self.scroll_widget_layout.addStretch(1)
 
-
-
+    def closeEvent(self, event):
+        self.closed.emit()
+        super().closeEvent(event)
 
 
 

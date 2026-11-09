@@ -74,7 +74,7 @@ class TaskTableModel(QtCore.QAbstractTableModel):
             row = index.row()  # represents the dictionary row index in list
             column = index.column() # represents the column which can be mapped to the key
 
-            key = self.headers[column].lower()
+            key = self.headers[column]
 
 
             # logger.debug("Data edited on row: %s , key %s", row, key)

@@ -14,7 +14,7 @@ Exports:
 """
 
 
-from PySide6.QtWidgets import QMessageBox, QTableView, QHBoxLayout, QGridLayout, QLineEdit ,QPushButton, QSizePolicy, QGroupBox, QFrame, QWidget, QApplication, QMainWindow, QLabel,QVBoxLayout, QScrollArea
+from PySide6.QtWidgets import QLayout, QMessageBox, QTableView, QHBoxLayout, QGridLayout, QLineEdit ,QPushButton, QSizePolicy, QGroupBox, QFrame, QWidget, QApplication, QMainWindow, QLabel,QVBoxLayout, QScrollArea
 from  PySide6 import QtCore
 from PySide6.QtCore import Qt, Signal
 import sys
@@ -130,7 +130,8 @@ class TaskViewWidget(QWidget):
 
         # print()
         # print("-------")
-        phase_count = 0
+
+        self.phase_count = 0
 
         if len(self.returned_task_data) == 0:
             # display something else
@@ -181,7 +182,7 @@ class TaskViewWidget(QWidget):
                 self.removeBtn = QPushButton("Remove Row")
                 self.deleteBtn = QPushButton("Delete Phase")
 
-                self.deleteBtn.clicked.connect(self.delete_single_phase)
+                self.deleteBtn.clicked.connect(partial(self.delete_single_phase, self.phase_count))
                 self.insertBtn.clicked.connect(partial(self.insert_row, self.model))
                 self.removeBtn.clicked.connect(partial(self.remove_row, self.model, self.phaseTable))
 
@@ -197,6 +198,9 @@ class TaskViewWidget(QWidget):
                 # self.mainLayout.addWidget(self.phaseContentGroupBox)
                 self.phase_content_groupbox_array.append(self.phaseContentGroupBox)
                 self.vert_layout.addWidget(self.phaseContentGroupBox) # add to vertial layout
+
+                # increment self.phase_count
+                self.phase_count += 1
 
         # self.projectName = QLabel()
         # self.projectName.setText(self.returned_task_data["project"])
@@ -359,17 +363,44 @@ class TaskViewWidget(QWidget):
             "Are you sure you want to delete all the project phases ? This action cannot be reversed!!",
             buttons = QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel
         )
-        if response:
+        if response == QMessageBox.StandardButton.Ok:
             logger.debug("all project phases removed")
         else: 
             logger.debug("Action canceled!")
 
 
-    def delete_single_phase(self):
+    def delete_single_phase(self, phase_count):
         """
         Method delete_single_phase is used to remove a single phase from project phases
         """
+
         logger.debug("removing project phase: someName")
+        response = QMessageBox.warning(
+            self, 
+            "Warning", 
+            "Are you sure you want to delete this phase?",
+            buttons=QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel
+        )
+        
+        if response == QMessageBox.StandardButton.Ok:
+            # deleting from the layout
+            layout_item = self.vert_layout.itemAt(phase_count)
+            if layout_item is not None:
+                found_widget = layout_item.widget() # Extract the QWidget
+                
+                if found_widget is not None :
+                    # we can then remove the entire phaseContentGroupBox: 
+                    self.vert_layout.removeWidget(found_widget)
+                    found_widget.deleteLater()
+
+            del self.subtasks_model_array[phase_count]
+            del self.phase_content_groupbox_array[phase_count]
+        
+        else:
+            logger.debug("Phase not deleted")
+
+
+
 
     def insert_row(self, model):
         """

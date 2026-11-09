@@ -5,7 +5,8 @@ Purpose:
     Proviedes a view for the Ask AI feature in the application. This view allows users to input their questions and receive answers from the AI model.
 
 
-Depends: 
+Depends:
+    utils.config_manager.ConfigManager
 
 
 """
@@ -17,6 +18,9 @@ from PySide6.QtCore import Qt
 from ollama import chat
 import logging
 from rich.logging import RichHandler
+
+
+from app.utils.config_manager import ConfigManager
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -177,11 +181,5 @@ class AskAIView(QWidget):
 
 
 
-        
 
-
-app = QApplication([])
-window = AskAIView()
-window.show()
-app.exec()
 

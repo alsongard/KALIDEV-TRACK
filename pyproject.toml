@@ -9,6 +9,8 @@ dependencies = [
     "python-dotenv",
     "Send2Trash",
     "bcrypt",
+    "request", 
+    "ollama"
 ]
 
 [project.optional-dependencies]

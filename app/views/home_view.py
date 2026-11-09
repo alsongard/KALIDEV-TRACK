@@ -19,6 +19,7 @@ Depends on:
 	- views.edit_view_single_project.EditSingleProjectView
 	- views.list_all_projects_view.ListAllProjects
 	- views.settings_view.SettingsView
+	- views.ask_ai_view.AskAIView
 
 Exports: 
 	HomeAppView
@@ -39,6 +40,8 @@ from PySide6.QtWidgets import QApplication
 import sys
 import os
 
+from pydantic import NonNegativeFloat
+
 
 # importing classes
 from models.home_table_model import HomeTableModel
@@ -51,7 +54,7 @@ from utils.button_delegate import ButtonDelegate
 from views.edit_view_single_project import EditSingleProjectView
 from views.list_all_projects_view import ListAllProjects
 from views.settings_view import SettingsView
-
+from views.ask_ai_view import AskAIView
 
 
 import logging
@@ -78,6 +81,7 @@ class HomeAppView(QMainWindow):
 		self.project_edit_view = None
 		self.sychronize_view = None
 		self.task_view = None
+		self.ai_assistant_view = None
 		self.edit_single_project = None
 		# we are creating a QMenuBar object() : we are using menuBar() method from QMainWindow()
 		menuBarObject = self.menuBar()
@@ -202,8 +206,9 @@ class HomeAppView(QMainWindow):
 		# self.editProjectBtn = QPushButton("Edit Project")
 		self.sychronizeBtn = QPushButton("Sychronize")
 		self.exitApp = QPushButton("ExitApp")
+		self.ai_assistant = QPushButton("AI Assistant")
 
-		myButtons = [self.settingBtn, self.homeButton, self.searchBtn,  self.newProjectBtn,  self.viewProjectBtn, self.sychronizeBtn, self.exitApp]
+		myButtons = [self.settingBtn, self.homeButton, self.searchBtn,  self.newProjectBtn,  self.viewProjectBtn, self.sychronizeBtn, self.exitApp, self.ai_assistant]
 		for button in myButtons:
 			button.setCheckable(True)
 			button.setStyleSheet("text-align: left; padding: 5px;")
@@ -213,6 +218,7 @@ class HomeAppView(QMainWindow):
 		self.viewProjectBtn.clicked.connect(self.open_view_projects_page)
 		self.sychronizeBtn.clicked.connect(self.open_sychronization_backup_page)
 		self.settingBtn.clicked.connect(self.open_settings_view)
+		self.ai_assistant.clicked.connect(self.open_ai_asistant_view)
 		self.exitApp.clicked.connect(self.close_window)
 		# homeButton.clicked.connect()
 		fastActionView.addWidget(self.searchBtn)
@@ -220,6 +226,7 @@ class HomeAppView(QMainWindow):
 		fastActionView.addWidget(self.newProjectBtn)
 		# fastActionView.addWidget(self.addTaskBtn)
 		fastActionView.addWidget(self.viewProjectBtn)
+		fastActionView.addWidget(self.ai_assistant)
 		# fastActionView.addWidget(self.editProjectBtn)
 		fastActionView.addWidget(self.sychronizeBtn )
 		fastActionView.addWidget(self.settingBtn)
@@ -679,6 +686,34 @@ class HomeAppView(QMainWindow):
 			self.settings_view.close()
 			self.settings_view = None
 			self.settingBtn.setChecked(False)
+
+	def open_ai_asistant_view(self, checked):
+		"""
+		Method open_ai_assistant_view is handles opening a AI assistant view
+
+		Args:
+			checked(bool): status of button
+		"""
+		logger.debug("open_ai_assistant_view executed")
+		logger.debug("button status: %s", checked)
+		logger.debug("Status of self.ai_assistant: %s", self.ai_assistant_view)
+
+		if checked:
+			if self.ai_assistant_view is None:
+				self.ai_assistant_view = AskAIView()
+				self.ai_assistant_view.closed.connect(self.handles_ai_asisstant_view_closed_signal)
+				self.ai_assistant_view.show()
+			else:
+				self.ai_assistant_view.close()
+				self.ai_assistant_view = None
+
+	def handles_ai_asisstant_view_closed_signal(self):
+		"""
+		Method handles_ai_assistant_view_closed_signal is used to handle the closed signal emited by AskAIView class
+		"""
+		if self.ai_assistant_view is not None:
+			self.ai_assistant_view.close()
+			self.ai_assistant_view = None
 
 
 

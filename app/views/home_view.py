@@ -458,24 +458,31 @@ class HomeAppView(QMainWindow):
 				project_start_date = datetime.strptime(project["project_start_date"], date_format)
 				project_end_date = datetime.strptime(project["project_end_date"], date_format)
 
+				# logger.debug("project title: %s", project["project_title"])
 				# logger.debug("project_start_date: %s", project_start_date)
-				# logger.debug("project_end_date: %s", project_end_date)
+				logger.debug("project_end_date: %s", project_end_date)
 
 				# getting the differences between the dates: preferably in days
 				# comparing the current date and the deadline: using comparisons < > 
 				# logger.debug("todays date: %s", todays_date)
 				
 				if (project_start_date.date() > todays_date):# future projects
+					# logger.debug("project in future")
 					self._upcoming_activies.append(project["project_title"])
 					self._display_projects.append([project["project_title"], project["project_priority"],  project["project_start_date"], project["project_end_date"], "Future", ""])
-				elif (project_start_date.date() <= todays_date and project_end_date.date() > todays_date ):# start with active projects
+				
+				elif (project_start_date.date() <= todays_date and project_end_date.date() >= todays_date ):# start with active projects
+					logger.debug("project in active")
 					self._active_activities.append(project["project_title"])
 					self._display_projects.append([project["project_title"], project["project_priority"],  project["project_start_date"], project["project_end_date"], "Active", ""])
-				elif (project_end_date.date() < todays_date) : # Overdue projects
+				
+				elif (project_end_date.date() < todays_date) : # Overdue and Finished projects
 					if (project["project_status"].lower() == "completed" or project["project_status"].lower() == "finished"):
+						# logger.debug("project completed")
 						self._completed_activities.append(project["project_title"])
 						self._display_projects.append([project["project_title"], project["project_priority"],  project["project_start_date"], project["project_end_date"], "Completed", ""])
 					else:
+						# logger.debug("project passed due date")
 						self._passdeadline_activies.append(project["project_title"])
 						self._display_projects.append([project["project_title"], project["project_priority"],  project["project_start_date"], project["project_end_date"], "Overdue", ""])
 		elif mode == "Completed":
@@ -493,7 +500,7 @@ class HomeAppView(QMainWindow):
 			for index, project in enumerate(self._all_projects):
 				project_start_date = datetime.strptime(project["project_start_date"], date_format)
 				project_end_date = datetime.strptime(project["project_end_date"], date_format)
-				if (project_start_date.date() < today.date() and project_end_date.date() > todays_date ):# start with active projects
+				if (project_start_date.date() <= today.date() and project_end_date.date() >= todays_date ):# start with active projects
 					self._display_projects.append([project["project_title"], project["project_priority"],  project["project_start_date"], project["project_end_date"], "Active", ""])
 			
 			logger.debug("Length of displayed projects: %s", len(self._display_projects))

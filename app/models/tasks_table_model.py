@@ -106,4 +106,28 @@ class TaskTableModel(QtCore.QAbstractTableModel):
             | Qt.ItemFlag.ItemIsEnabled 
             | Qt.ItemFlag.ItemIsEditable
         )
+
+    def insertRows(self, position,  rows: int,   parent = QtCore.QModelIndex()) -> bool:
+        """
+        Method insertRows is used to override the QAbstractTableModel insertRows and adds a new row at the end of the table
+        """
+        self.beginInsertRows(parent, position, position + rows - 1)
+        logger.debug("position: %s, rows: %s", position, rows)
+        for i in range(rows):
+            empty_dict = {"Module": "", "Description": "", "Status": ""}
+            self._data.insert(position + 1, empty_dict)
+        self.endInsertRows()
+        return True
+
+    def removeRows(self, position: int,  rows: int, parent = QtCore.QModelIndex()) -> bool:
+        """
+        Method removeRows is used to the selected row 
+        """
+        self.beginRemoveRows(parent, position, position + rows - 1)
+        logger.debug("position: %s, rows: %s", position, rows)
+
+        for i in range(rows):
+            del self._data[position]
+        self.endRemoveRows()
+        return True
         

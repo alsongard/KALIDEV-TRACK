@@ -1,5 +1,5 @@
 
-from PySide6.QtWidgets import QApplication, QGraphicsPixmapItem, QTableView, QVBoxLayout, QWidget
+from PySide6.QtWidgets import QApplication, QGraphicsPixmapItem, QHBoxLayout, QPushButton, QTableView, QVBoxLayout, QWidget
 from PySide6 import QtCore
 from PySide6.QtCore import Qt
 import logging
@@ -24,12 +24,12 @@ class TableModel(QtCore.QAbstractTableModel):
 
     def rowCount(self, index):
         # returns the length of the entire data
-        logger.debug("rowCount: %s", len(self._data))
+        # logger.debug("rowCount: %s", len(self._data))
         return len(self._data)
 
     def columnCount(self, index) -> int:
         # returns the length of the columns e.g for row 0 same as others
-        logger.debug("columnCount: %s", len(self._data[0]))
+        # logger.debug("columnCount: %s", len(self._data[0]))
         return len(self._data[0])
 
 
@@ -44,8 +44,8 @@ class TableModel(QtCore.QAbstractTableModel):
             return None
 
         if role == Qt.ItemDataRole.DisplayRole or role == Qt.ItemDataRole.EditRole:
-            logger.debug("Index:  %s", index)
-            logger.debug("row: %s, column: %s", index.row(), index.column())
+            # logger.debug("Index:  %s", index)
+            # logger.debug("row: %s, column: %s", index.row(), index.column())
             
             # get dictionary in list for the current row
             row_dict = self._data[index.row()]
@@ -56,7 +56,7 @@ class TableModel(QtCore.QAbstractTableModel):
 
             value = row_dict.get(column_key, "") # retrieves value from the dictionary
 
-            logger.debug("Value: %s", value)
+            # logger.debug("Value: %s", value)
             return str(value)
         return None    
 
@@ -83,6 +83,25 @@ class TableModel(QtCore.QAbstractTableModel):
             self._data[row_num][key] = value # value is was the user inserts
             return True
 
+    def insertRows(self, position, rows, parent=QtCore.QModelIndex()):
+        self.beginInsertRows(parent, position, position+ rows -1)
+        logger.debug("position: %s, rows: %s, ", position, rows)
+        position = len(self._data) 
+        for i in range(rows):
+            empty_dict ={"id": " ","first_name": "","last_name": "","email": "","gender": "","University": ""}
+            self._data.insert(position, empty_dict)
+        self.endInsertRows()
+        # self.layoutChanged.emit()
+        return True
+
+    def removeRows(self, position, rows,  parent = QtCore.QModelIndex()) -> bool:
+        logger.debug("position: %s, rows: %s", position, rows)
+        self.beginRemoveRows(parent, position, position + rows - 1)
+        for i in range(rows):
+            del self._data[position]
+        self.endRemoveRows()
+        # self.layoutChanged.emit()
+        return True
 
 
 
@@ -117,15 +136,40 @@ class StudentTable(QWidget):
         ]
 
         header_data = ["id", "first_name", "last_name", "email", "gender", "University"]
-        model = TableModel(student_data,  header_data=header_data)
-        myTable = QTableView()
-        myTable.setModel(model)
+        self.model = TableModel(student_data,  header_data=header_data)
+        self.myTable = QTableView()
+        self.myTable.setModel(self.model)
 
-        self.main_layout.addWidget(myTable)
+        self.main_layout.addWidget(self.myTable)
 
+        hor_layout = QHBoxLayout()
+        insertBtn = QPushButton("Insert Row")
+        removeBtn = QPushButton("Remove Row")
+        insertBtn.clicked.connect(self.insert_row)
+        removeBtn.clicked.connect(self.remove_row)
 
+        hor_layout.addWidget(insertBtn)
+        hor_layout.addWidget(removeBtn)
+        self.main_layout.addLayout(hor_layout)
 
+        self.setMinimumSize(400, 400)
         self.setLayout(self.main_layout)
+        
+    def remove_row(self):
+        """
+        Method remove_row is used to remove row in the table from current selected row
+        """
+
+        index = self.myTable.currentIndex()
+        self.model.removeRows(index.row(), 1)
+
+    def insert_row(self):
+        """
+        Method insert_row is used to insert a row at the table based on the ucrrent selectd row
+        """
+        index = self.myTable.currentIndex()
+        self.model.insertRows(index.row(), 1)
+        
 
 app = QApplication([])
 window = StudentTable()

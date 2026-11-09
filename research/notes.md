@@ -530,6 +530,36 @@ To retrieve the title of a QGroupBox:
 current = self.group_box.title()  # "Subtask 
 ```
 
+## Adding & Removing Rows from a Table
+1. Adding/Inserting rows
+To insert rows, one must override the ``insertRows()`` method of QAbstractTableModel
+```py
+def insertRows(self, position, rows, parent=QtCore.QModelIndex()):
+    self.beginInsertRows(parent, position, position + rows -1)
+    for i in range(rows):
+        default_row = [""] * self.columnCount(None) # creates a list with empty values
+        self._data.insert(position, default_row) # inserts the row  at the given position
+    self.endInsertRows()
+    return True
+```
+
+- ``beginInsertRows()`` : this method informs the views that rows are bout to be added
+- actual modify the data using
+- ``endInsertRows()`` : the method notifies the view that the insertion operation has ended
+- ``position`` is the insertion point and ``rows`` is the number of rows to insert.
+
+
+2. Removing rows
+to remove rows from a Table we override: ``removeRows()`` method
+```py
+def removeRows(self, position, rows, parent=QtCore.QModelIndex()):
+    self.beginRemoveRows(parent, position, position + rows - 1)
+    
+    for i in range(rows):
+        del self._data[position]
+    self.endRemoveRows()
+    return True
+```
 
 # Prop Drilling
 in cass whereby, a config or a variable is required by another module, instead of passing this variable from one class to another, we use a class, which  only one instance can be found in the application.

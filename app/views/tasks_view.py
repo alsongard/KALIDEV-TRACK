@@ -23,6 +23,7 @@ import sys
 from app.utils.file_operations import FileManager
 from app.models.tasks_table_model import TaskTableModel
 from app.views.create_tasks_widget import CreateTaskWidget
+from functools import partial   
 
 import logging
 from rich.logging import RichHandler
@@ -89,7 +90,7 @@ class TaskViewWidget(QWidget):
         saveTaskBtn =  QPushButton('Save Phases')
         saveTaskBtn.setCheckable(True)
         saveTaskBtn.setObjectName("saveTaskBtn")
-        deleteTaskBtn = QPushButton("Delete Phase")
+        deleteTaskBtn = QPushButton("Delete All Phase")
         deleteTaskBtn.setCheckable(True)
         deleteTaskBtn.setObjectName("deleteTaskBtn")
         deleteTaskBtn.setCheckable(True)
@@ -99,7 +100,7 @@ class TaskViewWidget(QWidget):
 
         createTaskBtn.clicked.connect(self.create_new_task_fun)
         saveTaskBtn.clicked.connect(self.save_task_fun)
-        deleteTaskBtn.clicked.connect(self.delete_task_fun)
+        deleteTaskBtn.clicked.connect(self.delete_all_phases)
         exitViewBtn.clicked.connect(self.close_window)
 
         self.fastActionVLayout.addWidget(createTaskBtn)
@@ -175,6 +176,21 @@ class TaskViewWidget(QWidget):
                 self.phaseTable.resizeColumnsToContents()
 
                 self.phaseLayout.addWidget(self.phaseTable)
+                button_horizontal_layout = QHBoxLayout()
+                self.insertBtn = QPushButton("Insert Row")
+                self.removeBtn = QPushButton("Remove Row")
+                self.deleteBtn = QPushButton("Delete Phase")
+
+                self.deleteBtn.clicked.connect(self.delete_single_phase)
+                self.insertBtn.clicked.connect(partial(self.insert_row, self.model))
+                self.removeBtn.clicked.connect(partial(self.remove_row, self.model, self.phaseTable))
+
+                button_horizontal_layout.addWidget(self.deleteBtn, alignment=Qt.AlignmentFlag.AlignLeft)
+                button_horizontal_layout.addWidget(self.insertBtn, alignment=Qt.AlignmentFlag.AlignLeft)
+                button_horizontal_layout.addWidget(self.removeBtn, alignment=Qt.AlignmentFlag.AlignLeft)
+                button_horizontal_layout.addStretch(0)
+
+                self.phaseLayout.addLayout(button_horizontal_layout)
 
                 self.phaseContentGroupBox.setMinimumSize(200, 250)
                 self.phaseContentGroupBox.setLayout(self.phaseLayout) # phaseContentGroupBox layout is set
@@ -266,6 +282,9 @@ class TaskViewWidget(QWidget):
     
 
     def save_task_fun(self):
+        """
+        Method save_task_fun is used to save changes after user has edited subtasks for the project phases
+        """
         logger.debug("this button is linked to saveBtn signal")
         project_phases = {
             "project" : self.project_name, 
@@ -329,8 +348,53 @@ class TaskViewWidget(QWidget):
                 buttons=QMessageBox.StandardButton.Ok
             )
 
-    def delete_task_fun(self):
+    def delete_all_phases(self):
+        """
+        Method delete_all_phases is used to remove all project phases in project_task.json
+        """
         logger.debug("this button  is  linked to deleteBtn signal")
+        response = QMessageBox.warning(
+            self,
+            "Warning",
+            "Are you sure you want to delete all the project phases ? This action cannot be reversed!!",
+            buttons = QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel
+        )
+        if response:
+            logger.debug("all project phases removed")
+        else: 
+            logger.debug("Action canceled!")
+
+
+    def delete_single_phase(self):
+        """
+        Method delete_single_phase is used to remove a single phase from project phases
+        """
+        logger.debug("removing project phase: someName")
+
+    def insert_row(self, model):
+        """
+        Method insert_row is a button slot function that is used for inserting rows to a table.
+        Inserts a row at the end of the table
+        """
+        model.insertRows(model.rowCount(), 1)
+            
+
+
+    def remove_row(self, model, table):
+        """
+        Method remove_row is a button sot function that is used for removing rows to a table
+        """
+        index = table.currentIndex() # retrieves the  QModelIndex of the row
+        if index.isValid():
+            model.removeRows(index.row(), 1)
+        else:
+            QMessageBox.information(
+                self,
+                "Information", 
+                "Select a row to be removed", 
+                buttons=QMessageBox.StandardButton.Ok   
+            )
+
 
 
 # project_name = "KALIDEV-track"

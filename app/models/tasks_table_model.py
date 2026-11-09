@@ -14,28 +14,40 @@ from  PySide6 import QtCore
 from PySide6.QtCore import Qt, QModelIndex
 import logging
 
+
 logger = logging.getLogger(__name__)
 # Model , View & Controller (MVC) : View & Controller are treated as one
 class TaskTableModel(QtCore.QAbstractTableModel):
     """
+    Class TaskTableModel inherits form QAbstractTableModel and setups the model for QTableView
 
     """
     
     def __init__(self, mydata, myHeaderData): 
+        """
+        Class constructor method used for initializing an instance of class TaskTableModel
+
+        Args:
+            - mydata (list) : a list containing the data for the table
+            - myHeaderData (list) : a list containing the headers 
+        """
         super().__init__()
         self._data = mydata
         self.headers = myHeaderData
         self._column_keys = ["Module", "Description", "Status"]
 
-    # returns rowCount
-    def rowCount(self, parent=QModelIndex()): 
+    def rowCount(self, parent: QModelIndex = QModelIndex()) -> int:  # pyright: ignore[reportIncompatibleMethodOverride]
         # print(f"this is index in rowCount: {index}")
-        return len(self._data)
-
-    # returns column count
-    def columnCount(self, parent=QModelIndex()):
+        if parent.isValid():
+            return 0
+        return len(self._data)  
+        
+        
+    def columnCount(self, parent: QModelIndex = QModelIndex()) -> int:  # pyright: ignore[reportIncompatibleMethodOverride]
         # print(f" this is count in columnCount method: {len(self.data[0])}")
-        return len(self._column_keys)
+        if parent.isValid():
+            return 0
+        return len(self._column_keys)   
 
     # returns headers
     def headerData(self, section, orientation, role=Qt.ItemDataRole.DisplayRole):
@@ -94,4 +106,28 @@ class TaskTableModel(QtCore.QAbstractTableModel):
             | Qt.ItemFlag.ItemIsEnabled 
             | Qt.ItemFlag.ItemIsEditable
         )
+
+    def insertRows(self, position,  rows: int,   parent = QtCore.QModelIndex()) -> bool:
+        """
+        Method insertRows is used to override the QAbstractTableModel insertRows and adds a new row at the end of the table
+        """
+        self.beginInsertRows(parent, position, position + rows - 1)
+        logger.debug("position: %s, rows: %s", position, rows)
+        for i in range(rows):
+            empty_dict = {"Module": "", "Description": "", "Status": ""}
+            self._data.insert(position + 1, empty_dict)
+        self.endInsertRows()
+        return True
+
+    def removeRows(self, position: int,  rows: int, parent = QtCore.QModelIndex()) -> bool:
+        """
+        Method removeRows is used to the selected row 
+        """
+        self.beginRemoveRows(parent, position, position + rows - 1)
+        logger.debug("position: %s, rows: %s", position, rows)
+
+        for i in range(rows):
+            del self._data[position]
+        self.endRemoveRows()
+        return True
         

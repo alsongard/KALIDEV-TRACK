@@ -122,9 +122,27 @@ QMessageBox.question(
         buttons=QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
         defaultButton=QMessageBox.StandardButton.No
 )
+
 ```
 
-Error : Positional argument error
+The return value of QMessageBox is a ``QMessage.StandardButton``. In the example below, one can check the return value to perform other operations.
+
+```py
+
+result = QMessageBox.question(
+    self,
+    "Confirm Action",
+    "Are you sure you want to delete this file? This action cannot be undone.",
+    buttons=QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+    defaultButton=QMessageBox.StandardButton.No
+)
+
+if result:
+    # perform operation
+
+```
+
+**Error : Positional argument error**  
 Positional argument: not parameter name is used when passing the argument
 Keyword argument: key=argument
 
@@ -561,6 +579,26 @@ def removeRows(self, position, rows, parent=QtCore.QModelIndex()):
     return True
 ```
 
+## Passing widget to a layout's parent
+Instead of having to set the layout for a Widget, you could pass a Widget to the layout.
+E.g
+```py
+account_gb = QGroupBox("Account")
+account_gb_layout = QVBoxLayout(account_gb)
+```
+
+
+## Images in PySide6
+In PySide6, to set an image we use ``QImage`` which is used to hold the image data and ``QLabel``
+for displaying the image.
+
+```py
+
+
+```
+
+
+
 # Prop Drilling
 in cass whereby, a config or a variable is required by another module, instead of passing this variable from one class to another, we use a class, which  only one instance can be found in the application.
 Some of this variables are called global application state (like ocnfiguration and paths)
@@ -727,6 +765,3 @@ reponse = chat(model="model name", message=messages, stream=True)
 for chunk in stream:
     print(chunk.message.content, end="", flush=True)
 ```
-
-
-

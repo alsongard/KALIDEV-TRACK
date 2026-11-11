@@ -229,8 +229,8 @@ import logging
 loggin.basicConfig(
     level=logging.DEBUG, # the level of logger e.g DEBUG, INFO
     format="%s(message)s",
-    handlers=[RichHandler(rich_tracebacks=True)]
-    datefmt="[%x]", 
+    handlers=[RichHandler(rich_tracebacks=True)],
+    datefmt="[%x]"
 )
 
 logger = logging.getLogger(__name__)
@@ -593,9 +593,38 @@ In PySide6, to set an image we use ``QImage`` which is used to hold the image da
 for displaying the image.
 
 ```py
-
-
+image= QPixmap("Image_location")
+image_label = QLabel()
+image_label.setPixmap(image)
 ```
+
+
+## Menu Bar
+- Defining you QAction
+```py
+open_file_action = QAction("&Open file")
+open_file_action.setStatusTip("Opens windw explorer")
+open_file_action.triggered.connect(self.open_file_manager_application)
+
+
+
+def open_file_manager_application(self):
+    """
+    """
+    logger.debug("Opens up file manager application")
+```
+
+```py
+self.menu = self.meuBar()
+
+
+file_menu = menu.addMenu("&File")
+file_menu.addAction(open_file_action)
+```
+
+Method ``self.menuBar()`` must be called on a class that inherits from the  QMainWindow class. 
+
+You can define a single QAction, defining the triggered action, and then add this action to both the menu and the toolbar. Each QAction has names, status messages, icons, and signals that you can connect to (and much more).
 
 
 

@@ -227,7 +227,6 @@ class HomeAppView(QMainWindow):
 		self.homeButton = QPushButton("Home")
 		# homeButton.setStyleSheet("font-size:30px;")
 		self.settingBtn = QPushButton('Setting')
-		self.searchBtn = QPushButton("Search")
 		self.newProjectBtn = QPushButton("New Project")
 		# self.addTaskBtn = QPushButton("Add Task For Project")
 		self.viewProjectBtn = QPushButton("Manage Projects")
@@ -235,28 +234,30 @@ class HomeAppView(QMainWindow):
 		self.sychronizeBtn = QPushButton("Sychronize")
 		self.exitApp = QPushButton("ExitApp")
 		self.ai_assistant = QPushButton("AI Assistant")
+		self.performanceBtn = QPushButton("Projects Analysis")
 		self.helpBtn = QPushButton("Help")
 
-		myButtons = [self.settingBtn, self.homeButton, self.searchBtn, self.helpBtn,  self.newProjectBtn,  self.viewProjectBtn, self.sychronizeBtn, self.exitApp, self.ai_assistant]
+		myButtons = [self.settingBtn, self.homeButton, self.helpBtn, self.performanceBtn,  self.newProjectBtn,  self.viewProjectBtn, self.sychronizeBtn, self.exitApp, self.ai_assistant]
 		for button in myButtons:
 			button.setCheckable(True)
 			button.setStyleSheet("text-align: left; padding: 5px;")
 
 
-		self.newProjectBtn.clicked.connect(self.open_new_project_view_fun)
-		self.viewProjectBtn.clicked.connect(self.open_view_projects_page)
+		self.newProjectBtn.clicked.connect(self.open_new_project_view)
+		self.viewProjectBtn.clicked.connect(self.open_manage_project_view)
 		self.sychronizeBtn.clicked.connect(self.open_sychronization_backup_page)
 		self.settingBtn.clicked.connect(self.open_settings_view)
 		self.ai_assistant.clicked.connect(self.open_ai_asistant_view)
+		self.performanceBtn.clicked.connect(self.open_project_analysis_view)
 		self.exitApp.clicked.connect(self.close_window)
 		self.helpBtn.clicked.connect(self.open_docs_view)
 		# homeButton.clicked.connect()
-		fastActionView.addWidget(self.searchBtn)
 		fastActionView.addWidget(self.homeButton)
 		fastActionView.addWidget(self.newProjectBtn)
 		# fastActionView.addWidget(self.addTaskBtn)
 		fastActionView.addWidget(self.viewProjectBtn)
 		fastActionView.addWidget(self.ai_assistant)
+		fastActionView.addWidget(self.performanceBtn)
 		# fastActionView.addWidget(self.editProjectBtn)
 		fastActionView.addWidget(self.sychronizeBtn )
 		fastActionView.addWidget(self.helpBtn)
@@ -704,20 +705,24 @@ class HomeAppView(QMainWindow):
 
 		# self.apply_filter()
 
-	def close_window(self):
-		logger.debug("Closing the application")
-		self.close()
-		if self.w is not None:
-			self.w.close() # close the project view page
-		if self.project_views is not None:
-			self.project_views.close() # close the view projects page
-		if self.project_edit_view is not None:
-			self.project_edit_view.close() # close the edit project page
-		if self.sychronize_view is not None:
-			self.sychronize_view.close() # close the sychronization backup page
-		if self.edit_single_project is not None:
-			self.edit_single_project.close()
+	def close_window(self, checked):
+		"""
+		Method close_window is used to close all windows of the program
+		"""
+		if checked:
+			logger.debug("Closing the application")
+			if self.w is not None:
+				self.w.close() # close the project view page
+			if self.project_views is not None:
+				self.project_views.close() # close the view projects page
+			if self.project_edit_view is not None:
+				self.project_edit_view.close() # close the edit project page
+			if self.sychronize_view is not None:
+				self.sychronize_view.close() # close the sychronization backup page
+			if self.edit_single_project is not None:
+				self.edit_single_project.close()
 
+			self.close() # closes the application
 	
 	def open_task_view(self):
 		"""
@@ -797,10 +802,27 @@ class HomeAppView(QMainWindow):
 				self.help_view = None
 	
 	def handle_help_view_closed_signal(self):
+		"""
+		Method handle_help_view_closed_signal is used to handle the closed Signal for DocsView class.
+		"""
 		if self.help_view is not None:
 			self.help_view.close()
 			self.help_view = None
 		
+	def open_project_analysis_view(self, checked):
+		"""
+		Method open_project_analysis_view is used for opening the ProjectAnalysisView class
+		"""
+		if checked:
+			QMessageBox.information(
+				self, 
+				"Information", 
+				"This feature is comming soon",
+				buttons=QMessageBox.StandardButton.Ok
+			)
+		
+		self.performanceBtn.setChecked(False)
+
 
 
 		

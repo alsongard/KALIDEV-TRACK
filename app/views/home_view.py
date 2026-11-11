@@ -86,43 +86,68 @@ class HomeAppView(QMainWindow):
 		self.task_view = None
 		self.ai_assistant_view = None
 		self.edit_single_project = None
-		# we are creating a QMenuBar object() : we are using menuBar() method from QMainWindow()
-		menuBarObject = self.menuBar()
 		self.settings_view = None
 
-		# adding menues to the menuBar
-		fileMenuBarMenue = menuBarObject.addMenu("&File")
-		helpMenuBarMenue = menuBarObject.addMenu("&Help")
-		viewMenuBarMenue = menuBarObject.addMenu("&View")
-		editMenuBarMenue = menuBarObject.addMenu("&Settings")
 
-		
-		# viewMenuBareMenueItems/Action
-		self.collapseSidebarStatement = "Collapse SideBar"
-		self.collapseNotificationStatement = "Collapse Notification"
-		collapse_action = viewMenuBarMenue.addAction(self.collapseSidebarStatement)
-		notification_action = viewMenuBarMenue.addAction(self.collapseNotificationStatement)
-		collapse_action.triggered.connect(self.toggle_sidebar)
-		notification_action.triggered.connect(self.toggle_notification)
-		# actions for menuBar
-		# collapseAction = QAction("Collapse", self)
-		# collapseAction.triggered.connect(self.toggle_sidebar)
-		# collapseActionMenuBarMenue.addAction(collapseAction)
+		# we are creating a QMenuBar object() : we are using menuBar() method from QMainWindow()
+		menuBar = self.menuBar()
+
+		# CREATE MENU FOR menuBar
+		file_menu = menuBar.addMenu("&File")
+		view_menu = menuBar.addMenu("&View")
+		help_menu = menuBar.addMenu("&Help")
+		setting_menu = menuBar.addMenu("&Settings")
+
+		# Help menu actions
+		documentation_action = QAction("Documentation", self)
+		documentation_action.setCheckable(True)
+
+		about_action = QAction("About", self)
+		about_action.setCheckable(True)
+
+		documentation_action.setStatusTip("Opens up documentation window")
+		documentation_action.triggered.connect(self.open_docs_view)
 
 
-		# creating actions|items for the menues objects
-		new_project_action = fileMenuBarMenue.addAction('&New Project')
-		view_project_action = fileMenuBarMenue.addAction('&Manage Projects')
-		# edit_project_action = fileMenuBarMenue.addAction('&Edit Project')
-		sychronize_project_action = fileMenuBarMenue.addAction('&Sychronize Project')
-		exit_action = fileMenuBarMenue.addAction('&Exit')
+		# View menu actions
+		self.collapse_fastaction_sidebar = QAction("Collapse Fast Actions SideBar", self)
+		self.collapse_notification_sidebar = QAction("Collapse Notification Sidebar", self)
 
-		new_project_action.triggered.connect(self.open_new_project_view_fun)
-		view_project_action.triggered.connect(self.open_view_projects_page)
-		# edit_project_action.triggered.connect(self.open_edit_projects_page)
-		sychronize_project_action.triggered.connect(self.open_sychronization_backup_page)
+		view_menu.addAction(self.collapse_fastaction_sidebar)
+		view_menu.addAction(self.collapse_notification_sidebar)
+		self.collapse_fastaction_sidebar.triggered.connect(self.toggle_sidebar)
+		self.collapse_notification_sidebar.triggered.connect(self.toggle_notification)
+
+
+
+		# file menu actions
+		self.new_project_action = QAction("New Project", self)
+		self.new_project_action.setCheckable(True)
+		self.new_project_action.triggered.connect(self.open_new_project_view)
+		file_menu.addAction(self.new_project_action)
+
+		self.manage_project_action = QAction("Manage Project", self)
+		self.manage_project_action.setCheckable(True)
+		self.manage_project_action.triggered.connect(self.open_manage_project_view)
+		file_menu.addAction(self.manage_project_action)
+
+		sychronize_action = QAction("Sychronize Project", self)
+		sychronize_action.setCheckable(True)
+		sychronize_action.triggered.connect(self.open_sychronization_backup_page)
+		file_menu.addAction(sychronize_action)
+
+		# exit action
+		exit_action = QAction("Exit", self)
+		exit_action.setCheckable(True)
 		exit_action.triggered.connect(self.close_window)
+		file_menu.addAction(exit_action)
 
+
+		# Setting MENU BAR QACTION
+		self.settings_action = QAction("Settings", self)
+		self.settings_action.setCheckable(True)
+		self.settings_action.triggered.connect(self.open_settings_view)
+		setting_menu.addAction(self.settings_action)
 
 
 		# setting shortcuts for menuItems/menuActions : need to work on shortcuts
@@ -133,13 +158,13 @@ class HomeAppView(QMainWindow):
 		# exit_action.setShortcut('Ctrl+Q')
 
 		# creating action|items for edit menue
-		# undo_action = editMenuBarMenue.addAction('Undo')
-		# redo_action  = editMenuBarMenue.addAction('Redo')
-		# cut_action = editMenuBarMenue.addAction('Cut')
-		# copy_action = editMenuBarMenue.addAction('Copy')
-		# paste_action = editMenuBarMenue.addAction('Paste')
-		# find_action = editMenuBarMenue.addAction('Find')
-		# find_replace_action = editMenuBarMenue.addAction('Find & Replace')
+		# undo_action = setting_menu.addAction('Undo')
+		# redo_action  = setting_menu.addAction('Redo')
+		# cut_action = setting_menu.addAction('Cut')
+		# copy_action = setting_menu.addAction('Copy')
+		# paste_action = setting_menu.addAction('Paste')
+		# find_action = setting_menu.addAction('Find')
+		# find_replace_action = setting_menu.addAction('Find & Replace')
 
 		# setting shortcuts for editAction/Item
 		# undo_action.setShortcut('Ctrl+U')
@@ -150,8 +175,8 @@ class HomeAppView(QMainWindow):
 		# find_action.setShortcut('Ctrl+F')
 
 		# creating action|items for help menue
-		helpMenuBarMenue.addAction('About')
-		helpMenuBarMenue.addAction('Documentation')
+		help_menu.addAction(about_action)
+		help_menu.addAction(documentation_action)
 
 		mainToolBar = QToolBar()
 		# self.addToolBar(mainToolBar)
@@ -536,59 +561,87 @@ class HomeAppView(QMainWindow):
 
 
 
-	def toggle_sidebar(self,collapseSidebarStatement):
+	def toggle_sidebar(self):
+		"""
+		Method toggle_sidebar is used to hide and expand the fastActionFrame 
+		"""
 		if self.fastActionFrameCollapse:
-			self.collapseSidebarStatement = "Expand Sidebar"
 			self.fastActionFrame.setMinimumWidth(0)
 			self.fastActionFrame.hide()
 			self.fastActionFrameCollapse = False
+			self.collapse_fastaction_sidebar.setText("Expand Fast Action Sidebar")
 		else:
 			self.fastActionFrame.show()
 			self.fastActionFrameCollapse = True
+			self.collapse_fastaction_sidebar.setText("Collapse Fast Action Sidebar")
+
 
 	def toggle_notification(self):
+		"""
+		Method toggle_notification is used to hide or expand the notificationFrame
+		"""
 		if self.nofication_collapse:
-			self.collapseNotificationStatement = "Expand Notification"
 			self.notificationFrame.hide()
 			self.nofication_collapse = False
+			self.collapse_notification_sidebar.setText("Expand Notification Sidebar")
 		else:
 			self.notificationFrame.show()
 			self.nofication_collapse = True
+			self.collapse_notification_sidebar.setText("Collapse Notification Sidebar")
 
-	def open_new_project_view_fun(self, checked):  # using checked to set view
+
+	def open_new_project_view(self, checked):  # using checked to set view
+		"""
+		Method open_new_project_view is used to open ProjectViewAdd Window (opening new projects)
+		"""
 		# print("The status for self.w is")
 		# print(self.w)
 		if checked == True:
 			if self.w is  None:
 				self.w = ProjectAddView(self.usrID)
-				self.w.closed.connect(self.on_new_project_child_closed)
+				self.w.closed.connect(self.handle_new_project_closed)
 				self.w.show()
 		else:
 			if self.w is not None:
 				self.w.close()
 				self.w = None
 
-	def on_new_project_child_closed(self):
+	def handle_new_project_closed(self):
+		"""
+		Method handle_new_project_closed is a slot for the closed signal from ProjectAddView Class
+		"""
 		# print("The child widget `is closing : signal received")
-		self.w = None
-		self.reload_projects() # this is used to run reload_projects for reading project_data.json files
-		self.newProjectBtn.setChecked(False)
+		if self.w is not None:
+			logger.debug("self.w is not none")
+			self.w.close()
+			self.w = None
+			# self.reload_projects() # this is used to run reload_projects for reading project_data.json files
+			self.newProjectBtn.setChecked(False)
+			self.new_project_action.setChecked(False)
 		
-	def open_view_projects_page(self, checked):
+		
+	def open_manage_project_view(self, checked):
 		if checked == True: # we change using setCheckable(True)
 			if self.project_views is None:
 				self.project_views = ListAllProjects()
-				self.project_views.closed.connect(self.on_view_project_child)
+				self.project_views.closed.connect(self.handle_manage_project_view_closed)
 				self.project_views.show()
 		else: 
 			if self.project_views is not None: # an instance exist
 				self.project_views.close()
 				self.project_views = None
 
-	def on_view_project_child(self):
+	def handle_manage_project_view_closed(self):
+		"""
+		Method handle_manage_project_view_closed is used to handle closed signal from ListAllProjects Class
+		"""
 		logger.debug("Project Views Child Widget is closing : signal received ")
-		self.project_views = None
-		self.viewProjectBtn.setChecked(False)
+		if self.project_views is not None:
+			self.project_views.close()
+			self.project_views = None
+			self.viewProjectBtn.setChecked(False)
+			self.manage_project_action.setChecked(False)
+
 
 	def open_edit_projects_page(self):
 		if self.project_edit_view is None:
@@ -699,6 +752,7 @@ class HomeAppView(QMainWindow):
 			self.settings_view.close()
 			self.settings_view = None
 			self.settingBtn.setChecked(False)
+			self.settings_action.setChecked(False)
 
 	def open_ai_asistant_view(self, checked):
 		"""

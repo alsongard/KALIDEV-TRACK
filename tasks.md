@@ -323,3 +323,36 @@ Hide Metadata Columns	Hide date_created and date_updated in the QTableView for a
 Implement Status Styling	Update data() in TaskTableModel to apply colors (Red/Yellow/Green) or icons based on the status text.	⏳ Pending
 Update Save Logic	Refactor save_task_fun() to zip the UI models and properly extract and save the new keys to project_tasks.json.	⏳ Pending
 Migrate Old JSON Data	(Optional) Write a small script to convert old JSON files to the new schema, or delete old test files to prevent KeyErrors.	⏳ Pending
+
+
+
+
+
+### Phase 8: Project Schema Updates & Database Integration
+
+**Project Phase:** Schema Updates & Database Sync  
+**Goal/Objective:** Integrate the new `initial_project_date_ending` field across the UI and FileManager, and align the data models with MongoDB's automatic `_id` generation.
+
+| Tasks | Description | Status |
+| --- | --- | --- |
+| Update "Create Project" Logic | Update the `NewProjectView` and `FileManager` save methods to capture and save the new `initial_project_date_ending` field. | ⏳ Pending |
+| Update Edit/View Project UI | Add the `initial_project_date_ending` field to `EditSingleProjectView` so it can be viewed and edited. Ensure it saves correctly to the JSON file. | ⏳ Pending |
+| Remove `project_id` from Models | Update your Pydantic/TypedDict models to remove `project_id`. Rely on MongoDB's automatic `_id` generation for the primary key. | ⏳ Pending |
+| Update Foreign Key Logic | Update `ProjectRepository` and the Sync logic to use the generated MongoDB `_id` (ObjectId) as the foreign key linking `project_info` and `project_phase` collections. | ⏳ Pending |
+
+---
+
+### Phase 9: Application Packaging & Installation (Task 2)
+
+**Project Phase:** Linux Packaging & Distribution  
+**Goal/Objective:** Create an installable package for Kali/Debian so the user does not need to run `python main.py` from the terminal every time.
+
+*(Note: Since you are on Kali Linux, the industry standard is to create a **`.deb` package**).*
+
+| Tasks | Description | Status |
+| --- | --- | --- |
+| Create a `.desktop` File | Create a standard Linux launcher file (`kalidev-track.desktop`) that includes the app name, icon, and the command to execute. | ⏳ Pending |
+| Set Up Entry Point Script | Create a short bash script (e.g., `kalidev-track.sh`) or configure `pyproject.toml` `[project.scripts]` to launch the app, so users don't have to type `python`. | ⏳ Pending |
+| Configure `stdeb` (or `dh-virtualenv`) | Add the packaging configuration to your `pyproject.toml` or `setup.py` using `stdeb` to automatically bundle your `.venv` and Python dependencies. | ⏳ Pending |
+| Build the `.deb` Package | Run the build command (e.g., `python3 setup.py --command-packages=stdeb.command bdist_deb`) to generate the `.deb` installer file. | ⏳ Pending |
+| Test the Installation | Run `sudo dpkg -i kalidev-track.deb` on a clean environment to ensure the app installs correctly, launches from the Application Menu, and runs without terminal errors. | ⏳ Pending |

@@ -21,6 +21,7 @@ Depends on:
 	- views.settings_view.SettingsView
 	- views.ask_ai_view.AskAIView
 	- views.docs_view.DocsView
+	- views.synchronize_list_projects.SynchronizeProjectList
 	
 Exports: 
 	HomeAppView
@@ -57,7 +58,7 @@ from views.edit_view_single_project import EditSingleProjectView
 from views.list_all_projects_view import ListAllProjects
 from views.settings_view import SettingsView
 from views.ask_ai_view import AskAIView
-
+from views.synchronize_list_projects import SynchronizeProjectList
 
 import logging
 logger = logging.getLogger(__name__)
@@ -658,8 +659,14 @@ class HomeAppView(QMainWindow):
 
 	def open_sychronization_backup_page(self):
 		if self.sychronize_view is None:
-			self.sychronize_view = BackUpProject(self.user)
+			self.sychronize_view = SynchronizeProjectList()
 			self.sychronize_view.show()
+
+	def handle_synchronize_closed_signal(self):
+		if self.sychronize_view is not None:
+			self.sychronize_view.close()
+			self.sychronize_view = None
+
 
 
 	def reload_projects(self):

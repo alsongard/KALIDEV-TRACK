@@ -236,9 +236,9 @@ class CreateTaskWidget(QWidget):
                 return 
             
             subtask_dict = {
-                "module name": self.module_name_inp_array[count].text().strip(), 
-                "module description": self.module_description_inp_array[count].text().strip(), 
-                "status": self.module_status_array[count].currentText(), 
+                "Module": self.module_name_inp_array[count].text().strip(), 
+                "Description": self.module_description_inp_array[count].text().strip(), 
+                "Status": self.module_status_array[count].currentText(), 
                 "status note": self.module_status_note_inp_array[count].text().strip(), 
             }
             subtasks_array.append(subtask_dict)

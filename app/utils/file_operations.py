@@ -45,20 +45,9 @@ class FileManager():
             self:  declare to which instance it belongs to(seperation)
 
         Returns:
-            list[dictionaries]: Each dictionary has keys:
-                - userId: string
-                - project_title: string
-                - project_owner: string
-                - project_tags: string
-                - project_description: string
-                - project_status: string
-                - project_priority: string
-                - project_start_date: string
-                - project_start_time: string
-                - project_end_date: string
-                - project_end_time: string 
-            
-            list[] : empty array
+            A list of dictionaries, for each project. with keys: 
+            userId, project_title, project_owner, project_tags, project_description, project_status, project_priority, project_start_date, project_start_time, project_end_date, project_end_time (all str).
+            Or an empty array if no project is found
 
         Example:
             >>> 

@@ -226,9 +226,9 @@ To setup logger, we do the following:
 import logging
 
 # settup the logger
-loggin.basicConfig(
+logging.basicConfig(
     level=logging.DEBUG, # the level of logger e.g DEBUG, INFO
-    format="%s(message)s",
+    format="%(message)s",
     handlers=[RichHandler(rich_tracebacks=True)],
     datefmt="[%x]"
 )
@@ -521,6 +521,30 @@ for item in self.all_data:
     titleBtn.clicked.connect(partial(self.open_title_view, item["title"]))
 ```
 
+## Using lambda for setting arguments for QPushButton
+In cases where you which the slot function of a Signal to remember an argument passed to it, one can use ``labmda``
+as shown below:
+
+```py
+
+backupBtn = QPushButton("backup")
+backupBtn.clicked.connect(
+    lambda  checked, title=item["project_title"]: self.backup(title, checked)
+)
+
+# your predefined method
+def backup(self, title, checked):
+    # perform something
+```
+
+The above can be usefull in cases whereby the checked boolean value is required. 
+
+
+## Version of clicked signal in Pyside6
+Pyside6 has 2 version of clicked:
+
+- ``clicked()`` : Zero argument clicked singal. that takes no arguemnt
+- ``clicked(checked: Bool)`` : Default checked argument
 
 ## Accessing Widgets in QGroupBox
 Example:
@@ -794,3 +818,167 @@ reponse = chat(model="model name", message=messages, stream=True)
 for chunk in stream:
     print(chunk.message.content, end="", flush=True)
 ```
+
+# Working with  PyMongo
+1. **Creating an instance of mongoCient**
+
+The below code is for asynchronous operation when accessing a database:
+
+- install pymongo
+```bash
+python3 -m pip install pymongo
+```
+
+- install dotenv for accessing environment variables/secrets
+```bash
+python3 -m pip install dotenv
+```
+
+```py
+from pymongo import AsyncMongoClient
+from dotenv import load_dotenv
+import os
+async def main()
+    load_dotenv() # reads the .env file
+
+    # to access the specific env variable use:
+    mongo_uri = os.get_env("MONGO_URI")
+    client = AsyncMongoClient(mongo_uri)
+
+    try:
+
+        
+    except Exception as err:    
+        # do something with the error
+
+```
+
+2. **Accessing Database**  
+after setting an instance of MongoClient as shown above , we  access a database on the instance as:
+```py
+movies = client["databasename"] 
+```
+
+3. **Accessing Collection**  
+Accessing a collection on a database
+```py
+collection = client["test_collection"]
+```
+
+If the provided collection name does not already exist in the database, MongoDB implicitly creates the collection when you first insert data into it.
+
+
+4. **Creating a collection**  
+```py
+await client.create_collection("name_of_collection")
+```
+
+Example:
+```py
+async def main():
+
+    load_dotenv() # reads .env and sets variables in os.environ
+
+    url = os.getenv("MONGO_URL")
+    if url is None:
+        logger.debug("Error: mongo_uri cannot be found!!")
+        return False
+
+    logger.debug("mongo connection string: %s", url)
+
+    client = AsyncMongoClient(url)
+
+    try:
+        logger.debug("trying")
+        database = client.get_database()
+        logger.debug("found database: %s",database)
+        movies_collection = database.get_collection("movies")
+
+        # how to query the collection
+        query = {"title": "Back to the future"}
+        movie = await movies_collection.find_one(query)
+
+
+        logger.debug("found movie: %s", movie)
+
+        projectdb = client["devtrack"]
+        info_collection = projectdb.create_collection("projects_info")
+        phase_collection= projectdb.create_collection("projects_phase_subtaks")
+
+        """
+        perform queries
+        """
+        await client.close()
+
+    except Exception as err:
+        logger.debug("Error: %s", err)
+
+
+asyncio.run(main())
+
+```
+**Type Hints**  
+Type hints define the structure of documents, data types of variables, parameters and function return values
+
+Define a class that inherits from the TypeDict class and must contain all fields of your document. 
+The below defines a TypeHint for a collection
+```py
+
+from typing import TypeDict
+from pymongo.asynchronous.collection import Collection
+
+class Subtask(TypedDict):
+    module: str
+    description: str
+    Status: str
+
+
+class Phase(TypedDict):
+    phase_name: str
+    phase_goal: str
+    subtasks :List[Subtask]
+
+
+class ProjectPhase(TypedDict):
+    project_id: str
+    project: str
+    phases: List[Phase]
+
+class ProjectInfo(TypedDict):
+    project_id: str  # auto generated primary key by mongo
+    project_title: str
+    project_owner: str
+    project_tags: str
+    project_description: str
+    project_status: str
+    project_priority: str
+    project_start_date: str
+    project_start_time: str
+    project_end_date: str
+    project_end_time: str
+    
+
+projects_phase_collection: Collection[ProjectPhase] = client.collection("project_phase_subtasks")
+
+
+```
+While it's not necessary to create the database and collection, as this is done automatically when you insert documents. 
+
+**Inserting Documents**  
+To insert a record to the database, we do the following:
+
+```py
+# using the collection 
+devdb = client["devtrack"]
+project_collection = devdb["project_info"]
+
+# without TypedDict
+await project_collection.insert_one({"project_title": "some name"})
+
+# With TypedDict
+from filename import ProjectInfo
+
+await project_collection.insert_one(ProjectInfo(project_data))
+```
+
+

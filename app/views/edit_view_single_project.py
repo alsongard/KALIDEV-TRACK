@@ -185,13 +185,13 @@ class EditSingleProjectView(QWidget):
         the closeEvent is a method handler that receives the Qt close event.
 
         """
-        print("function to send Signal to parent")
+        logger.debug("function to send Signal to parent")
         self.closed.emit()# emit the close event
         super().closeEvent(event) # this hides the Widget(QWidget) and closes is
 
     
     def save_project_tasks_data(self):
-        print("this will save the project data")
+        logger.debug("this will save the project data")
         
         data = {
             "userId" : self.project_data["userId"],
@@ -208,10 +208,10 @@ class EditSingleProjectView(QWidget):
         }
         logger.debug("this is data in save_project_tasks_data: %s", data)
 
-        operation_result = self.fileManagerIns.updateProjectTasks(projectName=self.project_name, data=data)
+        operation_result = self.fileManagerIns.write_project_details(project_name=self.project_name, data=data)
 
         if operation_result: # true
-            print("result true")
+            logger.debug("result true")
             QMessageBox.information(
                 self, 
                 "Save",

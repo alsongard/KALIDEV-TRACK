@@ -2,7 +2,7 @@ from PySide6.QtWidgets import (
     QApplication, QGraphicsDropShadowEffect, QGroupBox ,QGridLayout, QScrollArea,
     QVBoxLayout, QWidget, QLabel, QHBoxLayout, QPushButton, QTextEdit
     )
-from utils.file_operations import FileManager
+from app.utils.file_operations import FileManager
 from PySide6.QtGui import QColor
 from PySide6.QtCore import Signal
 class ViewProjects(QWidget):

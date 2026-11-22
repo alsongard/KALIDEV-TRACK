@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QApplication
 import sys
 from app.utils import config_manager
-from views.form_window import MainFormWindow
+from app.views.form_window import MainFormWindow
 from  app.views.home_view import HomeAppView
 from app.utils.config_manager import ConfigManager
 import os

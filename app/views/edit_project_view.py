@@ -2,7 +2,7 @@ from PySide6.QtWidgets import (
     QApplication, QGraphicsDropShadowEffect, QGroupBox ,QGridLayout, QScrollArea,
     QVBoxLayout, QMessageBox, QWidget, QLabel, QHBoxLayout, QPushButton, QTextEdit
     )
-from utils.file_operations import FileManager
+from app.utils.file_operations import FileManager
 from PySide6.QtGui import QColor
 from send2trash import send2trash
 

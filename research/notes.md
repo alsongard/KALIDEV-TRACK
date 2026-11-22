@@ -651,6 +651,65 @@ Method ``self.menuBar()`` must be called on a class that inherits from the  QMai
 You can define a single QAction, defining the triggered action, and then add this action to both the menu and the toolbar. Each QAction has names, status messages, icons, and signals that you can connect to (and much more).
 
 
+## Pyside6 Packaging & Deployment
+Packaging enables users to run the executable application without necessarily having to install python or pyside6. *In PySide6 applications, packaging refers to the process of converting your Python code and all its dependencies into a standalone executable that can run on end-user systems without requiring Python or PySide6 to be installed.*
+
+
+**Qt Resource System (QRC)**  
+The qt resource system provides an platform-independent way to store binary files in the application executable. What this achieves(useful for):
+
+- Embedding images, icons, QSS stylesheets, and other assets directly in your executable
+- Simplifying deployment by eliminating the need to distribute resource files separately
+- Ensuring resources are always available to your application, regardless of installation location
+
+**QRC File Structure**
+A QRC file is an XML file that matps file paths to resource identifiers. These file have a .qrc extension .
+
+```xml
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource prefix="/icons">
+        <file>Resources/Icons/app_icon.png</file>
+    </qresource>
+    <qresource prefix="/styles">
+        <file>Resources/Styles/dark_theme.qss</file>
+    </qresource>
+</RCC>
+```
+The above file should list all the resources that the application requires.
+
+**Compiling QRC to Python**  
+to compile qrc files, we use ``pysdie6-rcc`` 
+```bash
+pyside6-rccc resource.qrc -o resource_rc.py
+```
+
+Then one can use this resources in their application as follows:
+```py
+import resource_rc
+
+app_icon = QIcon(":/icons/app_icon.png")
+```
+
+**Tools for packaging Pyside6 Desktop Applications**
+
+| Tool | Advantage | Considerations | 
+| ---- | ---- | ---- |
+| PyInstaller |	Most widely used, handles Qt dependencies well |	Larger package size |
+| cx_Freeze |	Good for cross-platform applications	| Requires more configuration for Qt apps |
+| Nuitka |	Creates compiled C executables, potential performance benefits |	More complex setup |
+
+- Pyside6 application source code
+- Resource Compilation
+- Packaging Tool (Pyisntaller/cx_Freeze/Nuitka)
+- StandAlone Executable
+- Distribution Package 
+
+To  package the application, one can use:
+```bash
+pyinstaller --name=AppName --windowed --icon=app_icon.ico main.py
+```
+
 
 # Prop Drilling
 in cass whereby, a config or a variable is required by another module, instead of passing this variable from one class to another, we use a class, which  only one instance can be found in the application.
@@ -980,5 +1039,6 @@ from filename import ProjectInfo
 
 await project_collection.insert_one(ProjectInfo(project_data))
 ```
+
 
 

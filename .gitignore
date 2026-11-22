@@ -19,3 +19,5 @@ kalidev_track.egg-info/
 
 build/
 dist/
+
+kalidev-package/usr/lib/

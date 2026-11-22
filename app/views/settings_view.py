@@ -137,7 +137,7 @@ class SettingsView(QWidget):
         self.configManager.set("email_for_notification", email_setting)
         self.configManager.set("save_before_exiting", save_data_setting)
         self.configManager.set("maximize_window_on_open", maximize_window_setting)
-        self.configManager.set("mongodb_uri", mongo_uri_setting)
+        self.configManager.set("mongodb_url", mongo_uri_setting)
         self.configManager.set("ai_url", ai_url_setting)
 
         result = self.configManager.save()
@@ -184,7 +184,7 @@ class SettingsView(QWidget):
             self.maximize_window_option.setCurrentIndex(1)
 
 
-        self.mongo_url_input.setText(self.configManager.get("mongodb_uri"))
+        self.mongo_url_input.setText(self.configManager.get("mongodb_url"))
         self.ai_url_input.setText(self.configManager.get("ai_url"))
 
 

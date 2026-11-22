@@ -10,12 +10,21 @@ Depends on:
 from pathlib import Path
 import logging
 import traceback
-
+import sys
 from json import load, dump
 logger = logging.getLogger(__name__)
 class ConfigManager():
     _instance = None
 
+    def __init__config(self):
+        if getattr(sys, 'frozen', False):
+            # Running  in a Pyinstaller bundle
+            self.app_dir = Path(sys._MEIPASS)
+        else:
+            # Running in normal Python environment
+            self.app_dir = Path(__file__).resolve().parent.parent.parent
+
+        self.settings_path = self.app_dir / "settings.json"   
     def __new__(cls): # overwritting the __new__ method which is called first when an object is initialized
         """
         Override __new__ method
@@ -51,8 +60,9 @@ class ConfigManager():
             "email_for_notification": "False",
             "save_before_exiting": "True",
             "maximize_window_on_open": "False",
-            "mongodb_uri": "",
-            "ai_url": ""
+            "mongodb_url": "",
+            "ai_url": "", 
+            "remember_me": 7
         }
 
         # call load() method

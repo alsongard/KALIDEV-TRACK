@@ -26,10 +26,10 @@ def app_setup(app, config):
 
 app = QApplication()
 configManager = ConfigManager()
-app_folder = configManager.app_dir
+app_folder = configManager.config_dir
 
-# window = MainFormWindow(app, app_folder)
-window = HomeAppView("setup_username", "setup_uuid")
+window = MainFormWindow(app, app_folder)
+# window = HomeAppView("setup_username", "setup_uuid")
 
 window.show()
 

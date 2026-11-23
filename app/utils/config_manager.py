@@ -9,22 +9,17 @@ Depends on:
 """
 from pathlib import Path
 import logging
+import os
 import traceback
 import sys
 from json import load, dump
+
+
 logger = logging.getLogger(__name__)
+
 class ConfigManager():
     _instance = None
 
-    def __init__config(self):
-        if getattr(sys, 'frozen', False):
-            # Running  in a Pyinstaller bundle
-            self.app_dir = Path(sys._MEIPASS)
-        else:
-            # Running in normal Python environment
-            self.app_dir = Path(__file__).resolve().parent.parent.parent
-
-        self.settings_path = self.app_dir / "settings.json"   
     def __new__(cls): # overwritting the __new__ method which is called first when an object is initialized
         """
         Override __new__ method
@@ -37,9 +32,8 @@ class ConfigManager():
             cls._instance = super(ConfigManager, cls).__new__(cls)
             # call __init__config
             cls._instance._init_config()
-
-
         return cls._instance
+
 
     def _init_config(self):
         """
@@ -47,11 +41,27 @@ class ConfigManager():
         Then sets self.settings with default values used for the application
         and calls the method load()
         """
-        # Setup the app directory path
-        self.app_dir = Path(__file__).resolve().parent.parent.parent # /home/username/PROGRAMS/KALIDEV-TRACK/app/utils/configManager.py
+        # Setup the app directory path  
+        if getattr(sys, 'frozen', False):
+            # Running  in a Pyinstaller bundle
+            self.app_dir = Path(sys._MEIPASS)
+            logger.debug("Running in Pyinstaller bundle")
+        else:
+            # Running in normal Python environment
+            logger.debug("Running in normal python environment")
+            self.app_dir = Path(__file__).resolve().parent.parent.parent
+
+        logger.debug("app_dir: %s", self.app_dir)
+        
+        # Setup the config directory for settings & user json file
+        self.home_direcory = Path.home()
+        self.config_dir = self.home_direcory/ ".config/devtrack"
+        if self.config_dir.exists() is False:
+            os.mkdir(self.config_dir)
+            logger.debug("Creating devtrack directory: %s", self.config_dir)
+
         # set filename for settings.json
-        logger.debug("app directory : %s", self.app_dir)
-        self.settings_path =  self.app_dir /"setting.json" # or f"{self.app_dir}/settings.json" but this would change logic
+        self.settings_path =  self.config_dir /"setting.json" # or f"{self.app_dir}/settings.json" but this would change logic
         logger.debug("setting filepath: %s", self.settings_path)
 
         self.settings = {

@@ -1,5 +1,11 @@
 """
+form_window.py
 
+Purpose:
+	Provides MainFormWindow class used for loging and registering user
+
+Depends on:
+	- app.view.home_view.HomeAppView
 """
 from PySide6.QtWidgets import QWidget, QTabWidget,QMessageBox, QApplication,  QLineEdit, QPushButton, QLabel, QVBoxLayout, QHBoxLayout
 import json
@@ -12,12 +18,12 @@ from .home_view import HomeAppView
 # this window will have 2 views: using QTabWidget 1 for creatign account and the other for signing in
 class MainFormWindow(QWidget):
 	"""
-
+	Class MainFormWindow provides the Widget Window for user registration and logic functionality
 	"""
-	def __init__(self, app, app_dir_path):
+	def __init__(self, app, config_dir):
 		super().__init__()
 		self.app = app # app will be given as an argument to MainFormWindow on start which will be assigned to variable app
-		self.filepath = app_dir_path
+		self.filepath = config_dir
 		# window title
 		self.setWindowTitle("KaliDevTrack")
 
@@ -59,7 +65,7 @@ class MainFormWindow(QWidget):
 
 		# setting button functionality
 		cancelBtn.clicked.connect(self.quit_app) # quit application
-		okBtn.clicked.connect(self.RegisterUserAccount)
+		okBtn.clicked.connect(self.register_user_account)
 
 		# add buttons to buttonLayout
 		buttonLayout.addWidget(cancelBtn)
@@ -100,7 +106,7 @@ class MainFormWindow(QWidget):
 
 		# add functionality to loginButtons
 		loginCancelBtn.clicked.connect(self.quit_app)
-		LoginBtn.clicked.connect(self.checkLogin)
+		LoginBtn.clicked.connect(self.user_login)
 
 
 		# set layouts
@@ -150,8 +156,9 @@ class MainFormWindow(QWidget):
 		"""
 		self.successMsg.setText("")
 
-	def RegisterUserAccount(self):
+	def register_user_account(self):
 		"""
+		Method register_user_account is used for registering users
 		"""
 		username = self.username_input.text()
 		password = self.password_input.text()
@@ -199,9 +206,9 @@ class MainFormWindow(QWidget):
 		#     timer = Timer(3.0, self.success_msg_set)
 		#     timer.start()
 	
-	def checkLogin(self):
+	def user_login(self):
 		"""
-
+		Method user_login  is used to provide functionality for loging in the user
 		"""
 		# get username &  get password
 		username = self.login_username_line_input.text()
@@ -213,7 +220,7 @@ class MainFormWindow(QWidget):
 			try:
 				with open(f"{filepath}/user.json", 'r') as file:
 					data = json.load(file) # return an array of dictionaries
-					# print(f"data  on checkLogin : type of data : {type(data)}")
+					# print(f"data  on user_login : type of data : {type(data)}")
 					# print(data)
 					# for item in data: # this is for handling multiple users for the application: 
 					# changed to single user
@@ -257,6 +264,7 @@ class MainFormWindow(QWidget):
 
 	def successMessage(self):
 		"""
+		Method succesMessage is used to a custom QMessageBox when loging is success
 		"""
 		messageObject = QMessageBox()
 		messageObject.setMinimumSize(700, 200)
@@ -272,6 +280,7 @@ class MainFormWindow(QWidget):
 
 	def alertMessage(self, message):
 		"""
+		Method alertMessage is used to set up a custom QMessageBox when loging in fials
 		"""
 		alert_message = message
 		messageObject = QMessageBox()

@@ -2,4 +2,4 @@ Package: kalidev-track
 Version: 1.0.0
 Architecture: amd64
 Maintainer: Gard Alson <alsongadizo@gmail.com>
-Decription: A project and task tracker for developers
+Description: A project and task tracker for developers.

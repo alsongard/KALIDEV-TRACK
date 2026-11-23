@@ -710,6 +710,89 @@ To  package the application, one can use:
 pyinstaller --name=AppName --windowed --icon=app_icon.ico main.py
 ```
 
+**Handling Errors when building your application**
+In some cases you might notices that building your application using ``pyinstaller file.spec | file.py``  results in an error e.g Module not  found, in this case do the below:
+
+```bash
+# uninstall the Pyside6 and it's other dependencies
+
+pip uninstall pyside6 pyside6_essentials pyside6_addons shiboken6 -y
+
+# Nuclear option — remove leftover files manually
+rm -rf $(python3 -c "import site; print(site.getsitepackages()[0])")/PySide6
+rm -rf $(python3 -c "import site; print(site.getsitepackages()[0])")/shiboken6
+python3 -m pip install PySide6   
+
+# then you can package your application 
+
+python3 -m PyInstaller --clean --noconfirm main.py  
+python3 -m PyInstaller --clean --noconfirm main.spec
+```
+the flag --clean is used to ensure that pyinstaller does not use any previous built cache 
+the --noconfirm is used to skip the user interactive, e.g when dist directory exist 
+
+after packaging your application you might want to test if it is working: change directory (cd) to dist directory and then run the executable file e.g ``./main``
+
+**Setting the data source and package name**  
+You might notice that though the application can be run, some images might be missing. To fix this set the data key in ``file.spec`` to have the below:
+```py
+data=[('source directory', 'destination directory')] 
+
+# e.g
+datas=[('app/resources', 'app/resources')],
+```
+To set a different name for the application, you must set the name in ``EXE`` and ``CONTROL`` properties
+e.g 
+```py
+name='DevTrack'
+```
+
+
+
+# Building Debian package
+To build a debian package for the application, we need the following:
+A parent directory e.g ``kalidev-package``
+```
+# Directory Structure
+
+kalidev-package/
+├── DEBIAN/
+│   └── control
+└── usr/
+    ├── bin/
+    │   └── kalidev-track (A bash script that runs the app)
+    ├── lib/
+    │   └── kalidev-track/ (Put the contents of dist/KALIDEV-TRACK/ here)
+    └── share/
+        ├── applications/
+        │   └── kalidev-track.desktop
+        └── icons/
+            └── kalidev-track.png
+```
+
+- **DEBIAN directory**: contains the control file which has metadata information
+e.g 
+```
+Package: kalidev-track
+Version: 1.0.0
+Architecture: amd64
+Maintainer: Gard Alson <alsongadizo@gmail.com>
+Description: A project and task tracker for developers.
+```
+
+- **usr directory**: contains the below directories
+    - **usr/lib** : contains the application files e.g ``devtrack _internal``
+    - **usr/bin** : contains the script file pointing to the application to be run e.g ``/usr/lib/devtrack`` in our case
+    - **usr/share/application** : contains the file.desktop file which contains the below:
+        ```
+        [Desktop Entry]
+        Name=DevTrack
+        Exec=kalidev-track
+        Icon=kalidev-track
+        Type=Application
+        Categories=Development;
+        ```
+     - **usr/share/icons** : contains the application icon
 
 # Prop Drilling
 in cass whereby, a config or a variable is required by another module, instead of passing this variable from one class to another, we use a class, which  only one instance can be found in the application.

@@ -21,3 +21,5 @@ build/
 dist/
 
 kalidev-package/usr/lib/
+
+/kalidev-package.deb

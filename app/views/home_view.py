@@ -221,7 +221,7 @@ class HomeAppView(QMainWindow):
 		3: calendar, notifications
 		"""
 
-		# setting up view 1
+		# SETTING UP GRID VIEW 1
 		self.fastActionFrame  = QFrame()
 		# F0F0F4
 		self.fastActionFrame.setStyleSheet("background-color:#0B0B0F;")
@@ -273,7 +273,7 @@ class HomeAppView(QMainWindow):
 
 		# fastActionView.setStyleSheet('border: 1px solid red')x
 
-		# setting up view 2 
+		# SETTING UP GRID VIEW 2
 		mainMiddleFrame = QFrame()
 		mainMiddleFrame.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
 		mainMiddleView = QVBoxLayout()
@@ -317,7 +317,6 @@ class HomeAppView(QMainWindow):
 		# print(f"This is self._all_projects")
 		# print(self._all_projects)
 		# print(len(self._all_projects))
-		self._display_projects = []
 
 		if len(self._all_projects) == 0:
 			self._display_projects.append(["No Project", "-", "-", "-", "-", "-"])
@@ -347,11 +346,7 @@ class HomeAppView(QMainWindow):
 
 		mainMiddleFrame.setLayout(mainMiddleView)
 
-		# setting up view 3 
-		# print(f'self._upcoming_activies: {self._upcoming_activies}')
-		# print(f'self._passdeadline_activies: {self._passdeadline_activies}')
-
-
+		# SETTING UP GRID VIEW 3
 		self.notificationFrame = QFrame()
 		notificationView = QVBoxLayout()
 		notificatonLabel = QLabel("Notifications")

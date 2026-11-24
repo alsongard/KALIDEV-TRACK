@@ -614,7 +614,7 @@ class HomeAppView(QMainWindow):
 			logger.debug("self.w is not none")
 			self.w.close()
 			self.w = None
-			# self.reload_projects() # this is used to run reload_projects for reading project_data.json files
+			self.load_projects() # this is used to run reload_projects for reading project_data.json files
 			self.newProjectBtn.setChecked(False)
 			self.new_project_action.setChecked(False)
 		

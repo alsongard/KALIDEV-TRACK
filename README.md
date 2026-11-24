@@ -13,7 +13,6 @@
 - **Deadline Tracking:** Monitor project start/end dates and visualize upcoming or overdue activities.
 - **Portable Storage:** Data is stored locally in JSON files for easy backup and portability.
 - **Safe Deletion:** Move projects to the system recycle bin safely using `Send2Trash`.
-- **Cross-Platform:** Built to run on Linux (Debian-based), Windows, and macOS.
 - **AI Assistant:** Built in AI Assistant chat, requires ollama to be set locally on device.
 
 ## Upcoming Features

@@ -28,7 +28,6 @@ class FileManager():
     """
 
     def __init__(self):
-        self.data_array = []
         home = os.path.expanduser("~")
         self.app_folder = home + "/PROJECTS"
 
@@ -43,7 +42,7 @@ class FileManager():
         
         Args: 
             self:  declare to which instance it belongs to(seperation)
-
+            self.data_array (array) : holds the project info
         Returns:
             A list of dictionaries, for each project. with keys: 
             userId, project_title, project_owner, project_tags, project_description, project_status, project_priority, project_start_date, project_start_time, project_end_date, project_end_time (all str).
@@ -53,6 +52,7 @@ class FileManager():
             >>> 
         
         """
+        self.data_array = []
         logger.info("readProjectDirs called - reading project data fles in ~/PROJECTS")
 
         home_dir = os.path.expanduser("~")
@@ -91,6 +91,8 @@ class FileManager():
                                         self.data_array.append(data)
             # print(self.data_array)
             user_projects_folders.close() # close to release memory
+
+            logger.debug("lenght of data array: %s", len(self.data_array))
             return self.data_array
         else: 
             logger.warning("Project folder: %s does not exist", app_project_folder)

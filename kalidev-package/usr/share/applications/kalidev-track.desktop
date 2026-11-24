@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=DevTrack
+Exec=kalidev-track
+Icon=kalidev-track
+Type=Application
+Categories=Development;

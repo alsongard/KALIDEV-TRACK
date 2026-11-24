@@ -1,1 +1,2 @@
+kalidev-package.deb filter=lfs diff=lfs merge=lfs -text
 research/** merge=ours

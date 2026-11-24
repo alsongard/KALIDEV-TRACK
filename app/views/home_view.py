@@ -47,18 +47,18 @@ from pydantic import NonNegativeFloat
 
 # importing classes
 from app.views.docs_view import DocsView
-from models.home_table_model import HomeTableModel
-from views.projects_page_view import ProjectAddView
-from views.view_projects import ViewProjects
-from views.edit_project_view  import EditProjectView
-from views.backup_data_view import BackUpProject
-from utils.file_operations import  FileManager
-from utils.button_delegate import ButtonDelegate 
-from views.edit_view_single_project import EditSingleProjectView
-from views.list_all_projects_view import ListAllProjects
-from views.settings_view import SettingsView
-from views.ask_ai_view import AskAIView
-from views.synchronize_list_projects import SynchronizeProjectList
+from app.models.home_table_model import HomeTableModel
+from app.views.projects_page_view import ProjectAddView
+from app.views.view_projects import ViewProjects
+from app.views.edit_project_view  import EditProjectView
+from app.views.backup_data_view import BackUpProject
+from app.utils.file_operations import  FileManager
+from app.utils.button_delegate import ButtonDelegate 
+from app.views.edit_view_single_project import EditSingleProjectView
+from app.views.list_all_projects_view import ListAllProjects
+from app.views.settings_view import SettingsView
+from app.views.ask_ai_view import AskAIView
+from app.views.synchronize_list_projects import SynchronizeProjectList
 
 import logging
 logger = logging.getLogger(__name__)
@@ -79,6 +79,8 @@ class HomeAppView(QMainWindow):
 
 		# set window title
 		self.setWindowTitle("KaliDev-Track")
+		icon_pix = QPixmap(str(ICON_DIR/"kaliDev-Track.jpg"))
+		self.setWindowIcon(icon_pix)
 		self.w = None
 		self.project_views = None
 		self.project_edit_view = None

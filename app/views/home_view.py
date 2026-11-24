@@ -643,36 +643,43 @@ class HomeAppView(QMainWindow):
 
 
 	def open_edit_projects_page(self):
+		"""
+		Method open_edit_projects_page is used to open ListAllProjects QWidget window used for managing the user projects
+		"""
 		if self.project_edit_view is None:
 			self.project_edit_view = ListAllProjects()
 			self.project_edit_view.closed.connect(self.handle_closed_edit_projects_view)
 			self.project_edit_view.show()
 
 	def handle_closed_edit_projects_view(self):
+		"""
+		Method handle_closed_edit_projects_view is a slot function for the closed signal from ListAllProjects
+		"""
 		if self.project_edit_view is not None:
 			self.project_edit_view.close()
 			self.project_edit_view = None
 
 
 	def open_sychronization_backup_page(self):
+		"""
+		Method open_sychronization_backup_page is used open SynchronizeProjectList QWidget window used for backing up the users projects
+		"""
 		if self.sychronize_view is None:
 			self.sychronize_view = SynchronizeProjectList()
 			self.sychronize_view.show()
 
 	def handle_synchronize_closed_signal(self):
+		"""
+		Method handle_synchronize_closed_signal is a slot function for the closed signal from SynchronizeProjectList
+		"""
 		if self.sychronize_view is not None:
 			self.sychronize_view.close()
 			self.sychronize_view = None
 
 
-
-	def reload_projects(self):
-		logger.debug("This reloads the reading on projects")
-		self.load_projects()
-
 	def open_single_project_editor(self, row):
 		"""
-		the method open_single_project_editor is connected to the button_delegate QStyleDelegateItem when clicked
+		Method open_single_project_editor is connected to the button_delegate QStyleDelegateItem when clicked
 		It opens up the edit or view for single project view
 		"""
 		# print("This will open project view")
@@ -689,14 +696,14 @@ class HomeAppView(QMainWindow):
 	
 	def on_open_single_project_editor_run(self):
 		"""
-		the method on_open_single_project_editor_run is connected to the EditSingleProjectView closed signal
+		Method on_open_single_project_editor_run is connected to the EditSingleProjectView closed signal
 		which is fired when an instance of the window EditSingleProject View is closed
 		"""
 		self.edit_single_project= None
 
 	def get_text_changed_combobox(self, text): 
 		"""
-		the method get_text_changed_combobox is connected to the QComboBox textChanged signal
+		Method get_text_changed_combobox is connected to the QComboBox textChanged signal
 		"""
 		logger.debug("Text Changed: %s", text)
 		self.determine_projects_list_to_display = text

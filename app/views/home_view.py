@@ -454,7 +454,9 @@ class HomeAppView(QMainWindow):
 		>>> example : PROJECT/KALIDEV-TRACK
 		"""
 		self._all_projects = self.fileManagerInstance.read_project_directories()
-		self.model.update_data(self._all_projects)
+
+		self.apply_filter()
+		self.model.update_data(self._display_projects)
 		logger.debug("All projects read length: %s", len(self._all_projects))
 	
 

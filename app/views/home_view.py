@@ -474,19 +474,20 @@ class HomeAppView(QMainWindow):
 		# to handle projects in the future we:
 		# compare time with now
 		today = datetime.now()
-		todays_date = today.date() 
+		todays_date = today.date()
 		
+		new_project_list = []
 
 		if mode == "All": 
 			# filters the project based on date and status and add to self._display_projects
 			for project in self._all_projects:
-				logger.debug("project: %s", project)
+				# logger.debug("project: %s", project)
 				project_start_date = datetime.strptime(project["project_start_date"], date_format)
 				project_end_date = datetime.strptime(project["project_end_date"], date_format)
 
 				# logger.debug("project title: %s", project["project_title"])
 				# logger.debug("project_start_date: %s", project_start_date)
-				logger.debug("project_end_date: %s", project_end_date)
+				# logger.debug("project_end_date: %s", project_end_date)
 
 				# getting the differences between the dates: preferably in days
 				# comparing the current date and the deadline: using comparisons < > 
@@ -495,30 +496,30 @@ class HomeAppView(QMainWindow):
 				if (project_start_date.date() > todays_date):# future projects
 					# logger.debug("project in future")
 					self._upcoming_activies.append(project["project_title"])
-					self._display_projects.append([project["project_title"], project["project_priority"],  project["project_start_date"], project["project_end_date"], "Future", ""])
+					new_project_list.append([project["project_title"], project["project_priority"],  project["project_start_date"], project["project_end_date"], "Future", ""])
 				
 				elif (project_start_date.date() <= todays_date and project_end_date.date() >= todays_date ):# start with active projects
 					logger.debug("project in active")
 					self._active_activities.append(project["project_title"])
-					self._display_projects.append([project["project_title"], project["project_priority"],  project["project_start_date"], project["project_end_date"], "Active", ""])
+					new_project_list.append([project["project_title"], project["project_priority"],  project["project_start_date"], project["project_end_date"], "Active", ""])
 				
 				elif (project_end_date.date() < todays_date) : # Overdue and Finished projects
 					if (project["project_status"].lower() == "completed" or project["project_status"].lower() == "finished"):
 						# logger.debug("project completed")
 						self._completed_activities.append(project["project_title"])
-						self._display_projects.append([project["project_title"], project["project_priority"],  project["project_start_date"], project["project_end_date"], "Completed", ""])
+						new_project_list.append([project["project_title"], project["project_priority"],  project["project_start_date"], project["project_end_date"], "Completed", ""])
 					else:
 						# logger.debug("project passed due date")
 						self._passdeadline_activies.append(project["project_title"])
-						self._display_projects.append([project["project_title"], project["project_priority"],  project["project_start_date"], project["project_end_date"], "Overdue", ""])
+						new_project_list.append([project["project_title"], project["project_priority"],  project["project_start_date"], project["project_end_date"], "Overdue", ""])
 		elif mode == "Completed":
 			# filters using project status
 			logger.debug("Running in mode: %s", self.determine_projects_list_to_display)
 			for index, project in enumerate(self._all_projects):
 				if project.get("project_status").lower() == "completed" or project.get("project_status").lower() == "finished":
-					self._display_projects.append(project)
+					new_project_list.append(project)
 			
-			logger.debug("Completed projects displayed : %s", len(self._display_projects))
+			logger.debug("Completed projects displayed : %s", len(new_project_list))
 			
 		elif mode == "Active":
 			logger.debug("Running in mode: %s", self.determine_projects_list_to_display)
@@ -527,9 +528,9 @@ class HomeAppView(QMainWindow):
 				project_start_date = datetime.strptime(project["project_start_date"], date_format)
 				project_end_date = datetime.strptime(project["project_end_date"], date_format)
 				if (project_start_date.date() <= today.date() and project_end_date.date() >= todays_date ):# start with active projects
-					self._display_projects.append([project["project_title"], project["project_priority"],  project["project_start_date"], project["project_end_date"], "Active", ""])
+					new_project_list.append([project["project_title"], project["project_priority"],  project["project_start_date"], project["project_end_date"], "Active", ""])
 			
-			logger.debug("Length of displayed projects: %s", len(self._display_projects))
+			logger.debug("Length of displayed projects: %s", len(new_project_list))
 			
 		elif mode == "Overdue":
 			logger.debug("Running in mode: %s", self.determine_projects_list_to_display)
@@ -539,9 +540,9 @@ class HomeAppView(QMainWindow):
 				project_end_date = datetime.strptime(project["project_end_date"], date_format)
 				today = datetime.now()
 				if (project_end_date.date() < today.date()) : # Overdue projects
-					self._display_projects.append([project["project_title"], project["project_priority"],  project["project_start_date"], project["project_end_date"], "Overdue", ""])
+					new_project_list.append([project["project_title"], project["project_priority"],  project["project_start_date"], project["project_end_date"], "Overdue", ""])
 
-			logger.debug("Length of displayed projects: %s", len(self._display_projects))
+			logger.debug("Length of displayed projects: %s", len(new_project_list))
 
 		elif mode == "Future":
 			logger.debug("Running in mode: %s", self.determine_projects_list_to_display)
@@ -550,15 +551,12 @@ class HomeAppView(QMainWindow):
 				project_start_date = datetime.strptime(project["project_start_date"], date_format)
 				today = datetime.now()
 				if (project_start_date.date() > today.date()):# future projects
-					self._display_projects.append([project["project_title"], project["project_priority"],  project["project_start_date"], project["project_end_date"], "Future", ""])
+					new_project_list.append([project["project_title"], project["project_priority"],  project["project_start_date"], project["project_end_date"], "Future", ""])
 					# foundIndexes(index)
 
-			logger.debug("Length of displayed projects: %s", len(self._display_projects))
-
-		if len(self._display_projects) == 0:
-			self._display_projects.append(["No Project", "-", "-", "-", "-", "-"])
+			logger.debug("Length of displayed projects: %s", len(new_project_list))
 		
-
+		self._display_projects = new_project_list
 
 
 

@@ -127,13 +127,14 @@ class TaskViewWidget(QWidget):
         self.returned_task_data = self.fileManager.read_project_task_file(self.project_name)
 
         logger.debug("Task read from file: %s", self.returned_task_data)
+        logger.debug("length of returned_task: %s", len(self.returned_task_data))
+        logger.debug("length of returned phase data: %s", len(self.returned_task_data["phases"]))
 
-        # print()
-        # print("-------")
+
 
         self.phase_count = 0
 
-        if len(self.returned_task_data) == 0:
+        if len(self.returned_task_data["phases"]) == 0:
             # display something else
             groupBox = QGroupBox()
             descriptionLabel = QLabel(f"No task found for project {self.project_name}\nClick the button below to start adding task for the project!")
@@ -148,7 +149,8 @@ class TaskViewWidget(QWidget):
             self.mainLayout.addWidget(groupBox)
             self.setGeometry(100,100,400,400) 
         else:
-            for item in  self.returned_task_data["phases"]: # item is a dictionary
+            for item in self.returned_task_data["phases"]: # item is a dictionary
+                logger.debug("single phase: %s", item)
                 self.phaseContentGroupBox = QGroupBox() # GroupBox to enable styling
                 self.phaseLayout = QVBoxLayout() # layout for the self.phaseContentGroupBox
                 self.phaseTable = QTableView() # each subtasks 

@@ -117,28 +117,35 @@ class FileManager():
         return 0        
 
 
-    def create_project_folder(self, project_name) -> bool | None:
+    def create_project_folder(self, project_name) -> bool | dict:
         """
         The method create_project_folder is used to create a project directory  in the APP_PROJECT directory
         
         Args:
             - project_name : the  name of the new project which is used to create the new project directory
         """
+        logger.info("Method create_project_folder executed")
         logger.debug("Creating project folder: %s", project_name)
-        if not os.path.exists(self.app_folder):
-            self.create_app_folder()
-        
-        # create project directory
-        folder_path=self.app_folder + "/"+project_name
-        if os.path.exists(folder_path): # project already exist
-            return
 
-        if os.path.isdir(folder_path):
-            logger.debug("Created project directory:  %s", folder_path)
-            return True
-        else:
-            logger.debug("Failed in creating project directory: %s", folder_path)
+        try:
+            # creates the app directory if not exist
+            if not os.path.exists(self.app_folder):
+                logger.debug("Creating APP folder!")
+                self.create_app_folder() 
+            
+            # create project directory
+            folder_path=self.app_folder + "/"+project_name
+
+            # check if project exist 
+            if os.path.exists(folder_path): # project already exist
+                return  {"message": "project already exist"}
+            else: 
+                os.mkdir(folder_path)
+                return True
+        except: 
+            logger.debug("Unknown error occured while trying to create project folder!! Contact Support Team")
             return False
+
 
 
 
@@ -156,8 +163,10 @@ class FileManager():
                 True: show operation success
                 False: show operation failed
         """
+        logger.info("Method write_project_details executed:")
         project_path_folder = self.app_folder + "/" + project_name
         if not os.path.exists(project_path_folder):
+            logger.debug("project_path folder not found: %s", project_path_folder)
             return False
         
         try:

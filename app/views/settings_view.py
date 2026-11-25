@@ -130,7 +130,7 @@ class SettingsView(QWidget):
         save_data_setting = self.save_data_option.currentText()
         maximize_window_setting = self.maximize_window_option.currentText()
         mongo_uri_setting = self.mongo_url_input.text()
-        ai_url_setting = self.ollama_model.text()
+        ollama_model_name = self.ollama_model.text()
 
         self.configManager.set("theme", dark_mode_setting)
         self.configManager.set("font_family", "")
@@ -138,7 +138,7 @@ class SettingsView(QWidget):
         self.configManager.set("save_before_exiting", save_data_setting)
         self.configManager.set("maximize_window_on_open", maximize_window_setting)
         self.configManager.set("mongodb_url", mongo_uri_setting)
-        self.configManager.set("ai_url", ai_url_setting)
+        self.configManager.set("model_name", ollama_model_name)
 
         result = self.configManager.save()
         if result:
@@ -185,7 +185,7 @@ class SettingsView(QWidget):
 
 
         self.mongo_url_input.setText(self.configManager.get("mongodb_url"))
-        self.ollama_model.setText(self.configManager.get("ai_url"))
+        self.ollama_model.setText(self.configManager.get("model_name"))
 
 
 # app = QApplication([])

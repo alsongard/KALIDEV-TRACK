@@ -133,7 +133,6 @@ class FileManager():
         if os.path.exists(folder_path): # project already exist
             return
 
-        os.mkdir(folder_path)
         if os.path.isdir(folder_path):
             logger.debug("Created project directory:  %s", folder_path)
             return True

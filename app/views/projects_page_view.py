@@ -61,18 +61,15 @@ class ProjectAddView(QWidget):
 
         # setting the sidebar
         sideBarView = QVBoxLayout()
-        createTasks = QPushButton('Create Tasks')
-        askAIBtn = QPushButton('Ask AI')
+        # createTasks = QPushButton('Create Tasks')
         exitBtn = QPushButton("Exit")
 
 
-        createTasks.clicked.connect(self.open_project_tasks)
+        # createTasks.clicked.connect(self.open_project_tasks)
         exitBtn.clicked.connect(self.close_window)
-        askAIBtn.clicked.connect(self.ask_ai_fun)
 
         
-        sideBarView.addWidget(createTasks)
-        sideBarView.addWidget(askAIBtn)
+        # sideBarView.addWidget(createTasks)
         sideBarView.addWidget(exitBtn)
         sideBarView.addStretch(0)
 
@@ -201,12 +198,11 @@ class ProjectAddView(QWidget):
             self,
             "Information",
             "Project Details will be Saved, Would you like to Proceed? ",
-            QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel,
-            QMessageBox.StandardButton.Ok
+            buttons = QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel,
         )
 
         if saving_message_response == QMessageBox.StandardButton.Ok:
-            print("Proceeding to save project data")
+            logger.debug("Proceeding to save project data")
             self.titleInput.clear()
             self.priorityInput.clear()
             self.projectTags.clear()
@@ -230,17 +226,28 @@ class ProjectAddView(QWidget):
 
 
             operation_status = self.fileManager.write_project_details(title_text, project_dictionary)
-            # writing data to the file
-            # file_name =new_dir+"/project_data.json"
-            # print(file_name)
-            # try:
-            #     with open(file_name, 'a') as file:
-            #         json.dump(project_dictionary, file)
-            #     self.emitRerunSignal()
-            # except Exception as e:
-            #     print(f"Error : {e}")
-                
-
+            if type(operation_status) is bool:
+                if operation_status:
+                    QMessageBox.information(                                                  
+                        self,                                                             
+                        "Information",                                                    
+                        "Project has been successfully created!",               
+                        buttons=QMessageBox.StandardButton.Ok                             
+                    )
+                else:
+                    QMessageBox.critical(                                                      
+                        self,                                                                     
+                        "Error",                                                                
+                        "Project cannot be saved! Contact Maintainer",                                                               
+                        buttons=QMessageBox.StandardButton.Ok                                     
+                    )  
+            elif type(operation_status) is dict:
+                QMessageBox.warning(                                                    
+                    self,                                                                     
+                    "Warning",                                                                
+                    "Your subscribtion will expire in 3 days. Please renew to avoid service interruption",                                                               
+                    buttons=QMessageBox.StandardButton.Ok                                     
+                )
         else:
             QMessageBox().warning(
                 self,
@@ -270,8 +277,6 @@ class ProjectAddView(QWidget):
         super().closeEvent(event)
 
 
-    def ask_ai_fun(self):
-        print("this button will be used to open a QWidget  for asking AI")
 
 
 

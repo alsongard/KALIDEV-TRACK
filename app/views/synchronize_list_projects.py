@@ -7,6 +7,7 @@ Purpose:
 
 Depends on: 
     utils/file_operations.FileManager
+    utils.config_manager.ConfigManager
     views/edit_view_single_project.EditSingleProjectView
     views/tasks_view.TaskViewWidget
 Exports:
@@ -30,6 +31,7 @@ from app.database.project_repository import ProjectRepository
 from app.utils.file_operations import FileManager
 from app.views.edit_view_single_project import EditSingleProjectView
 from app.views.tasks_view import TaskViewWidget
+from app.utils.config_manager import ConfigManager
 
 logger = logging.getLogger(__name__)
 class SynchronizeProjectList(QWidget):
@@ -46,6 +48,7 @@ class SynchronizeProjectList(QWidget):
         self.setWindowTitle("View All Projects")
         self.projectView = None
         self.taskView = None
+        self.config_manager_instance = ConfigManager()
         main_layout = QVBoxLayout()
 
         title_label = QLabel("View All Projects")
@@ -206,7 +209,19 @@ class SynchronizeProjectList(QWidget):
             return
 
         load_dotenv()
-        mongo_url = os.getenv("MONGO_URL")
+
+
+       
+        mongo_url = self.config_manager_instance.get("mongodb_url")
+        logger.debug("mongo url: %s", mongo_url)
+        if not mongo_url:
+            QMessageBox.information(                                                  
+                self,                                                             
+                "Information",                                                    
+                "No mongo url set! Ensure you have a mongo db connection string to backup your projects.",               
+                buttons=QMessageBox.StandardButton.Ok                             
+            )                                                                         
+            return
         database_manager = DatabaseManager(mongo_url=mongo_url)
         project_repository = ProjectRepository(database_manager) # pass the instance of database manager
          

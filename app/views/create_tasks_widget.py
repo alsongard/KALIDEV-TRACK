@@ -260,18 +260,24 @@ class CreateTaskWidget(QWidget):
         # appending the previous data
         prev_phases = self.prev_task_data["phases"] # this is an array which holds phases
         logger.debug("type of prev_phases: %s", type(prev_phases))
-        for item in new_phase["phases"]: # i need to append new phases to prev_task_data['phases']
-            prev_phases.append(item)
 
+        if len(prev_phases) > 0: # prev_phases has objects of phases
+            for item in new_phase["phases"]: # i need to append new phases to prev_task_data['phases']
+                prev_phases.append(item)
 
-        logger.debug("all phases to be added: %s", prev_phases)
+            project_tasks = {
+                "project":self.project_name,
+                "phases": prev_phases 
+            }
 
-        project_tasks = {
-            "project":self.project_name,
-            "phases": prev_phases 
-        }
+            logger.debug("new_phase & prev_phase combined: %s", prev_phases)
+        else: 
+            project_tasks = {
+                "project":self.project_name,
+                "phases": new_phase["phases"]
+            }
 
-        logger.debug("Project data: %s", project_tasks)
+            logger.debug("only new_phase data: %s", project_tasks)
 
         operation_result = self.fileManager.update_project_tasks(self.project_name, project_tasks)
         

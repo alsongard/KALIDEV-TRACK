@@ -10,7 +10,6 @@ Exports:
 
 """
 import logging
-# from sys import exception
 from send2trash import send2trash
 import json, os
 from rich.logging import RichHandler

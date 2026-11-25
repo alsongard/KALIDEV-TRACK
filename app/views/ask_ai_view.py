@@ -13,7 +13,7 @@ Depends:
 from re import S
 import re
 from typing import Container
-from PySide6.QtWidgets import QApplication, QGroupBox, QHBoxLayout, QTextEdit, QScrollArea, QVBoxLayout, QWidget, QPushButton, QLabel, QLineEdit
+from PySide6.QtWidgets import QApplication, QMessageBox, QGroupBox, QHBoxLayout, QTextEdit, QScrollArea, QVBoxLayout, QWidget, QPushButton, QLabel, QLineEdit
 from PySide6.QtCore import Qt, Signal
 from ollama import chat
 import logging
@@ -51,6 +51,7 @@ class AskAIView(QWidget):
         ai_assistant_label = QLabel("Your AI Assistant: ")
         self.messages = []
         self.main_layout.addWidget(ai_assistant_label)
+        self.config_manager_instance = ConfigManager()
 
         self.setGeometry(100, 100, 400, 200)
 
@@ -111,8 +112,18 @@ class AskAIView(QWidget):
                 "role": "user", 
                 "content": question
             }]
+            model_name = self.config_manager_instance.get("model_name")
+            logger.debug("model_name: %s", model_name)
+            if not model_name:
+                QMessageBox.information(                                                  
+                    self,                                                             
+                    "Information",                                                    
+                    "Model name is empty. Set the name of the model which you locally have!",               
+                    buttons=QMessageBox.StandardButton.Ok                             
+                ) 
+                return
 
-            response = chat(model="qwen2.5:0.5b", messages=message)
+            response = chat(model=model_name, messages=message)
             logger.debug("response message body: %s", response.message)
             logger.debug("response: %s", response.message.content)
 

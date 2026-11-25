@@ -71,7 +71,7 @@ class ConfigManager():
             "save_before_exiting": "True",
             "maximize_window_on_open": "False",
             "mongodb_url": "",
-            "ai_url": "", 
+            "model_name": "", 
             "remember_me": 7
         }
 

@@ -1,6 +1,5 @@
-# kALIDEV-TRACK
+# KALIDEV-TRACK
 
-[![wakatime](https://wakatime.com/badge/user/ca37100b-7f0f-4ae1-947c-ff595165e688/project/034b45f1-a1e8-420c-9e89-f194d93f4d50.svg)](https://wakatime.com/badge/user/ca37100b-7f0f-4ae1-947c-ff595165e688/project/034b45f1-a1e8-420c-9e89-f194d93f4d50)
 
 **kALIDEV-TRACK** is a desktop application built with Python and PySide6 designed to help developers track the progress of their software projects and tasks. It provides a clean, user-friendly interface to manage, view, and organize your workflows efficiently without relying on a web browser.
 

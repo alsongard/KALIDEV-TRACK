@@ -165,6 +165,7 @@ class FileManager():
             with open(filepath, 'w') as file:
                 json.dump(data, file)
                 logger.debug("project data saved successfully to project_data.json file")
+                self.create_project_task_file(project_name)
                 return True
         except  Exception as error:
             logger.debug("Error while saving project data: %s ", error) 

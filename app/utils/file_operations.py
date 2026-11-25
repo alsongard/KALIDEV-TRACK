@@ -10,6 +10,7 @@ Exports:
 
 """
 import logging
+# from sys import exception
 from send2trash import send2trash
 import json, os
 from rich.logging import RichHandler
@@ -285,33 +286,31 @@ class FileManager():
         # if (len(task_data) > 0): # using len  on dictionary to check key properties if it's zero task file is empty
         return task_data 
 
-    def read_single_project_data(self, project_name):
+    def read_single_project_data(self, project_name) -> dict:
         """
-        The method is used to read a single project_data.json file 
+        Read and parse the project_data.json file for a single project.
 
         Args:
-            self: Used to provide distiction for different instances of the class 
-            project_name: the sub-directory in the PROJECTS directory 
+            project_name: The sub-directory name under the PROJECTS directory.
 
         Returns:
-            dictionary{}: With the following keys:
-                - userId: string
-                - project_title: string
-                - project_owner: string
-                - project_tags: string
-                - project_description: string
-                - project_status: string
-                - project_priority: string
-                - project_start_date: string
-                - project_start_time: string
-                - project_end_date: string
-                - project_end_time: string
-            
-            
-            empty dictionary{}
-        
-        Example:
-            >>> 
+            A dictionary with the following keys:
+                - userId (str)
+                - project_title (str)
+                - project_owner (str)
+                - project_tags (str)
+                - project_description (str)
+                - project_status (str)
+                - project_priority (str)
+                - project_start_date (str)
+                - project_start_time (str)
+                - project_end_date (str)
+                - project_end_time (str)
+
+            An empty dictionary if the file is not found or contains no data.
+
+        Raises:
+            json.JSONDecodeError: If the file exists but contains invalid JSON.
         """
         home_dir = os.path.expanduser("~")
         # print(f"home_dir: {home_dir}")
@@ -319,22 +318,26 @@ class FileManager():
 
         project_directory_path = home_dir+"/"+"PROJECTS/"+project_name
         # print(f"project_directory_path: {project_directory_path}")
+        try:
+            if (os.path.exists(project_directory_path)):
+                # check if file exist
+                with  os.scandir(project_directory_path) as entries:# the os.scandir() method returns an iterator of os.dirEntry objects
+                    for dirEntry in entries:
+                        if dirEntry.is_file:
+                            file_name = dirEntry.name
+                            # print(f"File_name: {file_name}")
+                            file_path=project_directory_path+"/"+file_name
+                            with open(file_path, "r") as file:
+                                data = json.load(file)
+                                logger.debug("this is data in read_single_project_data: %s", data)
+                                return data
+                        else:
+                            return {}
 
-        if (os.path.exists(project_directory_path)):
-            # check if file exist
-            with  os.scandir(project_directory_path) as entries:# the os.scandir() method returns an iterator of os.dirEntry objects
-                for dirEntry in entries:
-                    if dirEntry.is_file:
-                        file_name = dirEntry.name
-                        # print(f"File_name: {file_name}")
-                        file_path=project_directory_path+"/"+file_name
-                        with open(file_path, "r") as file:
-                            data = json.load(file)
-                            print("this is data in read_single_project_data")
-                            print(data)
-                            return data
-                    else:
-                        return {}
+        except: 
+            logger.debug("An error occured while reading project details file for : %s", project_name)
+            return {}
+            
                     
     def update_project_tasks(self, projectName, data) -> bool:
         """

@@ -87,19 +87,19 @@ class SettingsView(QWidget):
 
 
         # API URL CONFIGS
-        mongo_config_label = QLabel("Enter your mongo uri label: ")
+        mongo_config_label = QLabel("Enter your mongo url: ")
         self.mongo_url_input = QLineEdit()
         self.mongo_url_input.setPlaceholderText("enter mongo connnection string")
 
         container_layout.addWidget(mongo_config_label)
         container_layout.addWidget(self.mongo_url_input)
 
-        ai_config_label = QLabel("Enter AI API url")
-        self.ai_url_input = QLineEdit()
-        self.ai_url_input.setPlaceholderText("https://api.com/")
+        ai_config_label = QLabel("Enter locall model name: ")
+        self.ollama_model = QLineEdit()
+        self.ollama_model.setPlaceholderText("qwen05-auto:latest")
 
         container_layout.addWidget(ai_config_label)
-        container_layout.addWidget(self.ai_url_input)
+        container_layout.addWidget(self.ollama_model)
 
         export_label = QLabel("Click to Export APP data in json: ")
         exportBtn = QPushButton("Export")
@@ -130,7 +130,7 @@ class SettingsView(QWidget):
         save_data_setting = self.save_data_option.currentText()
         maximize_window_setting = self.maximize_window_option.currentText()
         mongo_uri_setting = self.mongo_url_input.text()
-        ai_url_setting = self.ai_url_input.text()
+        ai_url_setting = self.ollama_model.text()
 
         self.configManager.set("theme", dark_mode_setting)
         self.configManager.set("font_family", "")
@@ -185,7 +185,7 @@ class SettingsView(QWidget):
 
 
         self.mongo_url_input.setText(self.configManager.get("mongodb_url"))
-        self.ai_url_input.setText(self.configManager.get("ai_url"))
+        self.ollama_model.setText(self.configManager.get("ai_url"))
 
 
 # app = QApplication([])

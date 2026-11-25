@@ -14,6 +14,9 @@ import sys, os, bcrypt, secrets
 from threading import Timer
 
 from .home_view import HomeAppView
+import logging 
+
+logger = logging.getLogger(__name__)
 
 # this window will have 2 views: using QTabWidget 1 for creatign account and the other for signing in
 class MainFormWindow(QWidget):
@@ -220,12 +223,10 @@ class MainFormWindow(QWidget):
 			try:
 				with open(f"{filepath}/user.json", 'r') as file:
 					data = json.load(file) # return an array of dictionaries
-					# print(f"data  on user_login : type of data : {type(data)}")
-					# print(data)
-					# for item in data: # this is for handling multiple users for the application: 
-					# changed to single user
+					# logger.debug("user info: %s", data)
 
-					if "user_name" in data: #  check if exist
+					if  data["user_name"] == username: #  check if exist
+						# logger.debug("username correct")
 						# print('user found') # testing:working
 						# print(f'found user: {item}') # testing:working
 						getHashedPassword = data['password']
@@ -255,6 +256,9 @@ class MainFormWindow(QWidget):
 							print("Wrong password")
 							self.alertMessage("Invalid Credentials")
 							# break
+					else:
+						self.alertMessage("Invalid account")
+
 			except FileNotFoundError as e:
 				print("File user.json not  found")
 				self.alertMessage("File Not found!, Try creating another account or reinstalling the app")
